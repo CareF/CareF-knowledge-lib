@@ -1,0 +1,430 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用），ctexcap套用中文格式（等同于\documentclass{ctexart}）
+\usepackage[a4paper,top=0.75in,bottom=1in,left=1in,right=1in]{geometry}
+
+\usepackage{amsmath,amssymb,array,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[2]%允许多行公式间换页，用//*表示不允许换页
+\newcommand\dif{\mathrm{d}}
+\newcommand\diff{\,\mathrm{d}}
+\usepackage{bm}%加粗（用于vector）
+\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+
+\usepackage[CJKbookmarks]{hyperref}
+
+\usepackage{multirow,longtable}
+%以下实现带圈的脚注
+\usepackage{pifont}
+\usepackage[perpage,symbol*]{footmisc}
+\DefineFNsymbols{circled}{{\ding{192}}{\ding{193}}{\ding{194}}
+{\ding{195}}{\ding{196}}{\ding{197}}{\ding{198}}{\ding{199}}{\ding{200}}{\ding{201}}}
+\setfnsymbol{circled}
+
+\usepackage{cases}
+
+
+\renewcommand{\[}{\ $\displaystyle}
+\renewcommand{\]}{$\ }%$
+\newcommand{\fdif}[2]{\ensuremath{\frac{\dif #1}{\dif #2}}}
+\newcommand{\fdifsq}[2]{\ensuremath{\frac{\dif^2 #1}{\dif #2^2}}}
+\newcommand{\pard}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\pardsq}[2]{\ensuremath{\frac{\partial^2 #1}{\partial #2^2}}}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}
+\newcommand\res{\mathop{\rm res~}}
+\newcommand{\summ}[2][n]{\sum_{#1=#2}^\infty}
+\usepackage{mathrsfs}
+\begin{document}
+\title{数理方程记忆手册}
+\author{吕铭\quad 物理21}
+\maketitle
+
+	 \newcommand{\fp}[2][l]{\ensuremath{\mathrm{P}_{#1}\left(#2\right)}}
+
+	 \newcommand{\fj}[2][\nu]{\ensuremath{\mathrm{J}_{#1}\left(#2\right)}}
+	 \newcommand{\fn}[2][\nu]{\ensuremath{\mathrm{N}_{#1}\left(#2\right)}}
+
+	
+\section{本征值问题与特殊函数}	
+	\subsection{拉普拉斯算符（Laplace operator）}
+		\begin{longtable}[c]{l>{\rule{0em}{2em}$\displaystyle\nabla^2 \equiv} l<{$}}
+		坐标系	&\multicolumn{1}{l}{坐标表示} \\
+%		二维直角坐标系	&\pardsq{}{x} + \pardsq{}{y} \\
+%		二维极坐标系	&\frac 1r\pard{}{r}\left(r\pard{}{r}\right) + \frac{1}{r^2}\pardsq{}{\phi}\\
+%		三维直角坐标系	&\pardsq{}{x} + \pardsq{}{y} + \pardsq{}{z}\\
+		三维柱坐标系	&\frac 1r\pard{}{r}\left(r\pard{}{r}\right) + \frac{1}{r^2}\pardsq{}{\phi} + \pardsq{}{z}\\
+		三维球坐标系	&\frac{1}{r^2}\pard{}{r}\left(r^2\pard{}{r}\right) + \frac{1}{r^2\sin\theta}\pard{}{\theta}\left(\sin\theta\pard{}{\theta}\right) + \frac{1}{r^2\sin^2\theta}\pardsq{}{\phi}
+		\end{longtable}
+		
+	\subsection{亥姆霍兹方程（Helmholtz equation）的分离变量}
+		\begin{enumerate}
+		  \item 柱坐标系
+		  	\begin{eqnarray*}
+		  	  &&\frac 1r\pard{}{r}\left(r\pard{u}{r}\right) + \frac{1}{r^2}\pardsq{u}{\phi} + \pardsq{u}{z} + ku = 0\\
+		  	  &\Rightarrow &\left\{\begin{array}{>{\rule{0em}{2em}\displaystyle}ll}
+		  	  \fdifsq{Z}{z} + \lambda^2 Z = 0 \\
+		  	  \fdifsq{\Phi}{\phi} + \nu^2 \Phi = 0 \quad \mbox{（$2\pi$周期条件）}\\
+		  	  \frac 1r\fdif{}{r}\left(r\fdif{R}{r}\right) + \left( k^2 - \lambda^2 - \frac{\nu^2}{r^2}\right) R = 0 & \cdots\cdots \mbox{贝塞尔方程}
+		  	  \end{array}\right.
+		  	\end{eqnarray*}
+		  \item 球坐标系
+		    \begin{eqnarray*}
+		      &&\frac{1}{r^2}\pard{}{r}\left(r^2\pard{u}{r}\right) + \frac{1}{r^2\sin\theta}\pard{}{\theta}\left(\sin\theta\pard{u}{\theta}\right) + \frac{1}{r^2\sin\theta}\pardsq{u}{\phi} + k^2 u = 0\\
+		      &\Rightarrow &\left\{\begin{array}{>{\rule{0em}{2em}\displaystyle}ll}
+		  	  \fdifsq{\Phi}{\phi} + m^2 \Phi = 0 \quad \mbox{（$2\pi$周期条件）}\\
+		  	  \frac 1{r^2}\fdif{}{r}\left(r^2\fdif{R}{r}\right) + \left( k^2 - \frac{l(l+1)}{r^2}\right) R = 0 & \cdots\cdots\mbox{球贝塞尔方程}\\
+		  	  \frac 1{\sin \theta}\fdif{}{\theta}\left(\sin \theta \fdif{\Theta}{\theta}\right) + \left(l(l+1) - \frac{m^2}{\sin ^2\theta}\right)\Theta = 0 & \cdots\cdots\mbox{连带勒让德方程}
+		  	  \end{array}\right.
+		    \end{eqnarray*}
+		\end{enumerate}
+			
+	\subsection{常用本征函数表}
+	对于\[\bm L u + \lambda u = 0\]
+%	\footnote{此处对于本征值定义和上面的相差一个符号}
+	，其中\[\bm{L} = \frac{1}{\rho(x)}\fdif{}{x}\left[p(x)\fdif{}{x}\right] + q(x)\]可以确定权重。
+	\newcommand{\border}[3]{\ensuremath{\left. #1 \right|_{#2 = #3}}}
+
+		
+		\subsubsection{（连带）勒让德多项式}
+		\begin{longtable}[c]{c|*{4}{>{\rule[-0.5em]{0em}{2.5em}$\displaystyle}c<{$}}}
+			$\bm L $	&\multicolumn{1}{c}{边界条件}	&\multicolumn{1}{c}{本征函数}	&\multicolumn{1}{c}{本征值}	&\multicolumn{1}{c}{归一化系数} \\\hline\endhead
+			$\displaystyle \fdif{}{x}\left[(1-x^2)\fdif{}{x}\right]$	&\border{u}{x}{\pm 1}\mbox{有界}	& \fp{x}\footnote{\[l = 0,1,2,\cdots\]，后同}	&l(l+1)	&\sqrt{\frac{2l+1}{2}} \\
+			$\displaystyle \fdif{}{x}\left[(1-x^2)\fdif{}{x}\right] - \frac{m^2}{1-x^2}$	&\border{u}{x}{\pm 1}\mbox{有界}	&\mathrm{P}_l^m(x)	&l(l+1)	&\sqrt{\frac{(l+m)!}{(l-m)!}\frac{2l+1}{2}} \\\hline
+		\end{longtable}
+		
+		\subsubsection{贝塞尔函数与球贝塞尔函数}
+		\begin{longtable}[c]{c|*{4}{>{\rule[-0.5em]{0em}{2em}$\displaystyle}c<{$}}}
+			$\bm L $	&\multicolumn{1}{c}{边界条件}	&\multicolumn{1}{c}{本征函数}	&\multicolumn{1}{c}{本征值}	&\multicolumn{1}{c}{归一化系数} \\\hline\endhead
+			\multirow{2}{*}{\rule{0em}{2em}$\displaystyle \frac 1r\fdif{}{r}\left(r\fdif{}{r}\right) - \frac{\nu^2}{r^2}$}
+				&u|_{r=0}\mbox{有界},u|_{r=a}
+%				=0	
+				&\fj{k_i r}
+%				\footnote{\[k_i\]满足边界条件，下同。}	
+%				&k_i^2	&\left[\frac {a^2}2\mathrm J_\nu'^2(k_ia)\right]^{-\frac 12} \\*
+%				&u|_{r=0}\mbox{有界},\left.\fdif ur\right|_{r=a}=0	&\fj{k_i r}	&k_i^2	&
+				%\left[\frac {a^2}2 \left(1 - \frac {m^2}{a^2 k_i^2}\right)\mathrm J_\nu^2(k_ia)\right]^{-\frac 12} 
+%				\\*
+%				&u|_{r=0}\mbox{有界},\mbox{第三类}	&\fj{k_i r}	&k_i^2	&
+				%\left[\frac {a^2}2 \mathrm J_\nu'^2 + \frac {a^2}2 \left(1 - \frac {m^2}{a^2 k_i^2}\right)\mathrm J_\nu^2\right]^{-\frac 12} 
+				\\*
+				&u|_{r=a,b}\mbox{的齐次条件}	&\mathrm J_\nu,\mathrm N_\nu	&k_i^2	&\mbox{略}\\\hline
+			\multirow{2}{*}{\rule{0em}{2em}$\displaystyle \frac 1{r^2}\fdif{}{r}\left(r^2\fdif{}{r}\right) - \frac{l(l+1)}{r^2}$}
+%				&u|_{r=0}\mbox{有界},u|_{r=a}=0	&\mathrm j_l(k_i r)	&k_i^2	&
+				%\left[\frac{a^3}{2}\mathrm j_l'^2(k_ia)\right]^{-\frac 12} 
+%				\\*
+				&u|_{r=0}\mbox{有界},u|_{r=a}	&\mathrm j_l(k_ir)	&k_i^2	&
+				%\left[\frac{a^3}{2}\left(j_l'^2 - j_lj_l''-\frac 1{k_ia}j_lj_l'\right)\right]^{-\frac 12}
+				\\*
+				&u|_{r=a,b}\mbox{的齐次条件}	&\mathrm j_l,\mathrm n_l	&k_i^2	&\mbox{略} \\\hline 
+		\end{longtable}
+		
+		\subsubsection{二元本征值问题}
+		归一化系数为1。
+		\begin{longtable}[c]{c|*{3}{>{\rule[-0.5em]{0em}{2.5em}$\displaystyle}c<{$}}}
+			$\bm L $	&\multicolumn{1}{c}{边界条件}	&\multicolumn{1}{c}{本征函数}	&\multicolumn{1}{c}{本征值}	\\\hline\endhead
+			$\displaystyle \frac{1}{\sin \theta}\pard{}{\theta}\left[\sin \theta\pard{}{\theta}\right] + \frac{1}{\sin^2\theta}\pardsq{}{\phi}$	&\border{u}{\theta}{0,\pi}\mbox{有界},u|_\phi\mbox{周期}2\pi	& \mathrm{Y}_l^m(\theta,\phi)\footnote{\[m = 0,\pm 1,\pm 2,\cdots, \pm l\]，\[2l+1\]重简并。权重因子\[\sin \theta\]。}	&l(l+1) \\\hline
+		\end{longtable}
+
+	    \begin{enumerate}
+	     \item 
+	     \[
+	     	  \mathrm{Y}_l^m(\theta,\phi) = \sqrt{\frac{2l+1}{4\pi}\frac{(l-m)!}{(l+m)!}}\mathrm{P}_l^m(\cos\theta)\e^{\mi m\phi}
+	     	\]
+%	     	其中\[m = 0,\pm 1 , \pm 2 , \cdots ,\pm l\]
+	     \item \[\mathrm Y_l^{m*}(\theta,\phi) = (-)^m\mathrm Y_l^{-m}(\theta,\phi)\]
+%	     \item 展开：
+%	      	  	\begin{numcases}{\frac 1 {|\vec r - \vec r'|} = }
+%	      	  		\frac 1{r'}\sum_{l=0}^\infty \sum_{m=-l}^l  \mathrm Y_l^{m*}(\theta,\phi)\mathrm Y_l^m(\theta',\phi')\left(\frac {r}{r'}\right)^l , & $r<r'$ \nonumber\\
+%	      	  		\frac 1{r}\sum_{l=0}^\infty \sum_{m=-l}^l \mathrm Y_l^{m*}(\theta,\phi)\mathrm Y_l^m(\theta',\phi')\left(\frac {r'}{r}\right)^l , & $r>r'$ \nonumber
+%	      	  	\end{numcases}
+%	     \item 加法公式：改变上式极轴方向可以得到
+%	     	$$
+%	     	  \fp{\cos\gamma} = \sum_{m=-l}^l \mathrm Y_l^{m*}(\theta,\phi)\mathrm Y_l^m(\theta',\phi')
+%	     	$$
+%	     	其中\[\cos \gamma = \cos \theta \cos \theta' + \sin \theta \sin \theta' \cos (\phi - \phi')\]
+	    \end{enumerate}	  
+\twocolumn		
+	\subsection{特殊函数}
+	  \subsubsection{勒让德多项式（Legendre polynomials）}
+		\begin{enumerate}
+			\item \[
+		 	  \fp{x} = \sum_{n=0}^l \frac{1}{(n!)^2}\frac{(l+n)!}{(l-n)!}\left(\frac{x-1}2\right)^n 
+		 	\]
+		 	\item \[
+		 	  \fp{x} = \frac{1}{2^l l!}\frac{\dif^l}{\dif x^l}\left[(x^2 - 1)^l\right]
+		 	\]
+%		 	\item 另一个显明表达式
+%		 	$$
+%		 	  \fp{x} = \sum_{r=0}^{[l/2]}\frac{(-)^r(2l-2r)!}{2^lr!(l-r)!(l-2r)!}x^{l-2r}
+%		 	$$
+%		 	\item \[\fp{-x} =(-)^l\fp{x}\]
+%		 	\item \[\fp[2l]{0} = (-)^l\frac{(2l)!}{(2^l l!)^2},\quad \fp[2l+1]{0} = 0\]
+%		 	\item 零点均在\[(-1,1)\]
+		 	\item \[
+		 		  \frac{1}{\sqrt{1 - 2xt + t^2}} = \summ[l]{\infty} \fp{x}t^l 
+		 		\]
+%		 	\item 递推关系：
+%		 		\begin{eqnarray*}
+%		 		  (2l+1)x\fp{x} &=& (l+1)\fp[l+1]{x} + l\fp[l-1]{x} \\
+%		 		  \fp[l]{x} &=& \mathrm{P}'_{l+1}(x) - 2x\mathrm{P}'_{l}(x) + \mathrm{P}'_{l-1}(x) \\
+%		 		  \mathrm{P}'_{l+1}(x) &=& x\mathrm{P}'_{l}(x) + (l+1)\fp{x} \\
+%		 		  \mathrm{P}'_{l-1}(x) &=& x\mathrm{P}'_{l}(x) - l\fp{x}
+%		 		\end{eqnarray*}
+%		 	\item 前6次：
+%		 		$$
+%		 		  \begin{array}{*{3}{>{\rule{0em}{2em}\displaystyle }l}}
+%		 		  \fp[0]{x} = 1,	&\fp[1]{x} = x,	&\fp[2]{x} = \frac{1}{2}(3x^2 - 1), \\
+%		 		  \fp[3]{x} = \frac 12(5x^3-3x),	&\fp[4]{x} =\frac 18 (35x^4 - 30x^2 + 3),	&\fp[5]{x} = \frac 18 (63x^5 - 70x^3 + 15x) 
+%		 		  \end{array}
+%		 		$$
+		\end{enumerate}
+		
+	  \subsubsection{连带勒让德函数（Associated Legendre polynomials）}
+	    \begin{enumerate}
+	    	\item \[
+	    		  \mathrm{P}_l^m(x) = (-)^m (1-x^2)^{m/2}\frac{\dif ^m}{\dif x^m}\fp{x}
+	    		\]
+	    	\item 相同阶但不同次的连带勒让德函数在区间\[[-1,1]\]上正交
+	    	\item \[\mathrm{P}_l^{-m}(x) = (-)^m\frac{(l-m)!}{(l+m)!}\mathrm{P}_l^m(x)\]
+	    	\item \[
+	    	\int_{-1}^1\mathrm{P}_l^m(x)\mathrm{P}_{l'}^{-m}(x)\diff x = (-)^m\frac{2\delta_{ll'}}{2l+1} \]
+%	    	\int_{-1}^1\mathrm{P}_l^m(x)\mathrm{P}_{l}^{m'}(x)\frac{\diff x}{1-x^2} &=& \frac{1}{m}\frac{(l+m)!}{(l-m)!}\delta_{mm'} \\
+%	    	\int_{-1}^1\mathrm{P}_l^m(x)\mathrm{P}_{l'}^{-m'}(x)\frac{\diff x}{1-x^2} &=& \frac{(-)^m}{m}\delta_{mm'}
+%	    	\end{eqnarray*}
+	    \end{enumerate}
+	       
+	      
+	  \subsubsection{贝塞尔函数（Bessel functions）和诺依曼函数（Neumann function）}
+	   \begin{enumerate}
+	     \item \[
+	     	  \fj{z} =\summ{0} \frac{(-)^n}{n! \Gamma(n + \nu + 1)}\left(\frac z2\right)^{2n+\nu} 
+	     	\]
+	     \item \[
+	     	  \fn{z} = \frac{\cos \nu\pi \fj{z} - \fj[-\nu]{z}}{\sin \nu\pi} 
+	     	\]
+%	     \item \[\fj[-n]{z} = (-)^n\fj[n]{z}\]其中\[n\]为整数
+	     \item 线性相关性（朗斯基行列式）：
+	     	\begin{eqnarray*}
+	     	 \Delta[\fj{z},\fj[-\nu]{z}] &=& -\frac{2}{\pi z}\sin \pi\nu \\
+	     	 \Delta[\fj{z},\fn{z}] &=& \frac{2}{\pi z}
+	     	\end{eqnarray*}
+%	     \item 诺依曼函数的整数极限：
+%	     	\begin{eqnarray*}
+%	     	 \fn[n]{z} &=& \lim\limits_{\nu\to n}\fn{z} \\
+%	 	  &=& \frac 2\pi \fj[n]{z}\ln\frac z2 - \frac 1\pi\sum_{k=0}^{n-1}\frac{(n-k-z)!}{k!}\left(\frac z2\right)^{2k-n} \\
+%	 	  &&\quad -\frac 1\pi\sum_{k=0}^{\infty}\frac{(-)^k}{k!(n+k)!}[\psi(n+k+1)+\psi(k+1)]\left(\frac z2\right)^{2k+n}\\
+%	     	\end{eqnarray*}
+%	     	当\[n = 0\]时，需去掉表达式中第二项的有限和
+	     \item 递推公式
+	     	\begin{eqnarray*}
+	     	 \fdif{}{z}\left[z^\nu\fj[\nu]{z}\right] &=& z^\nu\fj[\nu -1]{z} \\
+	     	 \fdif{}{z}\left[z^{-\nu}\fj[\nu]{z}\right] &=& -z^{-\nu}\fj[\nu +1]{z} 
+%	     	 \\
+%	     	 \fj[\nu-1]{z} - \fj[\nu+1]{z} &=& 2\mathrm J_\nu'(z) \\
+%	     	 \fj[\nu-1]{z} + \fj[\nu+1]{z} &=& \frac{2\nu}{z}\fj{z} \\
+%	     	 \left(\frac{\nu^2}{z^2} - 1\right)\fj{z} - \frac 1z\mathrm J_\nu'(z) &=& \mathrm J''_\nu(z)
+	     	\end{eqnarray*}
+	     	诺依曼函数形式完全相同。
+%	     \item \[\mathrm J_0'(z) = -\fj[1]{z}\]
+%	     \item \[\nu>-1\]或为整数时，\[\fj{x}\]有无穷多零点，零点都是实数且对称地分布在实轴上
+	     \item 渐近展开
+	     	\begin{eqnarray*}
+%	     	 \lim_{z\to 0}\fj{z} &\sim & \frac{1}{\Gamma(\nu+1)}\left(\frac z2\right)^\nu + O(z^{\nu+1})\\
+%	     	 \lim_{z\to 0}\fn{z} &\sim & -\frac{\Gamma(\nu)}{\pi}\left(\frac z2\right)^{-\nu} \quad \nu\neq 0\\
+	     	 \lim_{z\to 0}\fn[0]{z} &\sim & \frac{2}{\pi}\ln \frac x2\\
+	     	 \lim_{z\to\infty}\fj{z} &\sim & \sqrt{\frac 2{\pi z}}\cos\left(z-\frac{\nu\pi}2 - \frac \pi 4\right) \\
+	     	 \lim_{z\to\infty}\fn{z} &\sim & \sqrt{\frac 2{\pi z}}\sin\left(z-\frac{\nu\pi}2 - \frac \pi 4\right)
+	     	\end{eqnarray*}
+	     \item \[
+	     	 	  \exp\left[\frac z2\left(t - \frac 1t\right)\right] = \summ{-\infty} \fj[n]{z}t^n, 
+	     	 	\]
+%	     	 	令\[t = \mi\e^{\mi\theta},z=kr\]得到平面波按柱面波展开式：
+%	     	 	$$
+%	     	 	  \e^{\mi kr\cos\theta} = \fj[0]{kr} + 2\summ{1}\mi^n\fj[n]{kr}\cos n\theta
+%	     	 	$$
+%	     	 \item 积分表示
+%	     	 	$$
+%	     	 	  \fj[n]{z} = \frac{1}{\pi}\int_0^\pi\cos(z\sin\theta - n\theta)\diff\theta
+%	     	 	$$
+%	     	 \item 加法公式
+%	     	 	$$
+%	     	 	  \fj[n]{x+y} = \sum_{k=-\infty}^\infty\fj[k]{x}\fj[n-k]{y}
+%	     	 	$$
+	     \item 一些积分式：
+	     	\begin{eqnarray*}
+	     	 \int_0^\infty \e^{-ax}\fj[0]{bx} \diff x = \frac{1}{\sqrt{a^2+b^2}} \\
+	     	 \left.\int_0^1(1-x^2)\fj[0]{\mu x}x\diff x\right|_{\fj[0]{\mu} = 0} \\
+	     	 = \frac{2}{\mu^2}\fj[2]{\mu} \frac{4}{\mu^3}\fj[1]{\mu}
+	     	\end{eqnarray*}
+	     \item \[
+	     	  \fj[1/2]{z} = \sqrt{\frac 2{\pi z}}\sin z\]
+	   \end{enumerate}
+	   
+   
+	   \subsubsection{球贝塞尔函数（Spherical Bessel function）}
+	   \begin{enumerate}
+	     \item \[l\]阶球贝塞尔函数和\[l\]阶球诺依曼函数定义
+	     \begin{eqnarray*}
+%	       y &=& c_0\mathrm j_l(z) + c_1\mathrm n_l(z) \\
+	       \mathrm j_l(z) &=& \sqrt{\frac \pi{2z}}\fj[l+1/2]{z}\\
+%	         &=& \frac{\sqrt \pi}{2}\summ{0} \frac{(-)^n}{n!\Gamma(n+l+3/2)}\left(\frac z2\right)^{2n+l} \\
+	       \mathrm n_l(z) &=& \sqrt{\frac \pi{2z}}\fn[l+1/2]{z} \\
+%	         &=& （-)^{l+1}\frac{\sqrt \pi}{2}\summ{0} \frac{(-)^n}{n!\Gamma(n-l+1/2)}\left(z2\right)^{2n-l-1}
+	    \end{eqnarray*}
+%	    \item 前3阶
+	    \newcommand{\rj}{\mathrm j}
+	    \newcommand{\rn}{\mathrm n}
+%	    $$
+%		 	\begin{array}{*{3}{>{\rule{0em}{2em}\displaystyle }l}}
+%		 	 \rj_0(z) = \frac{\sin z}{z}, &\rj_1(z)=\frac{1}{z^2}(\sin z - z\cos z), &\rj_2(z) = \frac{1}{z^3}\left[(3-z^2)\sin z - 3z\cos z\right] \\
+%		 	 \rn_0(z) = -\frac{\cos z}{z}, &\rn_1(z) = -\frac{1}{z^2}(\cos z + z\sin z), &\rn_2(z) = -\frac{1}{z^3}\left[(3-z^2)\cos z + 3z\sin z\right]
+%		 	\end{array}
+%		$$
+%		\item 平面波按球面波展开
+%			$$
+%			  \e^{\mi kr\cos \theta} = \sum_{l=0}^{\infty}(2l+1)\mi^l\mathrm j_l(kr)\fp{\cos\theta}
+%			$$
+		\item \[r=0\]处\[\rj_l(r)\]有界，\[\rn_l(r)\]无界
+		\item \[r\to\infty\]渐近行为：
+			\begin{eqnarray*}
+			 \rj_l(r) &\sim & \frac{1}{r}\sin\left(r-\frac{l\pi}{2}\right)\\
+			 \rn_l(r) &\sim & -\frac{1}{r}\cos\left(r-\frac{l\pi}{2}\right) 
+			\end{eqnarray*}
+	   \end{enumerate}
+	   
+\section{积分变换方法}
+	\subsection{拉普拉斯变换（Laplace transform）}
+	 \begin{enumerate}
+	 \newcommand{\re}{\mathrm{Re}~}
+	   \item 定义：
+	   	$$
+	   	  F(p) = \int_0^\infty\e^{-pt}f(t)\diff t
+	   	$$
+	   	\[F(p)\]称为\[f(t)\]的拉普拉斯换式，两者也分别称为像函数与原函数。\[\e^{-pt}\]是拉普拉斯变换的核，简写为：
+	   	\begin{eqnarray*}
+	   	 F(p) = \mathscr{L}\{f(t)\} &\mbox{或}& F(p)\risingdotseq f(t) \\
+	   	 f(t) = \mathscr{L}^{-1}\{F(p)\} &\mbox{或}& f(t)\fallingdotseq F(p)
+	   	\end{eqnarray*}
+%	   	注意：\[f(t)\]应该理解为\[t<0\]时\[f(t)=0\]
+%	   \item 变换存在的充分条件：
+%	   		\begin{enumerate}
+%	   		 \item \[f(t)\]在区间\[ [0 , \infty)\]中除了有限的第一类间断点外连续，而且有连续导数；
+%	   		 \item \[f(t)\]增长不超过指数函数，即：存在正数\[M>0\]及\[s'\ge 0\]，使
+%	   		 	$$
+%	   		 	  \forall t. |f(t)|<M\e^{s't}
+%	   		 	$$
+%	   		 	\[s'\]的下界称为收敛横标，记为\[s_0\]
+%	   		\end{enumerate}
+%	   \item 拉普拉斯换式的极限
+%	   	\begin{eqnarray*}	   		
+%	   		\lim_{\re p\to+\infty} F(p) &=& 0 \\
+%	   		\lim_{\mathrm{Im}~p\to \pm\infty}F(p) &=& 0
+%	   	\end{eqnarray*}
+%	   \item 解析性：满足上面的条件，则\[F(p)\]在\[\re p\ge s_1>s_0\]的半平面中解析
+	   \item 导数性质
+	   	\begin{eqnarray*}
+	   		f'(t)&\fallingdotseq & pF(p) - f(0)\\
+	   		f^{(n)}(t) &\fallingdotseq & p^n F(p) - \sum_{k=1}^{n}p^{n-k}f^{(k-1)}(0)
+	   	\end{eqnarray*}
+%	   \item 初值定理和终值定理
+%	   	\begin{eqnarray*}
+%	   	 \lim_{p\to+\infty}pF(p) &=& f(0)\\
+%	   	 \lim_{p\to 0}pF(p) &=& f(\infty)
+%	   	\end{eqnarray*}
+%	   \item 积分的拉普拉斯变换
+%	   	$$
+%	   	  \int_0^tf(\tau)\diff\tau \fallingdotseq \frac{F(p)}{p}
+%	   	$$
+%	   \item 像函数的导数反演
+%	   $$
+%	     F^{(n)}(p) \risingdotseq (-t)^nf(t)
+%	   $$
+%	   \item 像函数的积分反演
+%	   $$
+%	     \int_p^\infty F(q)\diff q \risingdotseq \frac{f(t)}{t}
+%	   $$
+%	   \[p=0\]时由定义可以得到：
+%	   $$
+%	     \int_0^\infty F(q)\diff q = \int_0^\infty \frac{f(t)}{t}\diff t
+%	   $$
+	   \item 卷积定理
+	   	$$
+	   	  F_1(p)F_2(p) \risingdotseq \int_0^t f_1(\tau)f_2(t-\tau)\diff\tau
+	   	$$
+%	   \item 普遍反演公式：
+%	    \begin{enumerate}
+%	     \item \[F(p)\]在区域\[\re p > s_0\]中解析，且\[|p|\to\infty\]时\[F(p)\]一致趋于0
+%	     \item 对于所有的\[\re p = s>s_0\]，沿直线\[L:\re p = s\]的积分
+%	      $$
+%	        \int_{s-\mi\infty}^{s+\mi\infty}|F(p)|\diff\sigma
+%	      $$
+%	     收敛，则对于\[\re p = s>s_0\]
+%	     $$
+%	       F(p)\risingdotseq f(t) = \frac 1{2\pi\mi}\int_{s-\mi\infty}^{s+\mi\infty}F(p)\e^{pt}\diff p
+%	     $$
+%	    \end{enumerate}
+%	   \item 公式
+%	    $$
+%	      \frac{1}{\sqrt{p}}F(\sqrt{p})\risingdotseq \frac{1}{\sqrt{\pi t}}\int_0^\infty f(\tau)\e^{-\tau^2/4t}\diff\tau
+%	    $$
+	   \item 变换表
+	   	\begin{eqnarray*}
+	   	  1 &\fallingdotseq & \frac 1p ,\quad \re p>0 \\
+	   	  \e^{\alpha t} &\fallingdotseq & \frac{1}{p-\alpha} , \quad \re p>\re \alpha \\
+	   	  \delta(t-\tau) &\fallingdotseq & \e^{-\tau p} \\
+%	   	  t &\fallingdotseq & \frac 1{p^2}\\
+%	   	  \frac 12 t^2 &\fallingdotseq & \frac{1}{p^3} \\
+	   	  \frac 1{n!} t^n &\fallingdotseq & \frac 1{p^{n+1}}\\
+	   	  \sin \omega t &\fallingdotseq & \frac{\omega}{p^2+\omega^2} \\
+	   	  \cos \omega t &\fallingdotseq & \frac{p}{p^2+\omega^2} \\
+	   	  \frac{\sin\omega t}{t} &\fallingdotseq & \frac \pi 2 - \arctan \frac p\omega \\
+	   	  \mathrm{erfc}~ \frac{\alpha}{2\sqrt t} &\fallingdotseq & \frac 1p \e^{-\alpha\sqrt{p}}
+	   	\end{eqnarray*}
+	   	其中\[\mathrm{erfc}~x\]称为余误差函数，定义\[\mathrm{erfc}~x \equiv \frac{2}{\sqrt{\pi}}\int_x^\infty \e^{-\xi^2}\diff\xi\]。相关的还有误差函数\[\mathrm{erf}~x \equiv 1-\mathrm{erfc}~x = \frac{2}{\sqrt{\pi}}\int_0^x \e^{-\xi^2}\diff\xi\]
+	 \end{enumerate}
+	 
+	\subsection{傅里叶变换（Fourier transform）}
+	  \begin{enumerate}
+	  	\item 定义
+%	  		\begin{enumerate}
+%	  		 \item 无界区间\[(-\infty,+\infty)\]上的函数\[f(x)\]在任意有限区间上只有有限个极值点和有限个第一类间断点
+%	  		 \item 积分
+%	  		 $$
+%	  		   \int_{-\infty}^{\infty}f(x)\diff x
+%	  		 $$
+%	  		 绝对收敛，则它的傅里叶变换存在
+	  		 $$
+	  		   F(k) = \mathscr{F}[f(x)] \equiv \frac 1{\sqrt{2\pi}}\int_{-\infty}^\infty f(x)\e^{-\mi kx}\diff x
+	  		 $$
+	  		 逆变换（反演）
+	  		 $$
+	  		   f(x) = \mathscr{F}^{-1}[F(k)]\equiv \frac 1{\sqrt{2\pi}}\int_{-\infty}^{\infty}F(k)\e^{\mi kx}\diff k
+	  		 $$
+%	  		 \item 
+	  		 简记作\[f(x)\fallingdotseq F(k)\]
+%	  		\end{enumerate}
+%	  	\item 傅里叶变换可以看作是按正交完备集\[\left\{\frac{1}{\sqrt{2\pi}}\e^{\mi kx},k\in \mathbb R\right\}\]展开，实际上是无界区域的分离变量法。类似的方法可以把傅里叶变换推广到其他本征值问题中。
+	  	\item 卷积定理
+	  		\begin{eqnarray*}
+	  		  F_1(k)F_2(k) &\risingdotseq & \frac 1{\sqrt{2\pi}}\int_{-\infty}^{\infty}f_1(\xi)f_2(x-\xi)\diff\xi \\
+	  		  f_1(x)f_2(x) &\fallingdotseq & \frac 1{\sqrt{2\pi}}\int_{-\infty}^{\infty}F_1(\kappa)F_2(k-\kappa)\diff\kappa
+	  		\end{eqnarray*}
+	  	\item 导数公式
+	  	$$f'(x)\fallingdotseq \mi kF(k),\quad F'(k)\risingdotseq -\mi xf(x)$$
+%	  	\item 积分的变换
+%	  	$$\int_{-\infty}^x f(\xi)\diff\xi\fallingdotseq \frac{F(k)}{\mi k},\quad \int_{-\infty}^k F(\kappa)\diff \kappa \risingdotseq -\frac{f(x)}{\mi x}$$
+	  	\item  变换表
+	  		\begin{eqnarray*}
+	  		  1 &\fallingdotseq & \sqrt{2\pi}\delta(k) \\
+	  		  \delta(x-x') &\fallingdotseq & \frac{\e^{-\mi kx'}}{\sqrt{2\pi}} \\
+	  		  \e^{\mi k'x}&\fallingdotseq & \sqrt{2\pi}\delta(k-k') \\
+	  		  \e^{\alpha x^2} &\fallingdotseq & \frac{1}{\sqrt{2\alpha}}\e^{-\frac{k^2}{4\alpha}}
+	  		  \\
+	  		  \frac{1}{|x|} &\fallingdotseq & \frac{1}{\sqrt{|k|}} \\
+	  		  \e^{a|t|} &\fallingdotseq & \sqrt{\frac{2}{\pi}}\frac{a}{a^2+k^2} \\
+	  		  x^n &\fallingdotseq & \mi^n\sqrt{2\pi}\delta^{(n)}(k) \\
+	  		  x^{-n} &\fallingdotseq & -\mi\sqrt{\frac{\pi}{2}}\frac{(-\mi k)^{n-1)}}{(n-1)!}\mathrm{sgn}(k)\\
+	  		  \mathrm{sgn}(x) &\fallingdotseq & \sqrt{\frac 2\pi}\frac{1}{\mi k}
+	  		\end{eqnarray*}
+	  \end{enumerate}
+	
+\end{document}

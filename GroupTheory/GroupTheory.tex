@@ -1,0 +1,1292 @@
+%!TEX program = xelatex
+%!TEX root = ...
+%!TEX builder = latexmk
+%or can be latexmk texify
+%!TEX opetion = 
+\documentclass[12pt,a4paper]{article}%titlepage表示标题单独页
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用），ctexcap套用中文格式（等同于\documentclass{ctexart}）
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\contentsname}{目录}
+%\renewcommand{\thefigure}{\chinese{figure}}%将图片计数改为汉字数字
+%\renewcommand{\thetable}{\chinese{table}}%将表格计数改为汉字数字
+\usepackage[top=0.75in,bottom=0.75in,left=1in,right=1in]{geometry}%页边距设置：数据来自MS word的默认值
+%\usepackage{multicol}页面内多行包
+\usepackage[CJKbookmarks]{hyperref}%给pdf文档添加互动式链接和书签
+
+\usepackage{amsmath,amssymb,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[0]%允许多行公式间换页，用//*表示不允许换页
+\numberwithin{equation}{section}%公式编号包含章节
+\usepackage{bm}%加粗（用于vector）
+%\usepackage{textcomp}%符号包，不能用于数学模式，建议不要和SIunits混用
+%\usepackage{extarrows}%长箭头, 长等号etc.
+\usepackage{graphicx}%插图宏包
+%\usepackage{picinpar}%图文绕排
+\usepackage{array}%表格宏包
+%\usepackage{longtable}%长表格宏包
+\usepackage{multirow}%多行合并的表格宏包
+\usepackage{yhmath}
+%\usepackage{booktabs}%表格线宏包
+\usepackage{braket}
+\usepackage[vcentermath]{youngtab}
+
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}%电路图宏包
+%\usepackage[normalem]{ulem}%下划线，删除线等宏包，参数表示不修改\emph{}格式
+%\usepackage{mychemistry}%化学宏包，包含mhchem和chemfig
+%\usepackage[version=3]{mhchem}%化学宏包，包含mhchem和chemfig
+%\usepackage[symbol]{footmisc}%脚注拓展，选项表示用符号做脚注记号
+%\usepackage{enumerate}
+
+%\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+\newcommand{\dif}{\,\mathrm d}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}%定义数学模式中常用的正体字符
+\newcommand\qed{$\blacksquare$}
+\DeclareMathOperator\Tr{Tr}
+\DeclareMathOperator\diag{Diag}
+
+\begin{document}
+\title{群论课程整理}
+\author{吕铭 Lyu Ming}
+\maketitle
+\tableofcontents
+\section{定义与基本性质} % (fold)
+\label{sec:def}
+\subsection{定义} % (fold)
+\label{sub:def}
+\begin{enumerate}
+	\item 群 (Group): 定义\textbf{乘法} (Multiplication) 的非空集合 $G = \{\cdots, f, g,h,\cdots\}$ 满足:
+	\begin{itemize}
+		\item 封闭性 (Closure): $\forall f,g\in G.\quad fg\in G$
+		\item 结合律 (Associative law): $\forall f,g,h\in G.\quad f(gh) = (fg)h$
+		\item 存在唯一单位元素 (Unit element): $\forall f\in G.\quad ef = fe = f$
+		\item 总存在逆元素 (Inverse): $\forall f\in G.\quad \exists f^{-1}\in G.\quad f^{-f}f = ff^{-1} = e$
+	\end{itemize}
+	\item \textbf{重排定理} (Rearrangement theorem): $\forall u\in G.\quad G = \{g_iu|g_i\in G\}$ 且 $\forall g_i\neq g_j.\quad g_i u\neq g_j u$. 记为 $G = Gu$. $G = uG$ 同理.
+	\item 乘法表 (Multiplication table/ Cayley 表)
+	\begin{itemize}
+		\item 重排定理要求每一行, 每一列都是完整的群
+		\item 单位元相关的位置对称
+		\item 以上不能保证结合律, 如下面的乘法表不满足结合律因此不是群:\\
+		\begin{center}
+		\begin{tabular}{c|ccccc}
+		  & e & a & b & c & d \\ \hline
+		e & e & a & b & c & d \\
+		a & a & e & c & d & b \\
+		b & b & d & e & a & c \\
+		c & c & b & d & e & a \\
+		d & d & c & a & b & e \\
+		\end{tabular}
+		\end{center}
+	\end{itemize}
+	\item 子群 (Subgroup) $H\subset G$: 满足群定义的非空子集. 充要条件:
+	\begin{equation}
+		\forall h_\alpha, h_\beta \in H.\quad h_\alpha h_\beta^{-1}\in H
+	\end{equation}
+	\begin{itemize}
+		\item $\{e\}$ 和 $G$ 是 $G$ 的平凡子群 (Trivial subgroup), 其他子群称为固有子群 (Normal group) 或非平凡子群 (Nontrivial subgroup)
+		\item $H_1,H_2\subset G$: $H_1\cap H_2\subset G$; $H_1\cup H_2$ 不一定
+		\item $G$ 的有限大子集 $H$ 是子群 $\Longleftrightarrow H^2 = H$
+		\item 循环子群 $C_g^m\equiv\{g,g^2,\cdots,g^m = e\}$ 其中 $m\le n\equiv |G|$
+	\end{itemize}
+	\item 元素的阶 (Order of an element) 或周期 (Period) $m$: $m\equiv\min\{m\in\mathbb Z^+|g^m = e\}$
+	\item 生成元 (Generator): 子集 $S = \{g_1,g_2,\cdots\}\subseteq G$ 使 $G$ 的所有元素都能表示为 $S$ 的元素 (及其逆元素) 的乘积, 则称 $S$ 是 $G$ 的生成元集合, $S$ 的元素称为 $G$ 的生成元, 记为 $G = \left\langle S\right\rangle = \left\langle g_1, g_2, \cdots \right\rangle$
+	\begin{itemize}
+		\item 一般的由生成元产生的群
+		\begin{equation}
+			\left\langle g_1, g_2, \cdots, g_s\right\rangle 
+			= \{g_{k_1}^{i_1}g_{k_2}^{i_2}\cdots g_{k_t}^{i_t}|t\in\mathbb N; i_n\in\mathbb Z, k_n = 1,2,\cdots,s\}
+		\end{equation}
+		\item Cayley 图: 群元素为结点, 不同的生成元用不同的有向边表示, 根据乘法关系连接结点
+	\end{itemize}
+	\item 生成元的定义关系
+	\begin{equation}
+		W_i(g_1, g_2,\cdots, g_s) = e
+	\end{equation}
+	一个有限群可以由其生成元集合和定义关系集合所完全刻画. 
+	一般地如何找到最小数量的完全刻画群结构的定义关系尚未被解决...
+	\item 例子: 
+	\begin{itemize}
+		\item 整数模 $n$ 加法群 $\wideparen{\mathbb Z}_n$, 加法群 $\wideparen{\mathbb Z}, \wideparen{\mathbb R}, \wideparen{\mathbb C}$
+		\item $n$ 维正交变换 $\mbox{O}(n)$. 特别的 $\det A = 1$, $\mbox{SO}(n)$
+		\item $n$ 阶复矩阵群 (complex matrix group) $\mbox{GL}(n,\mathbb C)$. 满足 $\det A = 1$ 的特殊复矩阵群 (Complex special matrix group)
+		\begin{equation}
+			\mbox{SL}(n,\mathbb R) \subset \begin{Bmatrix}
+				\mbox{SL}(n,\mathbb C) \\
+				\mbox{GL}(n,\mathbb R)
+			\end{Bmatrix}\subset \mbox{GL}(n,\mathbb C)
+		\end{equation}
+		\item 点群
+		\item $n$ 阶置换群 (Permutation group) 或称对称群 (Symmetry group) $S_n = \{P_i\}$
+		$$
+		 P_i = \begin{pmatrix}
+		 	1 & 2 & \cdots & n \\
+		 	m_1 & m_2 & \cdots & m_n
+		 \end{pmatrix}
+		$$
+		\item $n$ 阶循环群 (Cycle group) $C^n = \{a, a^2, \cdots, a^{n-1}, a^n = e\}$
+		\item 二面体群 $D_{n}$ 是正 $n$ 边形的对称群. 特别的六阶二面体群 $D_3 = \{e,d,f,a,b,c\}$
+	\end{itemize}
+\end{enumerate}
+% subsection def (end)
+\subsection{群的结构} % (fold)
+\label{sub:struct}
+\begin{enumerate}
+	\item 陪集: 左陪集 (Left coset) $uH = \{uh_\alpha\}$ 和右陪集 $Hu = \{h_\alpha u\}$\footnote{左右陪集是对称的, 以下仅讨论左陪集, 但右陪集性质相同.}, 由子群 $H = \{h_\alpha\}\subset G$ 和元素 $u\in G-H$ 定义. $u$ 称为陪集的代表元 (Representative)
+	\begin{itemize}
+		\item $|uH| = |H|$
+		\item $uH\cap H = \emptyset$
+		\item $uH$ 不是一个群
+	\end{itemize}
+	\item \textbf{陪集定理}: $u_1 H\cap u_2 H\neq\emptyset\Longrightarrow u_1 H = u_2 H$
+	\begin{itemize}
+		\item 陪集中的任何元素都可以作为该陪集的代表元
+		\item 群元素是否属于同一个陪集是等价关系. 据此可以定义商集 (陪集串), 给定子群, 其商集是唯一的
+		\item \textbf{Lagrange 定理}: 对于有限群 $H\subset G$, 群的阶 $|G| = n, |H| = m$, 则 $m/n\equiv i\in\mathbb Z^+$, 即 $m$ 是 $n$ 的一个因子 (Factor). 称 $i$ 是子群 $H$ 在 $G$ 中的指标 (Index)
+	\end{itemize}
+	\item 共轭 (Conjugation) 元素 $f\sim g$: $f,g\in G, \exists h\in G.\quad hfh^{-1} = g$. 
+	符号 $ hfh^{-1}$ 称为 $h$ 对 $f$ 做共轭运算 (Conjugate operation)
+	\item 类 (Class): 共轭关系是等价关系, 据此定义 (等价) 类. Abel 群的每个元素自成一类
+	\begin{itemize}
+		\item 单位元自成一类
+		\item 同类元素有相同的阶
+		\item \textbf{类定理} 有限群的类中的元素个数为该群阶的因子
+	\end{itemize}
+	\item 不变子群 (Invariant subgroup): $\forall u\in G- H.\quad uHu^{-1} = H$, 
+	等价于 $H$ 包含自身元素的所有同类元素
+	\begin{itemize}
+		\item 单群 (Simple group): 不含不变子群
+		\item 半单群 (Semi-simple group): 不含 Abel 不变子群
+	\end{itemize}
+	\item 商群 (Quotient group): $H$ 是 $G$ 的不变子群, 在其陪集串 $H, u_1H, u_2H,c\dots, u_{i-1}H$ 上定义陪集相乘: 
+	\begin{equation}
+		(u_j H)(u_k H) = \{u_jh_1u_kh_2|h_1,h_2\in H\} = (u_j u_k)H \equiv u_l H
+	\end{equation}
+	从而得到 $H$ 为单位元的群, 记为 $G/H$
+	\item 例子: 对于 $D_3 = \{e,d,f,a,b,c\}$
+	\begin{itemize}
+		\item $D_3$ 群的固有子群 $\{e,d,f\}$, $\{e,a\}$, $\{e,b\}$, $\{e,c\}$
+		\item 一组可能的生成元 $\{a,b\}$ 及其定义关系 $a^2=e$, $b^2=e$, $(ab)^3=e$
+		\item 三个类 $\{e\}$, $\{d,f\}$, $\{a,b,c\}$
+		\item 不变子群 $d_3 = \{e,d,f\}$
+	\end{itemize}
+\end{enumerate}
+% subsection struct (end)
+\subsection{变换群} % (fold)
+\label{sub:trans_group}
+\begin{enumerate}
+	\item 变换群: 双射(变换) $f:X\mapsto X$ 构成的群. 所有这样的变换构成完全对称群 $S_X$
+	\item 等价元素 $x\sim y$ ($x,y\in X$): $\exists g\in G.\quad gx = y$. 元素等价也是等价关系
+	\item 含 $x$ 的 $G$ 轨道: $\{gx|g\in G\}$
+	\item $X$ 的 $G$ 不变子集 $Y$: $G(Y) = Y$. 
+	\begin{itemize}
+		\item 每个轨道, 以及轨道的合集都是 $G$ 不变的
+		\item $Y$ 不变的子群 $H\subset G$ 总是存在的
+	\end{itemize}
+	\item $G$ 对 $x\in X$ 的迷向子群 $G^{x}$: $G^x = \{h\in G|hx=x\}$
+	\begin{itemize}
+		\item 含 $x$ 的 $G$ 轨道上的点与 $G^x$ 的左陪集一一对应
+	\end{itemize}
+\end{enumerate}
+% subsection trans_group (end)
+\subsection{群的关系} % (fold)
+\label{sub:relation}
+\begin{enumerate}
+	\item 同构 (Isomorphism) $G\cong F$: 存在双射 $f: G\mapsto F$ 使得 $f(g_ig_j) = f(g_i)f(g_j)$
+	\begin{itemize}
+		\item \textbf{Cayley 定理}: 群 $G$ 同构与它的完全对称群 $S_G$ 的某个子群, 特别的任何一个 $n$ 阶群都与置换群 $S_n$ 的某个子群同构
+		\item 自同构 (Automorphism), 非平凡自同构
+	\end{itemize}
+	\item 同态 (Homomorphism) $G\approx F$: 存在满射 $f: G\mapsto F$ 使得 $f(g_ig_j) = f(g_i)f(g_j)$
+	\begin{itemize}
+		\item 同态核: $H = f^{-1}(e)$
+		\item \textbf{同态核定理}: $H$ 是 $G$ 的不变子群, 商群 $G/H\cong F$
+	\end{itemize}
+	\item 群的直积 (Direct product): 记 $G = G_1\otimes G_2$ ($G_1, G_2\subset G$) 当:
+	\begin{enumerate}
+		\item $\forall g_{\alpha\beta}\in G.\quad \exists!g_{1\alpha}\in G_1, g_{2\beta}\in G_2 \mbox{ s.t. } g_{\alpha\beta} = g_{1\alpha}g_{2\beta}$
+		\item $g_{1\alpha}g_{2\beta} = g_{2\beta}g_{1\alpha}$
+	\end{enumerate}
+	称 $G_1, G_2$ 为直积因子 (Direct product factor). 性质
+	\begin{itemize}
+		\item $G_1\cap G_2 = \{e\}$
+		\item $G_1, G_2$ 是 $G$ 的不变子群
+		\item $G/G_2\cong G_1$, $G/G_1\cong G_2$ 
+	\end{itemize}
+	\item 半直积 (Semidirect product) $G = G_1\otimes_s G_2$: 定义同态映射 $\Phi:G_2\mapsto A(G_1)$ 其中 $A(G_1)$ 是 $G_1$ 的自同构群, $G$ 中的元素唯一 (有序地) 写为 $g_{\alpha\beta} =  (g_{1\alpha}, g_{2\beta})$, 且定义乘法
+	\begin{equation}
+		g_{\alpha\beta}g_{\alpha'\beta'} =  (g_{1\alpha}\Phi(g_{2\beta})(g_{1\alpha'}),g_{2\beta}g_{2\beta'})
+	\end{equation}
+\end{enumerate}
+% subsection relation (end)
+% section def (end)
+\section{有限群表示} % (fold)
+\label{sec:reps}
+\subsection{表示的定义} % (fold)
+\label{sub:def_reps}
+\begin{enumerate}
+	\item $G\approx A(G)$, 其中 $A(G)$ 是线性空间 $V$ 上的一个矩阵群, 则称 $A(G)$ 是 $G$ 的一个矩阵表示 (Matrix representation) 或者线性表示 (Linear representation), 简称表示
+	\item $A(G)$ 的作用空间 $V$ 称为群的表示空间 (Representation space), $V$ 的矢量基称为荷载群 $G$ 的表示的基 (Basis of representation), $V$ 的维数称为表示的维数 (Dimension of repre0sentation)
+	\item $G\cong A(G)$ 则称 $A(G)$ 是 $G$ 的忠实表示 (Faithful representation)
+	\item 等价表示 (Equivalent representation): $\exists X.\quad \forall g\in G, A'(g) = XA(g)X^{-1}$
+	\item 可约表示 (Reducible representation): 对于表示 $A(G)$, 存在某个等价表示 $A'(G) = XA(G)X^{-1}$ 使得:
+	\begin{equation}
+	 	\forall g\in G.\quad A'(g) = \begin{pmatrix}
+	 		C(g) & N(g) \\
+	 		0    & B(g)
+	 	\end{pmatrix}
+	\end{equation}
+	其中 $B(g)$ 和 $C(g)$ 都是方阵
+	\begin{itemize}
+		\item $C(G)$ 和 $B(G)$ 都是群 $G$ 的表示
+		\item 从表示空间的角度看, $A(G)$ 可约实质是 $V$ 上有 $G$ 不变的真子空间 $W$, $V = W\oplus W^{\perp}$.
+		%$C(G)$ 和 $B(G)$ 分别是 $W$ 和 $W^{\perp}$ 上的表示
+		\begin{itemize}
+			\item 称 $C(G)$ 是可约表示 $A'(G)$ 到 $W$ 上的缩小 (Restriction), 记为 $C(G) = \left.A'(G)\right|_W$
+		\end{itemize}
+		\item $N(g)\neq 0$ 的可约表示称为不可分表示 (Indecomposable representation); $N(g) \equiv 0$: 完全可约表示
+	\end{itemize}
+	\item 不可约表示 (Irreducible representation), 及其作用空间: 不可约空间 (Irreducible space)
+	\item 例子: 对于 $\wideparen{\mathbb R}$, $A_k(x) = \e^{kx}$ 产生了无穷多不等价不可约表示, $A(x) = \left(\begin{smallmatrix}
+			1 & 0 \\
+			x & 1
+		\end{smallmatrix}\right)$ 产生一个不可分表示
+	\item 幺正表示/酉表示 (Unitary representation): $A^\dagger(g) = A(g^{-1})$, 表示空间都应当是复内积空间
+	\begin{itemize}
+		\item 幺正表示可约则完全可约
+	\end{itemize}
+	\item 约化与直和: 有限维幺正表示可分解为有限个不可约幺正表示的直和
+	\begin{equation}
+		A(G) = \bigoplus_{i=1}^s c_iW_i
+	\end{equation}
+	\begin{itemize}
+		\item 求一个表示的全部的, 不等价的, 不可约的, 幺正表示?
+	\end{itemize}
+\end{enumerate}
+% subsection def_reps (end)
+\subsection{表示理论} % (fold)
+\label{sub:reps_thms}
+\begin{enumerate}
+	\item \textbf{Maschke 定理}: 有限群在内积空间上的任意一个表示都等价于一个幺正表示\\
+	证明: $n$ 阶群 $G$ 在定义了内积 $(x|y)$ 的函数空间, 总可以定义新内积
+	\begin{equation}
+		\left\langle x|y\right\rangle \equiv \frac 1n\sum_{g\in G} \left(A(g)x|A(g)y\right)
+	\end{equation}
+	新内积下 $A(g)$ 是幺正的:
+	\begin{equation}
+		\left\langle A(g_i)x|A(g_i)y\right\rangle = \left\langle x|y\right\rangle
+	\end{equation}
+	\begin{itemize}
+		\item 有限群可约则完全可约
+		\item $X$ 的一个构造: 
+		\begin{equation}
+			X^2 = \sum_{g\in G}A^\dagger(g)A(g)
+		\end{equation}
+	\end{itemize}\qed
+	\item \textbf{Schur 引理 1}: $V_A$ 上的复表示 $A(G)$ 与矩阵 $M$ 满足 $\forall g\in G.\quad MA(g) = A(g)M $, 则 $A$ 不可约等价于 $M\equiv \lambda I$\\
+	证明: 对应于 $M$ 的本征值 $\lambda$ 的本征向量空间 $V_\lambda \neq\emptyset$ (复空间中至少存在一个本征向量) 是 $A$ 的不变子空间. 于是 $V_\lambda = V_A$ (即 $M=\lambda I$) 或 $A$ 可约\qed
+	\begin{itemize}
+		\item Abel 群的不可与表示都是一维的
+		\item $\mbox{SO}(2)$ 的全部不可约表示 $A_m = \{\e^{\mi m\theta}\}, m\in\mathbb Z$
+	\end{itemize}
+	\item \textbf{Schur 引理 2}: $A(G)$ 和 $B(G)$ 分别是 $V_A, V_B$ 上的不可约表示, 矩阵 $M$ 满足 $\forall g\in G.\quad MA(g) = B(g)M$, 则 $M\equiv 0$ 等价于 $A$ 与 $B$ 等价\\
+	证明: $M$ 的核空间是 $A$ 的不变子空间, $MV_A$ 是 $B$ 的不变子空间. 而 $A,B$ 不可约, 于是 $M=0$ 或者 $M$ 可逆 (即 $A\sim B$)\qed
+	% \item 群代数 $R_G$: 以群元素为基的线性空间上定义矢量乘
+	% \begin{equation}
+	% 	xy\equiv \left(\sum_{\alpha=1}^n x_\alpha g_\alpha\right)\left(\sum_{\beta =1}^n y_\beta g_\beta\right) = \sum_{\alpha\beta}x_\alpha y_\beta (g_\alpha g_\beta) = \sum_\gamma (xy)_\gamma g_\gamma
+	% \end{equation}
+	% \item 正则表示 $L(G)$: 定义在空间 $R_G$ 上的表示,
+	% \begin{equation}
+	%  	L(g_i)g_j = g_ig_j \equiv g_k,\quad g_j, g_k\in R_G
+	% \end{equation} 
+\end{enumerate}
+% subsection reps_thms (end)
+\subsection{群函数} % (fold)
+\label{sub:group_func}
+\begin{enumerate}
+	\item 群函数 (Group function): $\varphi: G\mapsto \mathbb C$
+	\item $n$ 阶有限群只有 $n$ 个线性独立的群函数. 群函数空间 $V_G =\{\varphi\}$ 是 $n$ 维线性空间. 定义 $V_G$ 的内积
+	\begin{equation}
+		\left\langle \varphi_i|\varphi_j\right\rangle 
+		\equiv \frac 1n\sum_{g\in G} \varphi_i^*(g)\varphi_j(g)
+	\end{equation}
+	\begin{itemize}
+		\item 正交归一基 $\{\sqrt n f_i|f_i(g_j) = \delta_{ij}\}$
+	\end{itemize}
+	\item 正交性定理 (Orthogonality Theorem): $n$ 阶有限群 $G$ 的两个不等价不可约幺正表示 $A^{(p)}(G), A^{(r)}(G)$ (阶数 $S_p, S_r$) 的矩阵元满足:
+	\begin{equation}
+		\left\langle A^{(p)}_{\mu\nu}\middle|A^{(r)}_{\mu'\nu'}\right\rangle = \frac 1{S_p}\delta_{pr}\delta_{\mu\mu'}\delta_{\nu\nu'}
+	\end{equation}
+	证明: 构造矩阵
+	\begin{equation}
+		C = \frac 1n\sum_{g\in G}A^{(r)}(g)DA^{(p)}(g^{-1})
+	\end{equation}
+	满足 $\forall g_i\in G, D\in \mathbb C_{S_r\times S_p}.\quad CA^{(p)}(g_i) = A^{(r)}(g_i)C$. 在 $r=p$ 时引 Schur 引理 1, $r\neq p$ 时引 Schur 引理 2 可得证\qed
+	\item 完备性定理 (Completeness Theorem): 有限群 $G$ 的全部不等价不可约幺正表示 $A^{(i)}(G)$ 产生的群表示函数集 $\{A^{(p)}_{\mu\nu}|p = 1,2,\cdots, q; \mu,\nu = 1,2,\cdots, S_p\}$ 构成了函数空间上的完备集\\
+	证明: 讨论群函数空间 $R_G$ 上关于正则表示 $L(g_i): \phi(g_j)\mapsto \phi(g_ig_j)$ 的不可约表示分解, $L$ 的每一个不可约表示对应的不变子空间都可由 $\{A^{(p)}_{\mu\nu|\mu,\nu = 1,2,\cdots, S_p}$ 张成\qed
+	% $\{A^{(p)}_{\mu\nu}\}$ 为基张成空间 $V$, $V$ 是函数空间 $R_G$ 上的表示 $L(g_i): \phi(g_j)\mapsto \phi(g_ig_j)$ 的不变子空间, 因为
+	% \begin{equation}
+	% 	L(g_j)A^{(p)}_{\mu\nu}(g_i) = A^{(p)}_{\mu\nu}(g_j g_i) 
+	% 	= \sum_\lambda A^{(p)}_{\mu\lambda}(g_j)A^{(p)}_{\lambda\nu}(g_i)\in V
+	% \end{equation}
+	% 于是 $V$ 的正交补 $V^{\perp}$ 也是 $R_G$ 对于 $L(G)$ 的不变子空间. 由于 $\{A^{(p)}\}$ 是全部的不可约表示, 且 $L(G)$ 可约必完全可约, 则 $V^{\perp}$ 中存在子空间 $W\ssubset V^{\perp}$ 使 $L(G)$ 在 $W$ 上的表示是 $A^{(r)}$ (对应的基 $\{w_\mu\}$), 即:
+	% \begin{equation}
+	% 	L(g_i)w(g) = w(g_i g) = \sum_\nu A^{(r)}_{\mu\nu}(g_i)w_\nu(g)
+	% \end{equation}
+	% 取 $g=e$ 则 $w(g_i)\in V$, 从而 $V^{\perp}\subseteq V$, 因此 $V^{\perp} = \emptyset$
+	\begin{itemize}
+		\item 群函数空间中的的一组正交归一基
+		\begin{equation}
+			\left\{\sqrt{s_p}A^{(p)}_{\mu\nu}\middle|p=1,2,\cdots,q;\mu,\nu = 1,2,\cdots, S_p\right\}
+		\end{equation}
+		\item \textbf{Burniside 定理}: 有限群的所有不等价不可约表示的维数平方和等于该群的阶 (其中至少有一个一维恒等表示 $S_i = 1$).
+		\begin{equation}
+			\sum_{p=1}^q S_p^2 = n\equiv |G|
+		\end{equation}
+		于是 $|G|<5$ 的群的不等价不可约表示都是一维的
+		\item $D_3$ 群的全部不等价不可约表示 ($S, A, \Gamma$) 对应函数值:
+		\begin{center}
+			\begin{tabular}{>{$}c<{$}|*{6}{>{$}c<{$}}}
+			     & e & d & f & a & b & c \\\hline
+			S    & 1 & 1 & 1 & 1 & 1 & 1 \\
+			A_1  & 1 & 1 & 1 & -1 & -1 & -1 \\
+			\Gamma_{11} & 1 & -1/2 & -1/2 & 1 & -1/2 & -1/2 \\
+			\Gamma_{12} & 0 & \sqrt 3/2 & -\sqrt 3/2 & 0 & \sqrt 3/2 & -\sqrt 3/2 \\
+			\Gamma_{21} & 0 & -\sqrt 3/2 & \sqrt 3/2 & 0 & \sqrt 3/2 & -\sqrt 3/2 \\
+			\Gamma_{22} & 1 & -1/2 & -1/2 & -1 & 1/2 & 1/2
+			\end{tabular}
+		\end{center}
+	\end{itemize}
+\end{enumerate}
+% subsection group_func (end)
+\subsection{特征标} % (fold)
+\label{sub:chara}
+以下讨论对于同一个群 $G$ 的不同表示 $A^{(p)}$ 的表示和特征标的性质
+\begin{enumerate}
+	\item 群表示 $A(G)$ 的特征标 (Character): 
+	\begin{equation}
+		\chi ^A = \left\{\chi^A(g)\middle|\chi^A(g) = \Tr A(g), g\in G\right\}
+	\end{equation}
+	\item $\chi^A(e) = \operatorname{dim} A$
+	\item \textbf{第一正交关系}: 不可约表示特征标是正交归一的
+	\begin{equation}
+		\left\langle \chi^{(p)}|\chi^{(r)}\right\rangle 
+		\equiv\frac1n \sum_{g\in G}\sum_{ij} A^{(p)*}_{ii}(g) A^{(r)}_{jj}(g)
+		= \frac 1{S_p}\delta_{pr}\sum_{ij}\delta_{ij} = \delta_{pr}
+	\end{equation}
+	\item 可约表示的特征标等于它所包含的不可约表示的特征标之和
+	\begin{equation}
+		A(g) = \bigoplus_{i=1}^q m_i A^{(i)}(g) \Longrightarrow 
+		\chi^A(g) = \sum_{i=1}^q m_i \chi^{(i)}(g)
+	\end{equation}
+	\item $A'(G) = XA(G)X^{-1} \Longleftrightarrow \forall g.\quad\chi^{A'}(g) = \chi^{A}(g)$
+	\item 同类元素特征标相同 $\chi^A(hgh^{-1}) = \chi^A(g)$. 据此引入类函数 (Class function) $\chi^{(p)}(K_i) = \chi^{(p)}(g_i)$, 其中 $g_i\in K_i$
+	\begin{itemize}
+		\item \textbf{第二正交关系}: 
+		\begin{equation}
+			\frac{n_i}n\sum_{p=1}^q \chi^{(p)*}(K_i)\chi^{(p)}(K_j) = \delta_{ij}
+		\end{equation}
+		(两个正交关系一同看, 相当于 $F_{ip} = \sqrt{n_i/n}\chi^{(p)}(K_i)$ 是幺正矩阵)
+		\item 完备性原理 $\{\chi^{(i)}(K_j)\}$ 在类函数空间上是完备的
+	\end{itemize}
+	\item 不等价不可约表示的数目 $=$ 类的数目
+	\item 特征标表
+	\begin{center}
+		\begin{tabular}{>{$}c<{$}|*{4}{>{$}c<{$}}}
+		 	& K_1=\{e\} & K_2 & \cdots & K_1 \\\hline
+		\Gamma^{(1)}\equiv S & 1 & 1 & \cdots & 1 \\
+		\Gamma^{(2)} & S_2 & \chi^{(2)}(K_2) & \cdots & \chi^{(2)}(K_q) \\
+		\vdots & \vdots & \vdots & \ddots & \vdots \\
+		\Gamma^{(q)} & S_q & \chi^{(q)}(K_2) & \cdots & \chi^{(q)}(K_q)
+		\end{tabular}
+	\end{center}
+	\item 求一个群的全部不等价不可约的幺正表示
+	\begin{enumerate}
+		\item 给出乘法表
+		\item 寻找生成元 (减小计算量)
+		\item 寻找类
+		\item 根据 Burnside 定理确定不可约表示的维数
+		\item 利用定义关系求表示
+	\end{enumerate}
+\end{enumerate}
+% subsection chara (end)
+\subsection{群表示的直积与 C-G 展开} % (fold)
+\label{sub:reps_direct_product}
+\begin{enumerate}
+	\item $A(G)$ 和 $B(G)$ 是群 $G$ 的两个表示, 那么它们的直积 $A\otimes B = \{A(g_i)\otimes B(g_i)\}$ 也是 $G$ 的表示
+	\begin{itemize}
+		\item $\chi^{A\otimes B} = \chi^{A}\chi^{B}$
+	\end{itemize}
+	\item Clebsch-Gordan 展开
+	\begin{equation}
+		A^{(p)}(g)\otimes A^{(r)}(g) = \bigoplus_k a_{prk}A^{(k)}(g)
+	\end{equation}
+	\begin{itemize}
+		\item $a_{prk}\in\mathbb Z^+$ 称为约化系数 (Reduction Coefficient)
+		\begin{equation}
+			a_{prk} = \left\langle \chi^{(k)}\middle| \chi^{(p)}\chi^{(r)}\right\rangle
+		\end{equation}
+		\item 维数验证 $\sum_k a_{prk} S_k = S_p \times S_r$
+		\item 简单可约 (Simple reducibility): $a_{prk}\le 1$
+		\item Clebsch-Gordan 系数 $C_{m,i\alpha}^{(k),t}$: 联系 $A^{(k)}$ 的基与直积基 $\{\Phi_{i\alpha} \equiv \psi_i\varphi_\alpha|i=1,2,\cdots,S_p;\alpha=1,2,\cdots,S_r\}$
+		\begin{equation}
+			\phi_m^{(k),t} = \sum_{i\alpha}C_{m,i\alpha}^{(k),t}\Phi_{i\alpha}
+		\end{equation}
+		其中 $m$ 基矢量标记, $t = 1,2,\cdots, a_{prk}$ 标记同一个表示在不同载荷下的基
+		\item 当且仅当两个互为共轭表示的直积表示中才会出现且只出现一次恒等表示
+	\end{itemize}
+\end{enumerate}
+% subsection reps_direct_product (end)
+\subsection{直积群的表示} % (fold)
+\label{sub:direct_product_reps}
+\begin{enumerate}
+	\item 对于直积群 $G = G_1\otimes G_2$, 直积 $C(G) = A(G_1)\otimes B(G_1) = \{A(g_{1\alpha})\otimes B(g_{2\beta})\}\equiv \{C(g_{\alpha\beta})\}$ 是它的表示
+	\begin{itemize}
+		\item $\chi^{A\otimes B}(G) = \chi^A(G_1)\chi^B(G_2)$
+		\item 如果直积群的因子群表示都是不可约的, 当且仅当该直积群也是不可约的
+		\item 直积群类的个数等于其因子群类的个数
+		\begin{equation}
+			C(G) = \bigoplus_{i,j} c_{ij}A^{(i)}(G_1)\otimes B^{(j)}(G_2)
+		\end{equation}
+	\end{itemize}
+\end{enumerate}
+% subsection direct_product_reps (end)
+\subsection{Dirac 群和 Clifford 代数} % (fold)
+\label{sub:dirac_group_and_clifford_alg}
+\begin{enumerate}
+	\item Dirac 矩阵 $\gamma_\mu (\mu = 1,2,3,4)$ 满足关系
+	\begin{equation}\label{equ:dirac_struct}
+		\gamma_\mu\gamma_\nu + \gamma_\nu\gamma_\mu =  2\delta_{\mu\nu}
+	\end{equation}
+	\begin{itemize}
+		\item Dirac 代数: 以 $\gamma_\mu$ 为生成元长成的线性空间
+		\item Dirac 代数的代数结构: 式~(\ref{equ:dirac_struct})
+	\end{itemize}
+	根据其结构和生成元生成 $32$ 个群元素 (Dirac 群)
+	\begin{equation}
+		\{\pm 1, \pm\gamma_\mu, \pm\gamma_\mu\gamma_\nu\,(\mu<\nu), \pm\gamma_\mu\gamma_5, \pm\gamma_5\}
+	\end{equation}
+	其中 $\gamma_5 \equiv \gamma_1\gamma_2\gamma_3\gamma_4$ 同样满足式~(\ref{equ:dirac_struct}). 群结构有 $17$ 个类, 但满足代数结构的只有一个 $4$ 维表示
+	\item Clifford 代数 $C(p,q)$: 
+	\begin{equation}
+		\gamma_\mu\gamma_\nu + \gamma_\nu\gamma_\mu = 2\eta_{\mu\nu}
+	\end{equation}
+	其中 $\mu,\nu = 1,2,\cdots,p+q$, 
+	\begin{equation}
+		\eta_{\mu\nu} = \begin{cases}
+			0 & \mu\neq\nu \\
+			1 & \mu=\nu\le p \\
+			-1 & p<\mu=\nu\le p+q
+		\end{cases}
+	\end{equation}
+	特别的, $C(4,0)$ 就是 Dirac 代数. %它的有限维表示?
+\end{enumerate}
+% subsection dirac_group_and_clifford_alg (end)
+\subsection{广义投影算符} % (fold)
+\label{sub:general_proj}
+\begin{enumerate}
+	\item 广义投影算符 (Generalized projection operator) 或转移算符 (Transfer operator): 定义在 $A^{(p)}$ 的函数基 $\{\psi_i^{(p)}\}$ 上
+	\begin{equation}
+		\mathrm P_{kl}^{(r)}\equiv \frac{S_r}{n}\sum_{g\in G}A_{kl}^{(r)*}(g)T_g
+	\end{equation} %讲义上是 S_p. 疑似出错
+	其中 $T_g$ 是函数基上由 $g$ 诱导的函数变换:
+	\begin{equation}
+	 	T_g\psi_i^{(p)} = \sum_j A^{(p)}_{ji}\psi_j^{(p)}
+	\end{equation}
+	算符满足: $\mathrm P_{kl}^{(r)}\psi_i^{(p)} = \delta_{rp}\delta_{li}\psi_k^{(p)}$
+	\begin{itemize}
+		\item $\left(\mathrm P_{kl}^{(p)}\Phi|\Psi\right) = \left(\mathrm P_{kl}^{(p)}\Phi|\Psi\right)$, 其中内积的定义应当使得 $A(G)$ 为幺正表示. 特别的 $\mathrm P_k^{(p)} = \mathrm P_{kk}^{(p)}$ 是厄米算符
+		\item $\mathrm P_{kl}^{(p)}\mathrm P_{st}^{(r)} = \delta_{pr}\delta_{ls}\mathrm P_{kt}^{(p)}$. 特别的 $(\mathrm P_k^{(p)})^2 = \mathrm P_k^{(p)}$ 是传统的投影算符
+	\end{itemize}
+	\item 表示空间的约化
+	\begin{enumerate}
+		\item $V$ 的基 $\{\phi_i|i=1,2,\cdots, S\}$, 构造 $\Psi = \sum_i\phi_i$
+		\item 从 $\{\mathrm P_k^{(p)}|k=1,2,\cdots, S_p\}$ 中选取 $\mathrm P_n^{(p)}$ 使 $\mathrm P_n^{(p)}\Psi = \psi_n^{(p)} \neq 0$ 得到荷载 $A^{(p)}$ 的第 $n$ 个基分量. 如果总是有 $\mathrm P_k^{(p)}\Psi = 0$, 需要构造其他 $\Psi$
+		\item 通过 $\mathrm P_{n'n}^{(p)}\psi_n^{(p)}$ 得到其他 $S_p-1$ 个基分量 $\psi_{n'}^{(p)}$
+	\end{enumerate}
+	\begin{itemize}
+		\item $\{\mathrm P_k^{(p)}\Psi|k=1,2,\cdots, S_p\}$ 得到的基是正交的但未必归一, 也未必是载荷该表示的基
+		\item $A = \bigoplus_i c_i A^{(i)}$ 中若 $c_i>1$, 则选出载荷 $A^{(i)}$ 的不可约子空间不是唯一的
+	\end{itemize}
+	\item 第二类投影算符
+	\begin{equation}
+		\mathrm P^{(p)} \equiv \sum_k \mathrm P_k^{(p)}
+	\end{equation}
+\end{enumerate}
+% subsection general_proj (end)
+% section reps (end)
+\newcommand{\Group}[1]{\mathrm{#1}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\st}{\quad\mathrm{s.t.}\quad}
+\section{SU(2) 群和 SO(3) 群} % (fold)
+\label{sec:su2_and_so3}
+\subsection{定义} % (fold)
+\label{sub:su_so_def}
+\begin{enumerate}
+	\item 三维实正交群 (real
+orthogonal matrix group) $\Group{O}(3) = \left\{A\in\Group{GL}(3,\mathbb R)\middle|A\trans A = AA\trans = E\right\}$, 自由度 $3$
+	\item 三维特殊实正交群 (real special orthogonal group) $\Group{SO}(3) = \left\{A\in\Group{O}(3)\middle|\det A = 1\right\}$, 自由度 $3$, 是 $\Group{O}(3)$ 的不变子群, 陪集 $\Group{ISO}(3) = -\Group{SO}(3)$, $\Group{O}(3) = \Group{SO}(3)\otimes K$
+	\item 方位角 $(\theta, \varphi, \psi)$ 与 Euler 角 $(\alpha, \beta, \gamma)$ 描述的 $\Group{SO}(3)$ 群元素:
+	\begin{itemize}
+		\item 方位角: $\forall A\in\Group{SO}(3).\quad \exists \vec n\in\mathbb R^3 \st A\vec n = \vec n$, 于是 $A$ 可以描述为绕 $\vec n$ 旋转 $C_{\vec n}(\psi)$. $\vec n$ 的方位角 $0\le\theta\le\pi, 0\le\varphi < 2\pi$, 转角 $0\le\psi\le\pi$\footnote{$C_{\vec n}(\pi) = C_{-\vec n}(\pi)$}. 
+		\begin{align}
+			C_{\vec n}(\psi) &= C_k(\varphi)C_j(\theta) C_k(\psi) C_j^{-1}(\theta)C_k^{-1}(\varphi) \\
+			&= \Big (n_i n_j(1-\cos\theta) + \delta_{ij}\cos\psi - \epsilon_{ijk}n_k\sin\psi\Big)_{ij}\label{equ:so3_n_psi}
+			% \begin{pmatrix}
+			% 	n_x^2f(\psi) + \cos\psi & n_xn_yf(\psi) - n_z\sin\psi & n_xn_zf(\psi)+n_y\sin\psi \\
+			% 	n_xn_yf(\psi)+n_z\sin\psi & n_y^2f(\psi) + \cos\psi & n_yn_zf(\psi) - n_x\sin\psi \\
+			% 	n_xn_zf(\psi) - n_y\sin\psi & n_yn_zf(\psi) + n_x\sin\psi & n_z^2f(\psi) + \cos\psi
+			% \end{pmatrix}
+			% $f(\psi) = 1-\cos\psi$, 
+		\end{align}
+			其中 $n_x = \sin\theta\cos\varphi$, $n_y = \sin\theta\sin\varphi$, $n_z = \cos\theta$.
+			\begin{itemize}
+				\item[*] $\Tr[C_n(\psi)] = 1+2\cos\psi$
+				\item[*] $gC_{\vec n}(\psi)g^{-1} = C_{g\vec n}(\psi)$
+				\item $\psi$ 描述 $\Group{SO}(3)$ 的类
+			\end{itemize}
+		\item Euler 角 $0\le\alpha < 2\pi, 0\le\beta \le \pi, 0\le\gamma < 2\pi$
+		\begin{align}
+			&g(\alpha\beta\gamma) = C_{k''}(\gamma) C_{j'}(\beta) C_k(\alpha)
+			 = C_k(\alpha)C_j(\beta)C_k(\gamma) \\
+			 &= \begin{pmatrix}
+			 	\cos\alpha\cos\beta\cos\gamma - \sin\alpha\sin\gamma & -\cos\alpha\cos\beta\sin\gamma - \sin\alpha\sin\gamma & \cos\alpha\sin\beta \\
+			 	\sin\alpha\cos\beta\cos\gamma + \cos\alpha\sin\gamma & -\sin\alpha\cos\beta\sin\gamma + \cos\alpha\cos\gamma & \sin\alpha\sin\beta \\
+			 	-\sin\beta\cos\gamma & \sin\beta\sin\gamma & \cos\beta
+			 \end{pmatrix}
+		\end{align}
+		$\beta = 0, \pi$ 时 $\alpha\pm\gamma = \mbox{const.}$ 表示同一个元素
+	\end{itemize}
+	\item 二维幺群 (unitary group) $\Group{U}(2) \in \left\{u\in\Group{GL}(2,\mathbb C)\middle | uu^\dagger = u^\dagger u = E\right\}$, 自由度 $4$
+	\item 二维特殊幺正群 (special unitary group) $\Group{SU}(2) = \left\{u\in \Group{U}(2)\middle | \det u = 1\right\}$, 自由度 $3$
+	\begin{itemize}
+		\item Cayley-Klein 参数 $a,b$:
+		\begin{equation}\label{equ:su2_ck}
+			u = \begin{pmatrix}
+				a & b \\
+				-b^* & a^*
+			\end{pmatrix},\quad |a|^2 + |b|^2 = 1, \quad a,b\in\mathbb C
+		\end{equation}
+		\item 二维幺正变换 $u\in\Group{SU}(2)$ 诱导三维旋转 $R_u\in\Group{SO}(3)$:
+		\begin{equation}
+			u(\vec r\cdot\vec\sigma)u^\dagger = (R_u\vec r)\cdot\vec\sigma
+		\end{equation}
+		其中 $\{\vec r\cdot \vec \sigma\} = \{A|A^\dagger = A, \Tr[A] = 0\}$, $\det[\vec r\cdot\vec\sigma] = -|\vec r|^2$. 
+		\begin{itemize}
+			\item 据此有同态关系 $\Group{SU}(2)\approx\Group{SO}(3)$\footnote{$A^\dagger = A$ 中, $\Tr[A]$ 和 $\det[A]$ 确定了 $A$ 的本征值组即共轭标准型}
+			\item 对应关系\\
+				\begin{tabular}{cc}
+				$\Group{SO}(3)$ 的生成元 & $\Group{SU}(2)$ 的对应元素 \\\hline
+				$C_k(\alpha) = \begin{pmatrix}
+					\cos\alpha & -\sin\alpha & 0\\
+					\sin\alpha & \cos\alpha & 0 \\
+					0 & 0 & 1
+				\end{pmatrix}$ & $u_1 = \begin{pmatrix}
+					\e^{-\mi\alpha/2} & 0 \\
+					0 & \e^{\mi\alpha/2}
+				\end{pmatrix}$ \\
+				$C_j(\beta) = \begin{pmatrix}
+					\cos\beta & 0 & \sin\beta \\
+					0 & 1 & 0 \\
+					-\sin\beta & 0 & \cos\beta
+				\end{pmatrix}$ & $u_2 = \begin{pmatrix}
+					\cos\frac\beta 2 & -\sin\frac\beta 2 \\
+					\sin\frac\beta 2 & \cos\frac\beta 2
+				\end{pmatrix}$\\\hline
+				\end{tabular}\\
+				据此得到 Euler 角描述的 $\Group{SU}(2)$ 的元素
+				\begin{align}\label{equ:euler_ck}
+					u(\alpha\beta\gamma) \equiv u_1(\alpha)u_2(\beta)u_1(\gamma) = 
+					\begin{pmatrix}
+						\cos\frac\beta 2\e^{-\mi(\alpha+\gamma)/2} & 
+						-\sin\frac\beta 2\e^{-\mi(\alpha-\gamma)/2} \\
+						\sin\frac\beta 2\e^{\mi(\alpha-\gamma)/2} & 
+						\cos\frac\beta 2\e^{\mi(\alpha + \gamma)/2}
+					\end{pmatrix}
+				\end{align}
+			\item 同态核 $E_{3\times 3}\rightarrow \pm 1$ 
+		\end{itemize}
+	\end{itemize}
+\end{enumerate}
+% subsection su_so_def (end)
+\subsection{不可约表示} % (fold)
+\label{sub:repr}
+\begin{enumerate}
+	\item $\Group{SU}(2)$ 的表示
+	\begin{enumerate}
+		\item 定义即为二维忠实表示: $\vec r = \left(x_1, x_2\right)\trans$
+		\item 一般的, 载荷 $2j$ 维幺正表示的函数基 $f^j(\vec r) = \left\{f_m^j(x_1,x_2)\middle | m = j, j-1, \cdots, -j\right\}$, $j = 0, 1/2, 1, 3/2,\cdots$, 其中函数基
+		\begin{equation}\label{equ:su2_func_base}
+			f_m^j(x_1, x_2) = \frac{x_1^{j+m}x_2^{j-m}}{\sqrt{(j+m)!(j-m)!}}
+		\end{equation}
+		据此得到 $\Group{SU}(2)$ 的全部不等价不可约\footnote{不可约利用 Schur 引理 1 证明: 于存在表示为对角阵的元素, 于是 $M$ 是对角的; 存在表示中具有所有元素非 $0$ 列, 于是 $M$ 是常数阵.}的幺正表示, Cayley-Klein 参数, 即式(\ref{equ:su2_ck}) 表示
+		\begin{equation}\label{equ:su2_repr}
+		\begin{split}
+			A^{(j)}_{mm'}(u) =& \sum_k\frac{(-)^{k-m+m'}\sqrt{(j+m)!(j-m)!(j+m')!(j-m')!}}{(j+m-k)!(j-m'-k)!k!(k-m+m')!}\\
+			&\quad\times a^{j+m-k}a^{*j-m'-k}b^kb^{*k-m+m'}
+		\end{split}
+		\end{equation}
+		其中 $\max (0,m-m')\le k \le \min (j+m, j-m')$
+		\item 特征标: $u$ 的标准型是 $\diag[\e^{-\mi\psi/2},\e^{\mi\psi/2}]$, 据此标记类, 特征标是类函数: 
+		\begin{equation}\label{equ:chi_for_so}
+			\chi^j(\psi) = \sum_{m=-j}^j\e^{-\mi m\psi} = \frac{\sin(j+\frac 12)\psi}{\sin\frac\psi 2}
+		\end{equation}
+		其中 $\chi^0 = 1$, $\chi^{1/2} = 2\cos\frac\psi 2$, $\chi^j - \chi^{j-1} = 2\cos j\psi$ 构成完备基, 据此可见这组表示包含了全部的不等价不可约表示.
+	\end{enumerate}
+	\item $\Group{SO}(3)$ 的表示: 
+	\begin{enumerate}
+		\item 将式(\ref{equ:euler_ck}) 代入式(\ref{equ:su2_repr}) 可得到表示 $D^{(j)}_{mm'}(\alpha\beta\gamma)$, 关于 $a,b$ 的幂次是 $2j$, 从而当 $j = 0,1,2,\cdots$ 时 $D^{(j)}(\alpha\beta\gamma)$ 是 $\Group{SO}(3)$ 的表示. 拓展表示的定义到 ``双值表示''(double-value representation) 可以认为 $D^{(j)}$ 是一般的 $\Group{SO}(3)$ 的表示
+		\begin{align}
+			D_{mm'}^j(\alpha\beta\gamma) =& \e^{-\mi m\alpha}d_{mm'}^{(j)}(\beta)\e^{-\mi m'\gamma} \\
+			\begin{split}
+				d_{mm'}^{(j)}(\beta) =& \sum_k\frac{(-)^{k-m+m'}\sqrt{(j+m)!(j-m)!(j+m')!(j-m')!}}{(j+m-k)!(j-m'-k)!k!(k-m+m')!}\\
+				&\quad\times\left(\cos\frac\beta 2\right)^{2j+m-m'-2k}\left(\sin\frac\beta 2\right)^{2k-m+m'}
+			\end{split}
+		\end{align}
+		\item 对称关系: 
+		\begin{itemize}
+			\item $d^{(j)}_{mm'}(\beta) = (-)^{m-m'}d_{m'm}^{(j)}(\beta)$
+			\item $d_{mm'}^{(j)}(\beta) = d_{-m'-m}^{(j)}(\beta)$
+			\item $d_{mm'}^{(j)}(-\beta) = d_{m'm}^{(j)}(\beta)$
+			\item $d_{mm'}^{(j)}(\pi-\beta) = (-)^{j-m'}d_{-m'm}^{(j)}(\beta)$
+			\item $d_{mm'}^{(j)}(0) = \delta_{mm'}$, $d_{mm'}^{(j)}(\pi) = (-)^{2j}\delta_{mm'}$
+		\end{itemize}
+		\item 特征标同 $\Group{SU}(2)$
+	\end{enumerate}
+\end{enumerate}
+% subsection repr (end)
+\subsection{李代数} % (fold)
+\label{sub:lie_alg}
+\begin{enumerate}
+	\item 李代数 (Lie algebra): 定义了李积 (Lie product)/对易子 (commutator) $[x,y]$ (后文默认 $[x,y] = xy-yx$) 的线性空间 $g$, 要求满足:
+	\begin{itemize}
+		\item 封闭性 (closure): $\forall x,y\in g.\quad [x,y]\in g$
+		\item 双线性 (bi-linearity)
+		\item 反对易性 (anti-commutation)
+		\item Jacobi 恒等式 (Jacobi identity)
+		\begin{equation}
+			\left[[x,y],z\right] + \left[[y,z],x\right] \left[[z,x],y\right] = 0
+		\end{equation}
+	\end{itemize}
+	设线性空间的基 $X_i$ 为 $g$ 的生成元 (generator), 定义 $g$ 的结构常数 $C_{ij}^k$
+	\begin{equation}
+		[X_i, X_j] = C_{ij}^kX_k
+	\end{equation}
+	李代数描述李群在单位元领域的性质
+	\item $\Group{SU}(2)$ 的李代数: 设 $E$ 领域内 $E - \mi M \in \Group{SU}(2)$, 则 $M = \vec\delta\cdot\vec\sigma$, 其中 Pauli 矩阵:
+	\begin{equation}
+		\sigma_x = \begin{pmatrix}
+			0 & 1 \\
+			1 & 0
+		\end{pmatrix},\quad
+		\sigma_y = \begin{pmatrix}
+			0 & -\mi \\
+			\mi & 0
+		\end{pmatrix},\quad
+		\sigma_z = \begin{pmatrix}
+			1 & 0\\
+			0 & -1
+		\end{pmatrix}
+	\end{equation}
+	满足对易关系 $[\sigma_i, \sigma_j] = 2\mi\epsilon_{ijk}\sigma_k$. 据此得到李代数  $\Group{su}(2) = \{\vec r\cdot\vec\sigma|\vec r\in\mathbb R^3\}$
+	\begin{itemize}
+		\item 李代数到李群: 
+		\begin{equation}
+			\e^{-\mi\vec r\cdot\vec\sigma} = \cos r - \frac{\mi}r \left(\vec r\cdot\vec\sigma\right) \sin r
+			% \begin{pmatrix}
+			% 	\cos r - \mi \frac z{r}\sin r & -\mi\frac {x-\mi y}r\sin r \\
+			% 	-\mi\frac{x+\mi y}r\sin r & \cos r + \mi\frac zr\sin r
+			% \end{pmatrix}
+			\in\Group{SU}(2)
+		\end{equation}
+	\end{itemize}
+	\item $\Group{SO}(3)$ 的李代数设 $E$ 领域内 $E - \mi M \in \Group{SO}(3)$, 则 $M = \vec\delta\cdot\vec J$, 其中厄米矩阵基:
+	\begin{equation}
+		J_x = \begin{pmatrix}
+			0 & 0 & 0 \\
+			0 & 0 & -\mi \\
+			0 & \mi & 0
+		\end{pmatrix},\quad
+		J_y = \begin{pmatrix}
+			0 & 0 & \mi \\
+			0 & 0 & 0 \\
+			-\mi & 0 & 0
+		\end{pmatrix},\quad
+		J_z = \begin{pmatrix}
+			0 & -\mi & 0\\
+			\mi & 0 & 0 \\
+			0 & 0 & 0
+		\end{pmatrix}
+	\end{equation}
+	满足对易关系 $[J_i, J_j] = \mi\epsilon_{ijk}J_k$. 据此得到李代数  $\Group{so}(3) = \Group{o}(3) = \{\vec \psi\cdot\vec J|\vec \psi\in\mathbb R^3\}$
+	\begin{itemize}
+		\item 李代数到李群: 
+		\begin{equation}
+			\e^{-\mi\vec \psi\cdot\vec J} = C_{\vec n}(\psi) \in\Group{SO}(3)
+		\end{equation}
+		其中 $\vec n$ 是 $\vec \psi$ 单位方向, $C_{\vec n}(\psi)$ 与方位角表示式(\ref{equ:so3_n_psi}) 是一致的
+	\end{itemize}
+	\item 代数同构关系 $\vec J = \vec \sigma /2$ 下有 $\Group{su}(2)\cong\Group{so}(3)$. 然而对应的群没有同构关系, 由于在这组同态关系下, 群 $\Group{SO}(3) = \{\exp[-\mi\vec r\cdot\vec J]\}$ 对应于半径 $2\pi$ 的球, 球内各点与群元素一一对应, 球面上中心对称的两点对应于同一个群元素; 而群 $\Group{SU}(2) = \{\exp[-\mi\vec r\cdot(\vec \sigma/2)]\}$ 则对应于半径 $\pi$ 的球, 球面上各点对应群元素 $-1$
+\end{enumerate}
+% subsection lie_alg (end)
+\subsection{李代数的表示} % (fold)
+只要计算出李代数表示 (即生成元的矩阵表示), 原则上就可以利用指数映射得到相应的李群表示. 以 $\Group{o}(3)$ 为例
+\subsubsection{角动量量子力学方法} % (fold)
+\label{ssub:角动量量子力学方法}
+\label{sub:lie_repr}
+\begin{enumerate}
+	\item Casimir 算符: 与所有生成元对易的算符, $\vec J^2 = \sum J_i^2$, $[\vec J^2, J_i] = 0$
+	\item 通过共同本征态设基:
+	\begin{align}
+		&\vec J^2\ket{\phi m} = \phi\ket{\phi m} \\
+		&J_0\ket{\phi m} = m\ket{\phi m}
+	\end{align}
+	其中取算符球谐形式
+	\begin{equation}
+		J_0 = J_z,\quad J_{\pm1} =\mp\frac 1{\sqrt 2}J_\pm = \mp\frac 1{\sqrt 2}\left(J_x \pm \mi J_y\right)
+	\end{equation}
+	有 $[J_0, J_{\pm1}] = \pm J_{\pm1}$, $[J_{+1}, J_{-1}] = -J_0$, $J_{\pm1}^\dagger = -J_{\mp1}$
+	\item 得到关于算符的递推关系: 
+	\begin{align}
+		&J_0J_{\pm1}\ket{\phi m} = (m\pm 1)J_{\pm1}\ket{\phi m} \Longrightarrow
+		J_{\pm1}\ket{\phi m} \propto \ket{\phi m\pm 1} \\
+		&\braket{\phi m|J_{+1}J_{-1}|\phi m} = \braket{\phi|J_{-1}J_{+1}|\phi m} - m \\
+		\Longrightarrow & |\braket{\phi m\pm 1|J_{\pm1}|\phi m}|^2 = 
+		|\braket{\phi m|J_{\pm1}|\phi m\mp 1}|^2 \mp m
+	\end{align}
+	\item 有限维假设, $m_1\le m \le m_2$
+	\begin{align}
+		\braket{\phi m_2 + 1|J_{+1}|\phi m_2+1} = 0 \\
+		\braket{\phi m_1 - 1|J_{-1}|\phi m_1} = 0
+	\end{align}
+	套用递推关系可以得到 $m_2 = - m_1 = j = 0, 1/2, 1, 3/2, \cdots$, 且 $|\braket{\phi m \pm 1|J_{\pm1}|\phi m}|^2 = (j\mp m)(j\pm m + 1)/2$
+	\item 选取 Conden-Shortley 惯例的相因子
+	\begin{align}
+		\braket{\phi m \pm 1|J_{\pm1}|\phi m} = \mp\sqrt{\frac 12(j\mp m)(j\pm m + 1)}
+	\end{align}
+	\item 计算 $\vec J^2$ 的本征值
+	\begin{equation}
+		\phi = \braket{\phi m|\vec J^2|\phi m} = j(j+1)
+	\end{equation}
+\end{enumerate}
+综上得到了由 $j$ 标记的 $2j+1$ 位表示, 载荷该表示的基 $\ket{jm},\quad m = -j, -j+1, \cdots, j$
+% subsubsection 角动量量子力学方法 (end)
+\subsubsection{玻色子方法} % (fold)
+\label{ssub:boson}
+\begin{enumerate}
+	\item 玻色子算符 $a$, $a^\dagger$ 与粒子数算符 $N = a^\dagger a$:
+	\begin{equation}
+		[a,a^\dagger] = 1,\quad [N, a^\dagger] = a^\dagger, [N, a] = -a
+	\end{equation}
+	\item 角动量算符的玻色子实现
+	\begin{equation}
+		J_i = \frac 12 A^\dagger \sigma_i A
+	\end{equation}
+	其中 $A = (a_1, a_2)\trans$. 展开得到升降算符形式
+	\begin{align}
+		&J_{+1} = -\frac 1{\sqrt 2}a_1^\dagger a_2,\quad &&J_{-1} = \frac 1{\sqrt 2}a_2^\dagger a_1 \\
+		&J_0 = \frac 12 (N_1 - N_2), \quad &&\vec J^2 = \frac 14(N_1 + N_2)(N_1 + N_2 + 2)
+	\end{align}
+	\item 取本征态 $\ket{n_1n_2}$:
+	\begin{equation}
+		\ket{n_1 n_2} = \frac{\left(a_1^\dagger\right)^{n_1}\left(a_2^\dagger\right)^{n_2}}{\sqrt{n_1!n_2!}}\ket{00}
+	\end{equation}
+	这组量子数与 $(j,m)$ 的关系
+	\begin{equation}
+		m = \frac 12(n_1 - n_2),\quad j = \frac 12(n_1 + n_2)
+	\end{equation}
+	\item 将前面的算符关系和量子数关系代入可以得到表示
+\end{enumerate}
+% subsubsection boson (end)
+\subsubsection{微分方法} % (fold)
+\label{ssub:calc}
+与玻色子算符具有相同对易关系的微分算符, 如:
+\begin{equation}
+	a\longleftrightarrow \frac{\partial}{\partial x},\quad 
+	a^\dagger\longleftrightarrow x
+\end{equation}
+其他过程可以直接套用角动量实现. 特别的这里选取的基和式(\ref{equ:su2_func_base}) 函数基 $f_m^j$ 是一样的
+% subsubsection calc (end)
+
+根据上面的结果和指数映射可以得到 $\Group{SO}(3)$ 的表示
+\begin{align}
+	D_{m'm}^{(j)}(\alpha\beta\gamma) &= \braket{jm'|\e^{-\mi \alpha J_z}\e^{-\mi\beta J_y}\e^{-\mi \gamma J_z}|jm} \\
+	&= \e^{-\mi m'\alpha}\braket{jm'|\e^{-\mi\beta J_y}|jm}\e^{-\mi m\gamma}
+\end{align}
+% subsection lie_repr (end)
+\subsection{群表示的直积与 C-G 系数} % (fold)
+\label{sub:prod_of_repr}
+\begin{enumerate}
+	\item Clebsch-Gordon 定理: $D^{(j)}$ 是 $\Group{SO}(3)$ 群的一个不可约幺正表示\footnote{使用特征标的求和式相乘重新整理求和顺序可证明}
+	\begin{equation}
+		D^{(j_1)}\otimes D^{(j_2)} = \bigoplus_{j = |j_1-j_2|}^{j_1+j_2} D^{(j)}
+	\end{equation}
+	物理意义是耦合到同一旋转系统下的两个角动量体系. 
+	\item Clebsch-Gordon 系数
+	\begin{align}
+		&\sum_{m_1m_2m_1'm_2'} S_{j'm',m_1'm_2'} D^{(j_1)}_{m_1'm_1}D^{(j_2)}_{m_2'm_2}S^*_{jm,m_1m_2} = \delta_{j'j}D_{m'm}^{(j)} \\
+		% &\psi^{(j_1)}_{m_1}\psi^{(j_2)}_{m_2} = \sum_{j'm'} S_{j'm',m_1m_2}\psi^{(j')}_{m'}
+		&\psi^{(j)}_m = \sum_{m_1m_2} S^*_{m_1m_2, jm}\psi^{(j_1)}_{m_1}\psi^{(j_2)}_{m_2}
+	\end{align}
+	选取 Condon-Shortly 相因子使得 $S_{j,j_1-j_2;j_1,-j_2}$ 是正实数, 于是得到实 C-G 系数
+	\begin{equation}
+		\begin{split}
+			&S_{jm,m_1m_2} = \delta_{m,m_1+m_2}\sum_k\frac{(-)^{j_1-m_1+k}(j+j_1-m_2-k)!(j_2+m_2+k)!}{k!(j-m-k)!(j+j_1-j_2-k)!(k-j_1+j_2+m)!} \\
+			&\quad\times\sqrt{\frac{(2j+1)(j+j_1-j_2)!(j-j_1+j_2)!(-j+j_1+j_2)!(j+m)!(j-m)!}{(j+j_1+j_2+1)!(j_1+m_1)!(j_1-m_1)!(j_2+m_2)!(j_2-m_2)!}}
+		\end{split}
+	\end{equation}
+	\item 代数表示: 从 $J_1^2, J_{1z}, J_2^2 J_{2z}$ 本征态 $\ket{j_1m_1j_2m_2}$ 到 $J^2 J_z J_1^2 J_2^2$ 本征态 $\ket{jmj_1j_2}\equiv\ket{jm}$
+	\begin{equation}
+		S_{m_1m_2,j_m} = \braket{j_1m_1j_2m_2|jm} = \braket{jm|j_1m_1j_2m_2}
+	\end{equation}
+	\begin{itemize}
+		\item $J_z\ket{jm} = (J_{1z} + J_{2z})\sum_{m_1m_2}\ket{j_1m_2j_2m_2}\braket{j_1m_1j_2m_2|jm}$ 得到 $m = m_1+m_2$
+		\item 维数不变 $(2j_1 + 1)(2j_2+1) = \sum_j (2j+1)$ 得到 $|j_1-j_2|\le j \le j_1 + j_2$
+		\item $J_{\pm}\ket{jm} = (J_{1\pm} + J_{2\pm})\sum_{m_1m_2}\ket{j_1m_2j_2m_2}\braket{j_1m_1j_2m_2|jm}$ 得到递推关系
+		\begin{equation}
+			\begin{split}
+				&\sqrt{(j\pm m + 1)(j\mp m)}\braket{j_1m_1j_2m_2|jm\pm 1} \\
+				= &\sqrt{(j_1\mp m_1 + 1)(j_1\pm m_1)}\braket{j_1m_1\mp 1 j_2m_2|jm} \\
+				&\quad + \sqrt{(j_2\mp m_2 + 1)(j_2\pm m_2)}\braket{j_1m_1j_2m_2\mp 1| jm}
+			\end{split}
+		\end{equation}
+	\end{itemize}
+	\item 其他符号表示: Wigner 系数或者 $2j$ 系数$\left(\begin{smallmatrix}
+			j_1 & j_2 &j \\
+			m_1 & m_2 &m
+		\end{smallmatrix}\right)$, $C_{m_1m_2m}^{j_1j_2j}$ 等 (略); 推广到 $3$ 个或更多系统, Racah 系数或者 $6j$ 系数
+	\item 性质
+	\begin{itemize}
+		\item 正交归一性
+		\item Wigner 对称性
+		\item Regge 对称性
+	\end{itemize}
+	\item $\Group{o}(3)\cong\Group{su}(2)$, 从而两者的 CG 系数相同
+\end{enumerate}
+% subsection prod_of_repr (end)
+\subsection{不可约张量算符} % (fold)
+\label{sub:tensor_op}
+\begin{enumerate}
+	\item 称矢量算符 $\vec V^k$ 为 $\Group{SO}(3)$ 群的 $k$ 秩不可约张量算符 (irreducible tensor operator), 若它的 $2k+1$ 个分量算符 $V_q^k$ ($q = k, k-1, \cdots, -k$) 按 $\Group{SO}(3)$ 的不可约表示变换:
+	\begin{equation}
+		P(\alpha\beta\gamma) V_q^k P^{-1}(\alpha\beta\gamma) = \sum_{q'} D^{(k)}_{q'q}(\alpha\beta\gamma) V_{q'}^k
+	\end{equation}
+	或者等价的 (Racah), 若 $V_q^{k}$ 满足对易关系
+	\begin{equation}
+		[J_z, V_q^k] = qV_q^k,\quad [J_{\pm1}, V_q^k] = \sqrt{(k\mp q)(k\pm q + 1)} V_{q\pm 1}^k
+	\end{equation}
+	\begin{itemize}
+		\item 根据这个定义, 当 $\vec V^k$ 是一个物理量时, $k$ 必须是整数, 否则出现双值性
+		\item 特别的, 标量算符是 $0$ 秩不可约张量算符, 如各向同性哈密顿量等
+		\item 角动量算符球谐形式 $J_{0,\pm1}$ 是 $1$ 秩不可约张量算符
+		\item $(\vec V^{k\dagger})_q\equiv (-)^q(V^k_{-q})^\dagger$ 是不可约张量算符
+		\item 厄米不可约张量算符, 即上述满足 $V^{k\dagger}_q = V^k_q$
+	\end{itemize}
+	\item Wigner-Eckart 定理: 不可约张量算符在标准角动量本征态间的矩阵元可以分成两个因子的乘积\footnote{考察 $P_gV^k_q = \sum_q' D^{(k)}_{q'q}V_{q'}^kP_g$ 的矩阵元和 C-G 系数满足相同的矩阵方程, 即约化表示的矩阵所要满足的方程. 而表示直积的约化除相因子外是唯一的.}
+	\begin{equation}
+		\braket{j'm'|V_q^k|jm} = \braket{j'||V^k||j}\braket{j'm'|kqjm}
+	\end{equation}
+	\begin{itemize}
+		\item $\braket{j'||V^k||j}$: 约化矩阵元 (reduced matrix element), 与 $m, m', q$ 无关, 描述系统的动力学性质
+		\item $\braket{j'm'|kqjm}$: C-G 系数, 表示系统的几何性质
+	\end{itemize}
+	应用: 
+	\begin{itemize}
+		\item 标量算符 $\braket{j'm|V^0_0|jm} = \delta_{jj'}\braket{j||V^0||j}$
+		\item 算符的迹 $\Tr V_q^k = \delta_{k0}\sum_j(2j+1)\braket{j||V^k||j}$\footnote{由 Wigner-Eckart 定理得到 $q=0$, 再由变换不改变迹得到 $k=0$}
+		\item 导出关于角动量的选择定则, 如 $\braket{j_2m_2|Y_lm|j_1m_2}$ 根据 C-G 系数得到非 $0$ 元条件
+	\end{itemize}
+\end{enumerate}
+% subsection tensor_op (end)
+% section su2_and_so3 (end)
+\section{对称群 (置换群)} % (fold)
+\label{sec:sym_group}
+\subsection{定义} % (fold)
+\label{sub:sym_def}
+\begin{enumerate}
+	\item 记从基本排列 $1,2,\cdots, n$ 进行数置换为 $m_1, m_2, \cdots, m_n$ 的变换
+	\begin{equation}
+		P = \begin{pmatrix}
+			1 & 2 & 3 & \cdots & n\\
+			m_1 & m_2 & m_3 & \cdots & m_3
+		\end{pmatrix} = \begin{pmatrix}
+			3 & 1 & 2 & \cdots & n\\
+			m_3 & m_1 & m_2 & \cdots & m_3
+		\end{pmatrix}
+	\end{equation}
+	记 $\{P\} = S_n$ 为 $n$ 阶置换群, 群阶 $n!$ 
+	\item 轮换 (cyclical permutation): 
+	\begin{equation}
+		\begin{pmatrix}
+			a_1 & a_2 & \cdots & a_m \\
+			a_2 & a_3 & \cdots & a_1
+		\end{pmatrix}\equiv (a_1 a_2 \cdots a_m) = (a_m a_{m-1} \cdots a_1)^{-1}
+	\end{equation}
+	\begin{itemize}
+		\item 任意置换可以唯一地写成没有公共元素的轮换乘积的形式
+		\item 轮换结构 (cycle structure): 轮换长度, 轮换个数
+		\item 没有相通数字的轮换是对易的
+		\item 省略长度 $1$ 的轮换
+	\end{itemize}
+	\item 对换 (transposition): 两个数字的轮换. 特别的相邻数字对换称邻换
+	\begin{itemize}
+		\item 长度 $m$ 的轮换可以写成 $m-1$ 的对换乘积的形式 (不唯一)
+		\item 任意对换可以写成邻换乘积的形式: $n-1$ 个邻换可以作为 $S_n$ 的生成元
+	\end{itemize}
+	\item 置换的奇偶性 (odd/even permutation): 对换乘积的形式中对换个数的奇偶性
+	\item 共轭运算 $QPQ^{-1}$ 相当于对 $P$ 的两行同时进行 $Q$ 置换
+	\item 类: 共轭运算保持轮换结构不变, 具有相同轮换结构的置换属于同一个类. 于是可以用以下方法标记轮换结构, 进而标记类: 
+	\begin{itemize}
+		\item $\nu = (1^{\nu}, 2^{\nu_2}, \cdots, k^{\nu_k})$ 表示有 $\nu_i$ 个 $i$ 阶轮换; $\sum_i i\nu_i = n$
+		\item $[\lambda] = [\lambda_1\lambda_2\cdots\lambda_k]$: 表示 $n$ 的分割 (partition), 其中
+		\begin{equation}
+			\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_k > 0, \quad 
+			\sum_i \lambda_i = n
+		\end{equation}
+	\end{itemize}
+	两种标记的关系: 
+	\begin{equation}
+		\lambda_i = \sum_{j=i}^k\nu_j
+	\end{equation}
+	\begin{itemize}
+		\item 每一个类对应一个分割, 类的数目等于 $n$ 的分割的个数; 
+		\item 对应于类 $[\lambda]$ 的元素个数
+		\begin{equation}
+			\rho^{[\lambda]} = \frac{n!}{\prod_i \nu_i!i^{\nu_i}}
+		\end{equation}
+		\item 类 $[n]$ 中元素的个数 $\rho^{[n]} = 1$, 即单位元
+	\end{itemize}
+	\item 不变子群
+	\begin{itemize}
+		\item 群链结构 $S_n\supset S_{n-1}\supset \cdots \supset S_1$
+		\item 所有的偶置换 (对应商群 $K = \{\pm1\} = S_2$)
+	\end{itemize}
+\end{enumerate}
+% subsection sym_def (end)
+\subsection{杨图, 杨盘和杨算符} % (fold)
+\label{sub:young}
+\begin{enumerate}
+	\item 杨图: 第 $i$ 行有 $i$ 个格子的方格阵, 用 $(ij)$ 标记格子的位置. 如 $S_4$ 的 $5$ 个杨图\\
+	\begin{center}
+		\begin{tabular*}{0.8\linewidth}{@{\extracolsep{\fill}}*{5}c}
+		\yng(4) & \yng(3,1) & \yng(2,2) & \yng(2,1,1) & \yng(1,1,1,1) \\
+		$[4]$   & $[31]$    & $[22]$    & $[211]$     & $[1111]$
+		\end{tabular*}
+	\end{center}
+	\begin{itemize}
+		\item 对偶杨图 (dual Young diagram): 行列互换, 如 $[31]$ 和 $[211]$. 自对偶杨图 (self-dual Young diagram), 如 $[22]$
+	\end{itemize}
+	\item 杨盘 (Young tableau): 在杨图中不重复地填入 $1,2,\cdots, n$. 
+	\begin{itemize}
+		\item 标准杨盘 (standard Young tableau) $T_r^{[\lambda]}$ 满足数字从左到右, 从上到下递增. 如
+		\begin{center}
+			\begin{tabular*}{0.8\linewidth}{@{\extracolsep{\fill}}*{4}c}
+			\young(123) & \young(12,3) & \young(13,2) & \young(1,2,3) \\
+			$T^{[3]}$   & $T^{[21]}_1$ & $T^{[21]}_2$ & $T^{[111]}$   \\
+			$(111)$     & $(112)$      & $(121)$      & $(123)$ 
+			\end{tabular*}
+		\end{center}
+		\item 山内符号 (Yamanouchi symbol): $(R_1 R_2 \cdots R_n)$ 表示数字 $i$ 在第 $R_i$ 行. 如上述最后一行 
+		\item 标准杨盘的个数
+		\begin{equation}
+			f^{[\lambda]} = \frac{n!}{\prod_{ij}g_{ij}}
+		\end{equation}
+		其中 $g_{ij} = \tilde\lambda_j-i+\lambda_i-j+1$ 是 $(ij)$ 格子的钩长, 记向右和向下的格子总数: \\
+		{
+			\newcommand{\yvdots}{\hbox{:}}
+			钩长示意: \quad$\young(\hfil\hfil\hfil\hfil\hfil\hfil,\hfil\bullet\cdots\cdots,\hfil\yvdots\hfil)$
+		}
+		\begin{itemize}
+			\item 对偶杨图的标准杨盘个数相等
+			\item 对于同一个杨图的不同 (标准) 杨盘 $T_r^{[\lambda]}$ 和 $T_s^{[\lambda]}$ 存在置换 $\sigma_{rs}\in S_s\st \sigma_{rs}T_s^{[\lambda]} = T_r^{[\lambda]}$
+		\end{itemize}
+	\end{itemize}
+	\item 杨算符 (Young operator): 利用杨盘构造算符
+	\begin{equation}
+		E(T) = P(T)Q(T)
+	\end{equation}
+	\begin{itemize}
+		\item 对称化算符 (symmetrizing operator): 
+		\begin{equation}
+			P(T) = \sum_{p\in R(T)}p
+		\end{equation}
+		其中行置换 (row/horizontal permutation) 集合 $R(T)\subset S_n$
+		\item 对称化算符 (symmetrizing operator): 
+		\begin{equation}
+			Q(T) = \sum_{q\in C(T)}(-)^q q
+		\end{equation}
+		其中列置换 (column/vertical permutation) 集合 $C(T)\subset S_n$; $(-)^q$ 表示当 $q$ 为偶 (奇) 置换时取 $1$ ($-1$)
+	\end{itemize}
+	性质:
+	\begin{itemize}
+		\item 标准杨盘能够生成独立完备的全部杨算符
+		\item 若两个数字在杨盘 $T_a$ 同一行, $T_b$ 同一列, 则 $E(T_a)E(T_b) = 0$
+	\end{itemize}
+\end{enumerate}
+% subsection young (end)
+\subsection{不可约表示} % (fold)
+\label{sub:sym_repr}
+有限群不等价不可约幺正表示的数目等于类的数目, 从而用类的标记 $[\lambda]$ 也可以标记不可约表示
+\begin{enumerate}
+	\item Young 定理: $S_n$ 对应于杨图 $[\lambda]$ 的不可约表示的维数 $d^{[\lambda]}$ 等于该杨图的标准杨盘个数:
+	\begin{equation}
+		d^{[\lambda]} = f^{[\lambda]} = \frac{n!}{\prod_{ij}g_{ij}}
+	\end{equation}
+	\item 构造载荷表示的基 $\Psi_i$\footnote{见 Hamermesh}: 
+	\begin{enumerate}
+		\item 选取某一函数 $\psi_i(1,2,\cdots,n)$ 与标准杨盘 $T_i^{[\lambda]}$ 对应, 根据杨盘间关系可以构造一组函数 $\psi_j = \sigma_{ji}\psi_i$
+		\item 利用标准杨算符构造具有确定对称性的函数: $\Psi_i = E(T_i^{[\lambda]})\psi_i$, ($i = 1,2,\cdots,f^{[\lambda]}$)
+	\end{enumerate}
+	从基出发, 将 $S_n$ 的生成元作用到基上即可得到相应的表示
+	\begin{itemize}
+		\item $[n]$ 和 $[1^n]$ 分别标记恒等表示 (全对称) 和 $\{\pm 1\}$ (全反对称)表示 
+		\item 这样得到的表示是不可约的, 但未必是幺正的, 因为选取的基不正交
+		\item 量子多 Boson 系统本征函数具有对称性 $[n]$, 多 Fermion 系统具有 $[1^n]$, 而一般的 $[\lambda]$ 是混合交换对称性
+		\item 对于较大的 $n$, 可以用群链 $S_n\supset S_{n-1}\supset \cdots$ 递推得到*
+	\end{itemize}
+	\item 幺正表示的构造规则: 对于生成元 $(k-1, k)$, 它的表示 $U^{[\lambda]}(k-1,k)$ 对应于杨图 $[\lambda]$, 表示的非零元如下:
+	\begin{enumerate}
+		\item $k-1, k$ 出现在 $T^{[\lambda]}_r$ 同一行: $U^{[\lambda]}_{rr} = 1$
+		\item $k-1, k$ 出现在 $T^{[\lambda]}_r$ 同一列: $U^{[\lambda]}_{rr} = -1$
+		\item $(k-1,k)T^{[\lambda]}_r = T^{[\lambda]}_s$ (此时上述一定不满足): 
+		\begin{align*}
+			& U^{[\lambda]}_{rr} = -\rho 
+			& U^{[\lambda]}_{rs} = U^{[\lambda]}_{sr} = \sqrt{1-\rho^2} &
+			& U^{[\lambda]}_{ss} = \rho
+		\end{align*}
+		其中 $\rho^{-1}$ 是杨盘 $T^{[\lambda]}_r$ 中 $k-1$ 到 $k$ 的轴距离 (axial distace): 记 $k-1$ 在 $(i,j)$, $k$ 在 $(i', j')$ (左上角为 $(1,1)$), 轴距离为 $j-j'-i+i'$
+	\end{enumerate}
+	\item 特征标计算规则: 
+	\begin{enumerate}
+		\item 对于表示 $[\lambda]$, 记类的标记 $\nu = (1^{\nu_1}2^{\nu_2}\cdots k^{\nu_k}) = (l_1l_2\cdots l_p) = (l)$. 配分数 $l_i$ 的定义表示第 $i$ 组轮换长度 $l_i$, 方便起见从小到大排列
+		\item 将 $l_1$ 个 $1$, $l_2$ 个 $2$ 等依次填入杨图, 要求满足正则填充法, 即:
+		\begin{itemize}
+			\item 每个数字填完后, 已填的格子构成杨图
+			\item 填充相同数字的格子必须相连, 且从最左下角的格子开始可以沿着向右或者向上走遍填该数字的格子. 
+			\item 填数字 $m$ 的格子 $\mbox{行数}-1$ 的奇偶性为该数字的填充宇称 $\pm 1$; 各数字的填充宇称的乘积为这次正则填充的宇称
+		\end{itemize}
+		\item 特征标 $\chi^{[\lambda]}[(l)]$ 为杨图 $[\lambda]$ 上 $(l)$ 的全部正则填充法的宇称和
+	\end{enumerate}
+	以表示 $[3,2]$ 的特征标为例: 
+	\begin{center}
+		\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}c|*{7}{>{$}c<{$}}}
+		类  & (1^5) & (1^3,2) & (1,2^2) & (1^2,3) & (2,3) & (1,4) & (5) \\\hline
+		正则填充\rule{0em}{4ex} & (5\mbox{个}) &\young(123,44) & \young(122,33) & \young(133,23) & \young(122,12) & \young(122,22) & \\
+		填充宇称 & 5\times 1 & 1 & 1 & -1 & 1 & -1 & \\
+		$\chi^{[3,2]}[(l)]$ & 5 & 1 & 1 & -1 & 1 & -1 & 0
+		\end{tabular*}
+	\end{center}
+\end{enumerate}
+% subsection sym_repr (end)
+\subsection{分支律, 直积分解和外积分解} % (fold)
+\label{sub:branch_reduce}
+\begin{enumerate}
+	\item $S_n$ 的不可约表示 $[\lambda]_n$ 对于其子群 $S_{n-1}$ 通常是可约的, 其约化
+	\begin{equation}\label{equ:braching}
+		[\lambda]_n \rightarrow \bigoplus_{\lambda'}[\lambda']_{n-1}
+	\end{equation}
+	称为 $S_n$ 到 $S_{n-1}$ 的分支律(branching rule), 记为 $S_n\downarrow S_{n-1}$
+	\begin{itemize}
+		\item 若将杨图 $[\lambda]_n$ 去掉某一个方格后仍然是允许的杨图 $[\lambda']_{n-1}$, 则 $[\lambda']_{n-1}$ 包含在 $[\lambda]_n$ 在 $S_{n-1}$ 的约化中
+		\item 式(\ref{equ:braching}) 中同一个 $[\lambda']_{n-1}$ 只出现一次
+	\end{itemize}
+	\item 不可约表示的直积约化为:
+	\begin{equation}
+		[\lambda_1]\otimes[\lambda_2] = \bigoplus_\lambda a_\lambda[\lambda]
+	\end{equation}
+	一般地给出 $a_\lambda$ 十分困难, 但特殊的, 当 $[\lambda_1]$ 和 $[\lambda_2]$ 是对偶的情况下, $a_{[1^n]} = 1$
+	\item 表示的外积: $S_{n_1+n_2}$ 在基 $\{\sigma\psi^{[\lambda]}_i\varphi^{[\mu]}_j|\sigma\in S_{n_1+n_2}; i =1,2,\cdots,n_\lambda;j = 1,2,\cdots,n_\mu\}$ 上的表示, 记为 $[\lambda]\odot[\mu]$, 其中 $[\lambda],\{\psi^{[\lambda]}_i\}$ 和 $[\mu],\{\varphi^{[\lambda]}_i\}$ 分别是 $S_{n_1}$ 和 $S_{n_2}$ 上的不可约表示以及载荷该表示的基. 外积的维度 (基分量个数):
+	\begin{equation}
+		\frac{(n_1+n_2)!}{n_1!n_2!}n_\lambda n_\mu
+	\end{equation}
+	记外积的分解
+	\begin{equation}
+		[\lambda]\odot [\mu] = \bigoplus_\nu a_\nu[\nu]
+	\end{equation}
+	\begin{itemize}
+		\item Littlewood 规则: 杨图 $[\nu]$ 是在杨图 $[\lambda]$ 依次添加 $\mu_i$ 个标有 $\alpha_i$ 的方格, 过程中满足
+		\begin{itemize}
+			\item 每一步添加都构成一个杨图, 且相同标号的方格不在同一列
+			\item 逐行从右向左得到 $\alpha_i$ 序列, 要求生产序列的过程中出现次数始终有 $\sum_{\alpha_1}\ge\sum_{\alpha_2}\ge\cdots$
+		\end{itemize}
+		如: 
+		\begin{align*}
+			\yng(2,1)\odot\young(\alpha\alpha,\beta) = &
+			\young(\hfil\hfil\alpha\alpha,\hfil\beta) 
+			\oplus \young(\hfil\hfil\alpha\alpha,\hfil,\beta)
+			\oplus \young(\hfil\hfil\alpha,\hfil\alpha\beta) 
+			\oplus \young(\hfil\hfil\alpha,\hfil\alpha,\beta) \\
+			&\quad \oplus \young(\hfil\hfil\alpha,\hfil\beta,\alpha) 
+			\oplus \young(\hfil\hfil\alpha,\hfil,\alpha,\beta) 
+			\oplus \young(\hfil\hfil,\hfil\alpha,\alpha\beta)
+			\oplus \young(\hfil\hfil,\hfil\alpha,\alpha,\beta)
+		\end{align*}
+		\item 简化的情况: 
+		\begin{enumerate}
+			\item $[\lambda]\odot[\mu]$ 中 $[\mu]$ 是单行或单列杨图
+			\item 分解为上述情况的杨图, 如
+			\begin{align*}
+				[21]\odot[21] &= [21]\odot([2]\odot[1] - [3]) \\
+				&= [21]\odot[2]\odot[1] - [21]\odot[3] \\
+				&= [42]\oplus[411]\oplus[33]\oplus[321]\oplus[31^3]\oplus[2^3]\oplus[2211]
+			\end{align*}
+		\end{enumerate}
+	\end{itemize}
+\end{enumerate}
+% subsection branch_reduce (end)
+% section sym_group (end)
+\section{典型李群的张量表示} % (fold)
+\label{sec:classic_lie}
+\subsection{定义} % (fold)
+\label{sub:lie_def}
+\begin{enumerate}
+	\item 对于用一组独立实参数 $\alpha_i\in\mathbb R$ ($i = 1,2,\cdots r$) 表示的群 $G = \{g(\alpha)\}$, 满足:
+	\begin{itemize}
+		\item 单位元 $e = g(\alpha^0) $, 通常取 $\alpha^0 = 0$
+		\item 逆元素 $g(\alpha)^{-1} = g(\phi(\alpha))$
+		\item 封闭性 $g(\alpha)g(\beta) = g(\varphi(\alpha,\beta))$. $\varphi$ 称 群 $G$ 的结合函数 (associative function)
+		\item 结合律 $\varphi(\alpha,\varphi(\beta,\gamma)) = \varphi(\varphi(\alpha,\beta),\gamma)$
+	\end{itemize}
+	\begin{enumerate}
+		\item 连续群 (continuous group): $\phi$ 和 $\varphi$ 是连续函数
+		\item 李群 (Lie group): $\phi$ 和 $\varphi$ 是解析函数. 独立实参数的个数称为李群的阶 (区别于有限群)
+	\end{enumerate}
+	\item 线性变换群 (linear transformation group): 
+	\begin{enumerate}
+		\item 复一般线性群 (complex general ..) $\Group{GL}(n,\mathbb C)$, $2n^2$ 阶
+		\item 实一般线性群 (real general ..) $\Group{GL}(n,\mathbb R)$, $n^2$ 阶
+		\item 复特殊线性群 (complex special ..) $\Group{SL}(n,\mathbb C) = \{g|g\in\Group{GL}(n,\mathbb C), \det g = 1\}$, $2n^2-2$ 阶
+		\item 实特殊线性群 (real special ..) $\Group{SL}(n,\mathbb R)$, $n^2-1$ 阶
+	\end{enumerate}
+	\begin{equation}
+		\Group{GL}(n,\mathbb C)\supset\left\{\begin{array}{l}
+			\Group{GL}(n,\mathbb R) \\
+			\Group{SL}(n,\mathbb C)
+		\end{array}\right\}\supset \Group{SL}(n,\mathbb R)
+	\end{equation}
+	\item 典型群 (classical group)
+	\begin{enumerate}
+		\item 酉群/幺正群 (unitary group) $\Group{U}(n) = \{u|u\in\Group(n,\mathbb C), u^\dagger u = uu^\dagger = I_n\}$, $n^2$ 阶
+		\item 特殊酉群 (special unitary group) $\Group{SU}(n) = \{u|u\in \Group U(n), \det u = 1\} $, $n^2-1$ 阶\\
+		$\Group{SU}(n) = \Group U(n)\cap\Group{SL}(n,\mathbb C)$
+		\item 复正交群 (complex orthogonal group) $\Group O(n,\mathbb C) = \{ R| R\in \Group{GL}(n,\mathbb C), R\trans R = R R\trans = I_n\}$, $n(n-1)$ 阶
+		\item 实正交群 (real orthogonal group) $\Group O(n) = \{ R| R\in \Group{GL}(n,\mathbb R), R\trans R = R R\trans = I_n\}$, $n(n-1)/2$ 阶
+		\item 特殊复正交群 $\Group{SO}(n,\mathbb C)$, $n(n-1)$ 阶
+		\item 特殊实正交群 $\Group{SO}(n,\mathbb R)$, $n(n-1)/2$ 阶\\
+		同构于 $n$ 维实线性空间中的纯转动群 (proper rotation group)
+		\begin{equation}
+			\Group{O}(n,\mathbb C)\supset\left\{\begin{array}{c}
+				\Group{O}(n) \\
+				\Group{SO}(n,\mathbb C)
+			\end{array}\right\}\supset \Group{SO}(n)
+		\end{equation}
+		\item 上述推广到非紧致型 (non-compact type), 定义 $I'\equiv\diag[I_n,-I_m]$
+		\begin{itemize}
+			\item $\Group{U}(n,m) = \{u|u\in\Group{GL}(n,\mathbb C), u^\dagger I' u = u I' u^\dagger =  I' \}$, $(n+m)^2$ 阶
+			\item $\Group{SU}(n,m) = \{u|u\in\Group{U}(n,m), \det u = 1\}$, $(n+m)^2 - 1$ 阶
+			\item $\Group{O}(n,m) = \{R|R\in\Group{GL}(n,\mathbb R), R\trans I' R = R I' R\trans = I'\}$, $(n+m)(n+m-1)/2$ 阶
+			\item $\Group{SO}(n,m)$ 群, $(n+m)(n+m-1)/2$ 阶. 特别的 $SO(3,1)$ 为 Lorentz 群
+		\end{itemize}
+		\item 辛群 (sympletic group), 定义
+		\begin{equation}
+		 	J = \begin{pmatrix}
+			0 & I_n \\
+			-I_n & 0
+		\end{pmatrix}
+		\end{equation}
+		\begin{itemize}
+			\item 复辛群 $\Group{Sp}(2n,\mathbb C) = \{g|g\in\Group{SL}(2n,\mathbb C), g\trans J g = J\}$, $(n+2)(n-1)$ 阶
+			\item 实辛群 $\Group{Sp}(2n,\mathbb C)$
+			\item 酉辛群 $\Group{USp}(2n,\mathbb C)$
+		\end{itemize}
+		\begin{align}
+			\Group{GL}(2n,\mathbb C)\supset\Group{Sp}(2n,\mathbb C)\supset & \Group{Sp}(2n,\mathbb R), \\
+			\left.\begin{array}{c}
+				\Group{Sp}(2n,\mathbb C) \\
+				\Group{SU}(2n)
+			\end{array}\right\}\supset&\Group{USp}(2n,\mathbb C)
+		\end{align}
+	\end{enumerate}
+	\item 根据参数空间的性质, 引入
+	\begin{enumerate}
+		\item 连通性 (connectivity): 单连通 (single-connection), 多连通 (multi-connection) \\
+		$\Group O(3)$ 不连通; $\Group{SO}(3)$ 连通 (非单连通); $\Group{SU}(2)$ 单连通 (四维球面)
+		\item 紧致性 (compactness): 闭的 (closed, Cauchy 序列收敛到一个元); 有界的
+	\end{enumerate} 
+\end{enumerate}
+% subsection lie_def (end)
+\subsection{张量表示} % (fold)
+\label{sub:tensor_repr}
+\begin{enumerate}
+	\item $k$ 阶张量空间 $V^{(k)} = V_n^{\otimes k}$, $n^k$ 维. 从空间 $V_n$ 中生成基
+	\begin{equation}
+		e_{i_1i_2\cdots i_k} = e_{i_1}e_{i_2}\cdots e_{i_k}
+	\end{equation}
+	\item $k$ 阶张量 $F^{(k)} \in V^{(k)}$, 展开
+	\begin{equation}
+		F^{(k)} = \sum_{i_1i_2\cdots i_k} F^{(k)}_{i_1i_2\cdots i_k} e_{i_1i_2\cdots i_k}
+	\end{equation}
+	\item 张量表示: 从 $\Group{GL}$ 群元素 $A$ 出发, $A^{(k)} = A^{\otimes k}$ 称为该群的 $k$ 阶张量表示
+	\item 张量空间的分解: 与标记基的 $k$ 个指标的置换有关, 借助 $S_k$ 群和它的杨图 $[\lambda]$
+	\begin{enumerate}
+		\item 标准杨算符引出不可约子空间 $V_r^{[\lambda]}\equiv E(T_r^{[\lambda]}) V^{(k)}$
+		\begin{itemize}
+			\item 若 $[\lambda]$ 行数大于 $\Group{GL}$ 维数 $n$, 则 $V_r^{[\lambda]} $ 是零空间
+		\end{itemize}
+		\item $V^{(k)}$ 可分解为 $V_r^{[\lambda]}$ 的直和
+		\begin{equation}
+			V^{(k)} = \bigoplus_{[\lambda],r} V_r^{[\lambda]}
+		\end{equation}
+	\end{enumerate}
+	\item 子空间的基
+	\begin{equation}
+		\xi^{[\lambda]}_{r,i_1i_2\cdots i_k}\propto E(T_r^{[\lambda]}) e_{i_1i_2\cdots i_k}
+	\end{equation}
+	为了获得上述基中线性独立的部分, 引入
+	\begin{itemize}
+		\item Weyl 盘: 把 $1,2,\cdots, n$ 填入 $[\lambda]$, 并满足: 
+		\begin{itemize}
+			\item 每一行填入的数字从左到右是不减的
+			\item 每一列填入的数字从上到下是增的
+		\end{itemize}
+	\end{itemize}
+	当角标 $i_1, i_2, \cdots ,i_k$ 取 Weyl 盘中对应数字时, $\xi$ 是独立的, 记为 $\xi_{r,s}^{[\lambda]}$
+	\begin{equation}
+		\xi_{r,s}^{[\lambda]} \equiv \xi(T_r^{[\lambda]}, W_s^{[\lambda]})
+	\end{equation}
+	\item 不可约张量 $F_r^{[\lambda]}\in V_r^{[\lambda]}$, 展开
+	\begin{equation}
+		F_r^{[\lambda]} = \sum_s F_{r,s}^{[\lambda]}\xi_{r,s}^{[\lambda]}
+	\end{equation}
+	当然标准杨算符可以把一般张量元素 $F^{(k)}$ 投影为不可约张量 $F_{r}^{[\lambda]} = E(T_{r}^{[\lambda]})F^{(k)}$, 或者分量形式
+	\begin{equation}
+		F_{r,i_1i_2\cdots i_k}^{[\lambda]} = E(T_{r}^{[\lambda]})F^{(k)}_{i_1i_2\cdots i_k}
+	\end{equation}
+	类似的当 $i_1, i_2, \cdots , i_k$ 取值由 Weyl 盘确定时, 得到一组独立张量
+	\item 将 $A^{(k)}$ 作用在 $\{\xi_{r,s}^{[\lambda]}|s = 1,2,\cdots\}$ 即可以得到全部 $k$ 阶不可约表示
+	\item $V^{[\lambda]}_r$ ($r = 1,2,\cdots f^{[\lambda]}$) 之间相互等价, 从而 $S_k$ 不多于 $n$ 行的杨图 $[\lambda]$ 可以标记 $\Group{GL}(n,\mathbb C)$ 的表示
+	\item $\Group{GL}(n,\mathbb C)$ 自身表示对应于杨盘 $T^{[1]} = \young(1)$. 从这个角度出发, 约化 $A^{(k)}$ 即外积约化如下式
+	\begin{equation}
+		\yng(1)\odot\yng(1)\odot\cdots\odot\yng(1) = \yng(1)^{\odot k}
+	\end{equation}
+	\item Robinson 公式: $[\lambda]$ 不可约表示的维数 (Weyl 盘的个数)
+	\begin{equation}
+		\dim[\lambda] = \prod_{ij}\frac{n+j-i}{g_{ij}}
+	\end{equation}
+	\item 例子: 二阶张量表示的情况: 
+	\begin{equation}
+		\yng(1)\otimes\yng(1) = \yng(2)\oplus\yng(1,1)
+	\end{equation}
+	如对于 $n = 3$, 维数满足 $3\times 3 = 6 + 3$, 分别对应 Weyl 盘 \\
+	\begin{center}
+		\begin{tabular}{c|c}
+		标准杨盘 & Weyl盘 \\\hline
+		\young(12)\rule{0em}{4ex}  & \young(11), \young(12), \young(13), \young(22), \young(23), \young(33) \\
+		\young(1,2) & \young(1,2), \young(1,3), \young(2,3)
+		\end{tabular}
+	\end{center}
+\end{enumerate}
+上述张量表示可以得到 $\Group{GL}(n,\mathbb C)$ 的不可约表示, 但不是全部的. 如表示 $[\lambda]$ 的复共轭 $[\lambda]^*$ 也是表示, 但与 $[\lambda]$ 不等价
+% subsection tensor_repr (end)
+% section classic_lie (end)
+\end{document}

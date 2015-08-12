@@ -1,0 +1,744 @@
+%!TEX program = <xelatex>
+\documentclass[11pt,a4paper,twocolumn,fleqn]{article}%titlepage表示标题单独页
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用），ctexcap套用中文格式（等同于\documentclass{ctexart}）
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+%\renewcommand{\thefigure}{\chinese{figure}}%将图片计数改为汉字数字
+%\renewcommand{\thetable}{\chinese{table}}%将表格计数改为汉字数字
+\usepackage[top=0.75in,bottom=1in,left=0.75in,right=0.75in]{geometry}%页边距设置
+\usepackage[CJKbookmarks]{hyperref}%给pdf文档添加互动式链接和书签
+
+\usepackage{amsmath,amssymb,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[1]%允许多行公式间换页，用//*表示不允许换页
+\usepackage{bm}%加粗（用于vector）
+%\usepackage{textcomp}%符号包，不能用于数学模式，建议不要和SIunits混用
+\usepackage[squaren]{SIunits}%科学单位包，可以用于数学模式（为了统一不要和textcomp混用），squaren选项消除和amssymb的冲突
+\usepackage{graphicx}%插图宏包
+\usepackage{picinpar}%图文绕排
+\usepackage{array}%表格宏包
+\usepackage{longtable}%长表格宏包
+\usepackage{multirow}%多行合并的表格宏包
+%\usepackage{booktabs}%表格线宏包
+\makeatletter % `@' now normal "letter"
+\@addtoreset{equation}{section}
+\makeatother  % `@' is restored as "non-letter"
+\renewcommand\theequation{\oldstylenums{\thesection}.\oldstylenums{\arabic{equation}}}
+
+\usepackage{listings}
+\lstset{numbers=left,tabsize=4, xleftmargin=2em,xrightmargin=2em, aboveskip=1em, escapeinside=' '}
+\renewcommand{\lstlistingname}{算法}
+
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}%电路图宏包
+%\usepackage[normalem]{ulem}%下划线，删除线等宏包，参数表示不修改\emph{}格式
+%\usepackage{mychemistry}%化学宏包，包含mhchem和chemfig
+%\usepackage[symbol]{footmisc}%脚注拓展，选项表示用符号做脚注记号
+
+%\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+\DeclareMathOperator{\dif}{d}
+\DeclareMathOperator{\diff}{\, d}
+\DeclareMathOperator{\mi}{i}
+\DeclareMathOperator{\e}{e}%定义数学模式中常用的正体字符
+\renewcommand{\[}{~$}
+\renewcommand{\]}{$~}%$只是用来少打空格……
+\newcommand{\rank}{\mathrm{rank}\,}
+
+\usepackage{braket} %狄拉克记号
+
+\begin{document}
+\title{量子力学 (1)}
+\author{吕铭}
+\maketitle
+\section{概念和定理}
+ \begin{enumerate}
+ \setlength\itemsep{0pt}
+  \item 定态: 能量本征态, 各种力学性质不随时间改变
+  \item 束缚态: \[\lim_{|x|\to\infty} \Psi(x) = 0\]
+  \item 不简并定理: 一维束缚态必是非简并态
+  \item 一维束缚态波函数可以取为实函数
+  \item 正 (负) 宇称: \[\Psi(-x) = (-)\Psi(x)\]
+  \item 宇称定理: 如果\[V(-x) = V(x)\], 则一维束缚态波函数必有确定的宇称, 即\[\Psi(-x) = \pm\psi(x)\]
+  \item 量子隧道效应, 简称量子隧穿
+  \item 共振透射, 共振隧穿
+  \item Hermitian 算符的本征值都是实数
+  \item 同一个 Hermitian 算符的属于不同本征值的本征函数必是彼此正交的
+  \item 均方偏差, 涨落
+  \item 测量值集, 本征值集
+  \item 若\[[\hat F,\hat G]=0\], 则\[\hat F\]和\[\hat G\]可以有同时 (共同) 本征函数
+  \item 完备力学量集: 对于一个量子力学系统, 一组彼此函数独立而又两两对易, 并且完全去除简并的力学量的集合 \\
+  	经常地, 在系统的 Hamiltonian \[\hat H\]和时间无关的时候, 我们要求完备力学量集里包含\[\hat H\], 这样的完备力学量集称为完备守恒量集
+  \item 箱归一化, 周期性边界条件, 得到离散的动量取值
+  \item 若系统有两个彼此不对易的守恒量, \[[\hat F, \hat H] = [\hat G,\hat H] = 0\]但是\[[\hat F, \hat G]neq 0\], 那么系统的能级一般说是简并的\\
+  例外是\[[\hat A, \hat B] = \hat K\]且\[\hat K \psi = 0\]的情形
+  \item 对称性与守恒量: 对于连续幺正变换\[\hat Q = \exp(\mi\xi\hat F)\](其中\[\hat F^\dagger = \hat F\]是厄米算符), 若\[\hat Q\]是对称变换\[[\hat Q, \hat H] = 0\], 则\[\hat F\]是守恒量\[[\hat F, \hat H]=0\]
+  	\begin{itemize}
+  	 \item 空间平移不变性与动量守恒
+  	 \item 空间旋转不变性与角动量守恒
+  	\end{itemize}
+  	离散的对称性对应离散的守恒量 (如: 宇称)
+  \item 全同粒子不可区别性原理: 当一个全同粒子体系中各粒子的波函数有重叠的时候, 这些全同粒子是不可区别
+  	\begin{itemize}
+  	 \item 玻色子 (自旋整数): 对称波函数
+  	 \item 费米子 (自旋半整数): 反对称波函数
+  	\end{itemize}
+  \item Pauli 不相容原理: 不可能有两个或更多的费米子处于完全相同的量子状态中
+  \item 量子力学理论的幺正不变性, 也就是量子力学理论的表象无关性. 幺正不变性 (有时候也简称为幺正性) 是量子力学的最根本的不变性
+  \item 相干态\[\hat a\ket{\alpha} = \alpha\ket{\alpha}\]
+  \item Uhlenbeck-Goudsmit 电子自旋假设 (1925): 电子有自旋 (spin) 角动量, 其投影只能取两个值\[S_z = \pm\hbar/2\]
+ \end{enumerate}
+ 
+\section{公式}
+ \begin{enumerate}
+ \setlength\abovedisplayskip{5pt} 
+ \setlength\belowdisplayskip{0pt} 
+ \setlength\itemsep{0pt}
+  \item 普朗克公式
+  	\begin{equation}
+  	 \rho (\nu , T) \diff\nu = \frac{8\pi h\nu^3}{c^3}\frac{1}{\exp(\frac{h\nu}{k_B T}) - 1}
+  	\end{equation}
+  \item 康普顿效应
+  	\begin{equation}
+  	 \Delta \lambda = \frac{h}{mc}(1-\cos \theta) = \lambda_C(1-\cos \theta)
+  	\end{equation}
+  \item Bohr 模型\footnote{实质是量子力学的半经典近似, 即 WKB 近似} (1913)
+  	 \begin{align}
+  	  L &= n\hbar \equiv \frac{nh}{2\pi} \\
+  	  a_0 &= \frac{4\pi\epsilon_0}{m_e k_1 e^2} &\mbox{(Bohr 半径)}
+  	 \end{align}
+  \item Sommerfeld (索末菲) 量子化条件 (1915)
+  	 \begin{equation}
+  	  \oint p\diff q = nh
+  	 \end{equation}
+  \item (一维) de Broglie 波
+  	\begin{equation}
+  	 \braket{x|p} = \frac{1}{\sqrt{2\pi\hbar}}\e^{\mi px/\hbar}
+  	\end{equation}
+  \item (一维) 位置空间和动量空间的转化
+  	\begin{align}
+  	 \Phi (p,t) &= \int \frac{\Psi (x,t) }{\sqrt{2\pi\hbar}}\e^{-\mi px/\hbar}\diff x \\
+  	 \Psi (x,t) &= \int \frac{\Phi (p,t) }{\sqrt{2\pi\hbar}}\e^{\mi px/\hbar} \diff p
+  	\end{align}
+  \item 不确定性原理
+  	\begin{equation}
+  	 \Delta x \Delta p \ge \frac 12 |\langle [x,p]\rangle| = \frac{\hbar}{2}
+  	\end{equation}
+  \item 动量算符的位置标示
+  	\begin{equation}
+  	 \hat\vec p = -\mi\hbar\nabla
+  	\end{equation}
+  \item Schr\"odinger 方程
+  	\begin{equation}
+  	 \mi\hbar\frac{\partial \Psi}{\partial t} = \hat H\Psi
+  	\end{equation}
+  \item 电磁场中的哈密顿量
+  	\begin{equation}
+  	 \hat H = \frac{1}{2\mu}(-\mi\hbar\nabla - q\vec A)^2 + q\phi
+  	\end{equation}
+  	规范变换下:
+  	\begin{align}
+  	 \phi' &= \phi - \frac{\partial \lambda}{\partial t} \\
+  	 \vec A &= \vec A + \nabla\lambda \\
+  	 \Psi &= \e^{\mi q \lambda/\hbar}\Psi
+  	\end{align}
+  \item Hermite 多项式\[H_n(\xi)\]
+  	\begin{align}
+  	 -2n H_n &= \frac{\dif^2 H_n}{\dif \xi^2} - 2\xi\frac{\dif H_n}{\dif \xi} \\
+  	 H_n(\xi) &= (-)^n\e^{\xi^2}\frac{\dif^n}{\dif\xi^n}\e^{-\xi^2} \\
+  	  &= \e^{\xi^2/2}\left(-\frac{\dif}{\dif\xi}+\xi\right)^n\e^{-\xi^2/2} \\
+  	 \e^{-s^2 + 2\xi s} &= \sum_{n=0}^{\infty} \frac{H_n(\xi)}{n!}s^n 
+  	\end{align}
+  	\begin{equation}
+  	 \int_{-\infty}^{+\infty}H_m(\xi)H_n(\xi)\e^{-\xi^2}\diff\xi = \sqrt \pi 2^n n!\delta_{mn}
+  	\end{equation}
+  \item 平移算符\[\e^{\mi pa/\hbar} = \e^{a(\dif/\dif x)}\]
+  	\begin{equation}
+  	 \e^{a(\dif/\dif x)}\psi(x) = \psi(x+a)
+  	\end{equation}
+  \item 对易括号 (对易子):
+  	\begin{align}
+  	 &[\hat x_i , \hat x_j ] = [\hat p_i,\hat p_j] = 0\\
+  	 &[\hat p_i , \hat x_j ] = -\mi\hbar \delta_{ij} \\
+  	 &[\hat x, \hat F] = \mi \hbar \frac{\partial F}{\partial p_x} \\
+  	 &[\hat p_x, \hat F] = -\mi\hbar \frac{\partial F}{\partial x} \\
+  	 &[\hat L_i, \hat L_j] = \mi\hbar\epsilon^{ijk}\hat L_k \\
+  	 &[\hat L^2 , \hat L_i] = 0 \\
+  	 &[\hat a, \hat a^\dagger] =1
+  	\end{align}
+  \item 球坐标下的角动量算符: 
+  	\begin{align}
+  	 \hat L_z &= -\mi\hbar\frac{\partial }{\partial\varphi} \\
+  	 \hat L_x &= \mi\hbar\left(\sin\varphi\frac{\partial}{\partial\theta} + \cot\theta\cos\varphi\frac{\partial}{\partial \varphi}\right) \\
+  	 \hat L_y &= -\mi\hbar\left(\cos\varphi\frac{\partial}{\partial\theta} - \cot\theta\sin\varphi\frac{\partial}{\partial \varphi}\right) \\
+  	 \hat L^2 &= -\hbar^2 \left[\frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\left(\sin\theta\frac{\partial }{\partial \theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial ^2}{\partial\varphi^2}\right]
+  	\end{align}
+  \item 球谐函数与角动量本征值:
+  	\begin{equation}
+  	 Y_{lm} = (-)^m\sqrt{\frac{(2l+1)(l-m)!}{4\pi(l+m)!}}P_l^m(\cos\theta)\e^{\mi m\varphi}
+  	\end{equation}
+  	\begin{align}
+  	 \hat L^2 Y_{lm} &= l(l+1) \hbar^2 Y_{lm} \quad(l = 0,1,2,\cdots)\\
+  	 \hat L_z Y_{lm} &= m \hbar Y_{lm} \quad(m = l, l-1, \cdots , -l)
+  	\end{align}
+  	归一性: 
+  	\begin{equation}
+  	 \int Y^*_{l'm'}(\theta,\varphi)Y_{lm}(\theta,\varphi)\diff\Omega = \delta_{l'l}\delta_{m'm}
+  	\end{equation}
+  	其他性质
+  	\begin{align}
+  	 Y_{10} &= \sqrt{\frac{3}{4\pi}}\frac{z}{r} \\
+  	 Y_{1,\pm 1} &= \mp\sqrt{\frac{3}{4\pi}}\frac{x\pm\mi y}{\sqrt 2 r} \\
+  	 &\mbox{宇称}(-)^l
+  	\end{align}
+  \item Heisenberg 绘景 (picture)
+  	\begin{align}
+  	 \frac{\partial \hat F^{(H)}}{\partial t} &= \frac{1}{\mi\hbar}[\hat F^{(H)},\hat H] \\
+  	 \langle F\rangle &= \braket{\Psi(0)|\hat F^{(H)}|\Psi(0)}
+  	\end{align}
+  \item Ehrenfest 定理
+  	\begin{equation}
+  	 \frac{\dif \langle A\rangle}{\dif t} = \left\langle\frac{\partial \hat A}{\partial T}\right\rangle + \frac{1}{\mi\hbar}\langle[\hat A,\hat H]\rangle
+  	\end{equation}
+  \item Virial 定理
+  	\begin{equation}
+  	 2\langle T\rangle = \langle \vec r \cdot \nabla V\rangle
+  	\end{equation}
+  \item \[N\]费米子的反对称化波函数 (Slater 行列式): 
+   \begin{align}
+    \psi_A(q_i) = \frac{1}{\sqrt{N!}}\det|\psi_i(q_j)|
+   \end{align}
+  \item 阶梯算符 (降级算符, 升级算符)\\
+  	谐振子的湮灭算符,产生算符
+  	\begin{align}
+  	 \hat a\ket{n} &= \sqrt n\ket{n-1} \\
+  	 \hat a^\dagger\ket{n} &= \sqrt{n+1}\ket{n+1} \\
+  	 \hat N &= \hat a^\dagger\hat a , \quad \hat N\ket{n} = n\ket{n}
+  	\end{align}
+  	对易关系
+  	\begin{align}
+  	 &[\hat a, \hat a^\dagger] = 1 \\
+  	 &[\hat N,\hat a^\dagger] = \hat a ^\dagger,\quad [\hat N,\hat a] = -\hat a
+  	\end{align}
+  	角动量的阶梯算符
+  	\begin{align}
+  	 &\hat J_{\pm} = \hat J_x \pm\mi\hat J_y  \\
+  	 &[\hat J^2, \hat J_{\pm}]= 0,\quad [\hat J_z,\hat J_{\pm}] = \pm\hbar\hat J_{\pm} \\
+  	 &\hat J^2\ket{j,m} = j(j+1)\hbar^2\ket{j,m}\\
+  	 &\hat J_z\ket{j,m} = m\hbar\ket{j,m} \\
+  	 &\hat J_\pm \ket{j,m} = \sqrt{(j\pm m + 1)(j\mp m)}\hbar\ket{j,m\pm 1}
+  	\end{align}
+  \item 角动量的合成规则
+  	\begin{equation}
+  	 \ket{j_1,m_1;j_2,m_2}\mapsto \ket{j,m;j_1,j_2}
+  	\end{equation}
+  	Clebsch-Gordan (CG) 系数\footnote{后两式是使得 CG 系数唯一的约定}
+  	\begin{align}
+  	 &C(j_1,j_2,j;m_1,m_2,m) \nonumber \\
+  	  &\quad = \braket{j_1,m_1;j_2,m_2|j,m;j_1,j_2} \\
+  	 &C(j_1,j_2,j;m_1,m_2,m) \in \mathbb R \\
+  	 &C(j_1,j_2,j;j_1,j-j_1,j) >0
+  	\end{align}
+  	选择定则
+  	\begin{align}
+  	 &m=m_1 + m_2 \\
+  	 &|j_1 - j_2|\le j \le j_1 + j_2
+  	\end{align}
+  	交换对称性
+  	\begin{align}
+  	 &C(j_2,j_1,j;m_2,m_1,m) \nonumber \\
+  	 &\quad = (-)^{j_1 + j_2 - j}C(j_1,j_2,j;m_1,m_2,m)
+  	\end{align}
+  \item Pauli 矩阵
+  	\begin{align}
+  	 \sigma_x &= \begin{pmatrix}0 &1 \\ 1 &0\end{pmatrix}\\
+  	 \sigma_y &= \begin{pmatrix}0 &-\mi \\ \mi &0\end{pmatrix}\\
+  	 \sigma_z &= \begin{pmatrix}1 &0 \\ 0 &-1\end{pmatrix}
+  	\end{align}
+  	性质
+  	\begin{align}
+  	 &\sigma_i\sigma_j = \mi\epsilon^{ijk}\sigma_k + \delta_{ij}\\
+  	 &\e^{\mi\vec a\cdot \vec\sigma} = \cos|a| + \mi(\hat a\cdot\vec\sigma)\sin|a| \\
+  	 &(\vec a\cdot\vec\sigma)(\vec b\cdot\vec\sigma) = \vec a \cdot\vec b + \mi (\vec a\times\vec b)\cdot\vec\sigma
+  	\end{align}
+  	自旋\[1/2\]粒子\[\vec S = \frac{\hbar}{2}\vec\sigma\]
+  \item Bell 基, 是最大纠缠态
+  	\begin{align}
+  	 \psi^\pm &= \frac{1}{\sqrt 2}\left(\ket{\uparrow,\downarrow} \pm \ket{\downarrow,\uparrow}\right)\\
+  	 \phi^\pm &= \frac{1}{\sqrt 2}\left(\ket{\uparrow,\uparrow} \pm \ket{\downarrow,\downarrow}\right)
+  	\end{align}
+ \end{enumerate}
+ 
+\section{常见模型}
+ \begin{enumerate}
+ \setlength\abovedisplayskip{5pt} 
+ \setlength\belowdisplayskip{3pt} 
+ \setlength\itemsep{0pt}
+ \item 一维势阱:\\
+ 	无限深方势阱, \[\delta\]势阱
+ \item 线性谐振子
+ 	\begin{equation}
+ 	 H = -\frac{\hbar^2}{2m}\nabla^2 + \frac 12 m\omega^2x^2
+ 	\end{equation}
+ 	一维情形的解:
+ 	\begin{align}
+ 	 E_n &= \left( n+ \frac 12 \right)\hbar\omega \\
+ 	 \psi_n(x) &= \sqrt{\frac{\alpha}{\sqrt \pi 2^n n!}} H_n(\alpha x)\e^{-\alpha^2x^2/2}
+ 	\end{align}
+ 	其中\[\alpha = \sqrt{m\omega/\hbar}\]\\
+ 	三维情形的球坐标解\footnote{式\ref{al}是缔合 Laguerre 多项式}:
+ 	\begin{align}
+ 	 \psi &\sim L_{n_r}^{l+1/2}(\rho^2)\rho^l\e^{-\rho^2/2}Y_{lm}(\theta,\varphi) \\
+ 	 \rho &= \sqrt{\frac{\mu\omega}{\hbar}}r \\
+ 	 L_n^k(x) &= \frac{\e^x}{n!x^k}\frac{\dif^n}{\dif x^n}(x^{n+k}\e^{-x})\label{al}\\
+ 	 E_N &= \left(2n_r + l + \frac 32\right)\hbar\omega
+ 	\end{align}
+ 	阶梯算符解法
+ 	\begin{align}
+ 	 \hat x &= \sqrt{\frac{\hbar}{2m\omega}}(\hat a + \hat a^\dagger) \\
+ 	 \hat p &= -\mi\sqrt{\frac{m\hbar\omega}{2}}(\hat a - \hat a^\dagger) \\
+ 	 \hat H &= \frac{1}{2}(\hat a\hat a^\dagger + \hat a^\dagger\hat a)\hbar\omega \nonumber\\
+ 	 &= \left(\hat a^\dagger\hat a + \frac 12\right)\hbar\omega
+ 	\end{align}
+ 	基态 (无量纲化\[\xi = \sqrt{m\omega/\hbar}x\])
+ 	\begin{equation}
+ 	 \hat a \psi_0 = \frac{1}{\sqrt 2}\left(\frac{\dif}{\dif\xi}+\xi\right)\psi_0 = 0
+ 	\end{equation}
+ 	考虑归一化, 解得
+ 	\begin{equation}
+ 	 \psi_0 = \sqrt{\frac{\alpha}{\sqrt \pi}}\e^{-\xi^2/2}
+ 	\end{equation}
+ 	从而得到: 
+ 	\begin{equation}
+ 	 \psi_n = \frac{(\hat a^\dagger)^n}{\sqrt{n!}}\psi_0
+ 	\end{equation}
+ \item 一维散射\\
+   假定粒子从\[-\infty\]入射, 且\[V(\pm\infty) = 0\]
+ 	\begin{align}
+ 	 &\psi(x)_{x\to -\infty} = A\e^{\mi kx} + B\e^{-\mi kx} \\
+ 	 &\psi(x)_{x\to +\infty} = C\e^{\mi kx} \\
+ 	 &J = \frac{\mi \hbar}{2m}\left(\psi\frac{\dif \psi^*}{\dif x} - \frac{\dif\psi}{\dif x}\psi^*\right)
+ 	\end{align}
+ 	于是几率流密度:
+ 	 \begin{align}
+ 	  \mbox{入射} J_I = |A|^2v \\
+ 	  \mbox{反射} J_R = |B|^2v \\
+ 	  \mbox{透射} J_T = |C|^2v
+ 	 \end{align}
+ 	据此定义:
+ 	 \begin{align}
+ 	  \mbox{反射系数} R = \frac{J_R}{J_I} = \left|\frac{B}{A}\right|^2 \\
+ 	  \mbox{透射系数} R = \frac{J_R}{J_I} = \left|\frac{C}{A}\right|^2
+ 	 \end{align}
+ 	也常令\[A=1\]
+ \item 周期势场
+	  \begin{equation}
+	   U(x + a) = U(x)
+	  \end{equation}
+	  Floquet 定理
+	  \begin{equation}
+	   \psi(x+a) = \e^{\mi K a} \psi (x)
+	  \end{equation}
+	  准周期函数, \[K\in (-\pi/a , \pi/a)\]第一 Brillouin 区\\
+	  Bloch 定理
+	  \begin{equation}
+	   \psi(x) = \e^{\mi k x}\Phi_k(x)
+	  \end{equation}
+	  其中\[\Phi_k(x + a) = \Phi_k(x)\]. 这种形式的波函数称为 Bloch 波. 它可以看作是被周期函数\[\Phi_K (x)\]"调制" 的平面波\[\e^{\mi Kx}\], 所以\[K\]被称为 Bloch 波数\footnote{与平面波的波数不同, Bloch 波数没有的绝对意义, 能量和波数关系也不同.}\\
+	  能带, 能带结构, 允带, 禁带
+	 \item 中心力场
+	  \begin{equation}
+	   \hat H = -\frac{\hbar^2}{2\mu}\nabla^2 + V(|r|)
+	  \end{equation}
+	  其中:
+	  \begin{align}
+	   \nabla^2 &= \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial }{\partial\theta}\right) \nonumber\\
+	   &\quad + \frac{1}{r^2\sin^2\theta}\frac{\partial^2}{\partial \varphi^2} \\
+	   &= \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) - \frac{1}{\hbar^2r^2}\hat L^2
+	  \end{align}
+	  令\[\psi(\vec r) = \frac{u(r)}{r}Y_{lm}(\theta,\varphi)\], 得到约化径向方程
+	  \begin{equation}
+	   \frac{\dif^2 u}{\dif r^2} + \frac{2\mu}{\hbar^2}\left[E - V(r) - \frac{l(l+1)\hbar^2}{2\mu r^2}\right]u = 0
+	  \end{equation}
+	  边界条件\[u(0) = 0,u(\infty) = 0\]\\
+	  有效势能 离心势能
+  \item 氢原子和类氢离子
+  	\begin{equation}
+  	 V(r) = -\frac{k_1Ze^2}{r}
+  	\end{equation}
+  	解为: 
+  	\begin{align}
+  	 \psi &\sim \rho^l\e^{-\rho/2}L_{n-l-1}^{2l+1}(\rho)Y_{lm}(\theta,\varphi) \\
+  	 L_n^k(x) &= \frac{\e^x}{n!x^k}\frac{\dif^n}{\dif x^n}(x^{n+k}\e^{-x}) \\
+  	 \rho &= \frac{2\mu k_1 Ze^2}{\hbar^2 n} r = \frac{2Z}{n}\frac{r}{a_0}
+  	\end{align}
+  	量子数:
+  	\begin{align*}
+  	 &\mbox{主量子数}&n &= 1,2,3,\cdots \\&&&\quad\to E = E_n \\
+  	 &\mbox{角量子数}&l &= 0,1,\cdots,n-1 \\&&&\quad\to L^2 = l(l+1)\hbar \\
+  	 &\mbox{磁量子数}&m &= l,l-1,\cdots,-l \\&&&\quad\to L_z = m\hbar \\
+  	 &\mbox{简并度}& g_n &= n^2
+  	\end{align*}
+  	用 s, p, d, f, g, ... 表示\[l = 0,1,2,3,4,\dots\]\\
+  	对于碱金属的价电子来说, 能级和\[l\]有关, 以 Na 为例
+  	\begin{equation}
+  	 E_{3\mbox{s}} < E_{3\mbox{p}} < E_{3\mbox{d}}
+  	\end{equation}
+  \item 氢原子磁矩\\
+  	电子运动电流密度:
+  	\begin{align}
+  	 \vec J_e &= -e\frac{\mi \hbar}{2\mu}[\psi(\nabla\psi^*) - (\nabla \psi)\psi^*] \\
+  	 J_{er} &= J_{e\theta} = 0 \\
+  	 J_{e\varphi} &= -\frac{e\hbar m}{\mu r\sin\theta}|\psi_{nlm}|^2
+  	\end{align}
+  	从而氢原子轨道磁矩\footnote{这里没有用到径向波函数的具体形式, 从而结果对于中心力场是普适的}
+  	\begin{equation}
+  	 \vec M = \frac{1}{2}\int (\vec r \times \vec J_e)\diff^2\vec r = -\frac{e\hbar m}{2\mu}\hat z
+  	\end{equation}
+  	定义 Bohr磁子
+  	\begin{equation}
+  	 \mu_B \equiv \frac{e\hbar}{2\mu}
+  	\end{equation}
+  	定义\[g\]因子 (回转磁比)
+  	\begin{equation}
+  	 g \equiv -\frac{e}{2\mu}
+  	\end{equation}
+  	从而
+  	\begin{equation}
+  	 M_z = -m\mu_B = gL_z
+  	\end{equation}
+  \item 电子自旋磁矩
+  	\begin{equation}
+  	 \hat{\vec{M}}_S = 2g\hat{\vec S} = g\hbar\vec\sigma
+  	\end{equation}
+  \item Landau 能级\\
+  	对于磁场\[\vec B = B \hat z\], \\
+  	令\[\vec A = \left(-\frac{1}{2}yB,\frac{1}{2}xB,0\right)\]\\
+  	(经典的) 同步回旋 (cyclotron) 频率
+  	\begin{equation}
+  	 \omega_{\mathrm c} = \frac{eB}{\mu}
+  	\end{equation}
+  	Larmor 频率
+  	\begin{equation}
+  	 \omega_{\mathrm L} = \frac{1}{2}\omega_{\mathrm c} = \frac{eB}{2\mu}
+  	\end{equation}
+  	考察\[xoy\]平面上的运动
+  	\begin{align}
+  	 \hat H &= -\frac{\hbar^2}{2\mu}\nabla^2 + \frac{1}{2}\mu\omega_{\mathrm L}^2(x^2+y^2)+\omega_{\mathrm L}\hat L_z \\
+  	 \psi &\sim L_{n_\rho}^{|m|}(\xi^2)\xi^{|m|}\e^{-\xi^2/2}\e^{\mi m \varphi} \\
+  	 \xi &= \sqrt{\frac{\mu\omega_{\mathrm L}}{\hbar}}\rho \\
+  	 E_N &= (2n_\rho + m + |m| + 1)\hbar\omega_{\mathrm L} \nonumber \\
+  	 &= (N+1)\hbar\omega_{\mathrm c} \\
+  	 g &= \frac{eBS}{h} = \frac{\Phi}{\Phi_0} \mbox{简并度}
+  	\end{align}
+  	上述\[\Phi_0 = h/e\]是磁通量子化单位\\
+  	如果考虑电子自旋, 上述的\[\hat L_z\]应改为\[\hat L_z + 2\hat S_z\]
+  \item 电子自旋-轨道耦合:\\
+  	总角动量本征态:
+  	\begin{align}
+  	 \psi_{ljm} &= \frac{1}{\sqrt{2j}}\begin{pmatrix} \sqrt{j+m}Y_{j-\frac 12,m-\frac 12} \\ \sqrt{j-m}Y_{j-\frac 12,m+\frac 12}\end{pmatrix}\nonumber \\ &\quad \left(j=l+\frac 12\right) \\
+  	 \psi_{ljm} &= \frac{1}{\sqrt{2j+2}}\begin{pmatrix} -\sqrt{j-m+1}Y_{j+\frac 12,m-\frac 12} \\ \sqrt{j+m+1}Y_{j+\frac 12,m+\frac 12}\end{pmatrix}\nonumber \\ &\quad \left(j=l-\frac 12\right)
+  	\end{align}
+  	自旋-轨道耦合Hamiltonian:
+  	\begin{align}
+  	 \hat H_{LS} &= \frac{\mi e\hbar^2}{4m_e^2c^2}\vec\sigma\cdot\left(\nabla\phi\times\nabla\right) \\
+  	 &= \frac{1}{2m_e^2c^2}(\nabla V\times\hat{\vec p})\cdot\hat{\vec S} \\
+  	 &= \frac{1}{2m_e^2c^2}\frac{1}{r}\frac{\dif V}{\dif r}\hat{\vec L}\cdot\hat{\vec S} \\
+  	 &\equiv \xi(r)\hat{\vec L}\cdot\hat{\vec S}
+  	\end{align}
+  	其中\[\phi\]是电势场, \[V = -e\phi\]
+  	对易关系: 
+  	\begin{equation}
+  	 [\hat{\vec L} + \hat{\vec S},\hat{\vec L}\cdot\hat{\vec S}]=0
+  	\end{equation}
+  	\[\hat{\vec L}\cdot\hat{\vec S}\]本征态:
+  	\begin{align}
+  	 (\hat{\vec L}\cdot\hat{\vec S})\psi_{ljm} &= \left\{ \begin{array}{ll}
+  	 	\frac{l}{2}\hbar^2\psi_{ljm},&\left( j = l + \frac 12 \right) \\
+  	 	-\frac{l+1}{2}\hbar^2\psi_{ljm},&\left( j = l - \frac 12 \right)
+  	 \end{array}\right.
+  	\end{align}
+  \item 碱金属原子
+  	\begin{align}
+  	 V(r) &= -\frac{k_1 e^2}{r}\left(1+(Z-1)\e^{-\kappa r}\right) \\
+  	 \hat H &= -\frac{\hbar^2}{2m_e}\nabla^
+  	 2 + V(r) + \xi(r)\hat{\vec L}\cdot\hat{\vec S}
+  	\end{align}
+  	能级只对\[m\]简并, 简并度\[2j+1\], 用\[n\mathrm L_j\]标记: s$_{\frac 12}$, p$_{\frac 12}$, p$_{\frac 32}$... 其中电子自旋-轨道耦合造成的能级分裂 (精细结构)\footnote{自旋-轨道耦合在本质上是相对论效应, 这里的非相对论近似给出的能级裂距偏小}: 
+  	\begin{equation}
+  	 E_{n,l,j=l+\frac 12} = E_{n,l,j=l-\frac 12}
+  	\end{equation}
+  \item 精细结构 (fine structure): 电子自旋-轨道耦合造成的能级分裂
+  \item 超精细结构 (hyperfine structure): 电子-原子核磁矩耦合
+  \item Lamb 移动: 电子-真空的量子场论修正
+  \item Zeeman 效应\[\vec B = B\hat{z}\]
+  	\begin{align}
+  	 \hat H &= -\frac{\hbar^2}{2m_e}\nabla^2 + V(r) + \xi(r)\hat{\vec L}\cdot\hat{\vec S} \nonumber\\
+  	 & \quad + \frac{Be}{2m_e}(\hat L_z + 2\hat S_z) + \frac{B^2e^2}{8m_e}(x^2+y^2)
+  	\end{align}
+  	\begin{itemize}
+	  	\item 正常 Zeeman 效应: \\
+	  	略去\[B^2\]项和自旋-轨道耦合项
+	  	\begin{equation}
+	  	 \hat H = -\frac{\hbar^2}{2m_e}\nabla^2 + V(r) + \frac{Be}{2m_e}(\hat L_z + 2\hat S_z)
+	  	\end{equation}
+	  	此时磁场不改变能量自旋本征态的表达式
+	  	\begin{equation}
+	  	 \Delta E = \frac{Be\hbar}{2m_e}(m_l+2m_s)
+	  	\end{equation}
+	  	分裂成\[2l+3\]个能级 (\[l\neq 0\]\footnote{\[l=0\]时候是\[2\]个能级, \[2\]个态}), 共\[2(2l+1)\]个态 \\
+	  	谱线分裂的选择定则
+	  	\begin{equation}
+	  	 \Delta l = \pm 1, \quad \Delta m_l = 0,\pm 1, \quad\Delta m_s = 0
+	  	\end{equation}
+	  	其中\[\Delta m\]带来新的谱线, 谱线分裂
+	  	\begin{equation}
+	  	 \Delta \omega = 0,\pm\frac{Be}{2m_e}
+	  	\end{equation}
+	  	\item 反常 Zeeman 效应\\
+	  	磁场不太强, 自旋-轨道耦合项不能忽略的情形
+	  	\begin{align}
+	  	 \hat H &= -\frac{\hbar^2}{2m_e}\nabla^2 + V(r) + \frac{Be}{2m_e}(\hat L_z + 2\hat S_z) \nonumber \\ &\quad + \xi(r)\hat{\vec L}\cdot\hat{\vec S}
+	  	\end{align}
+	  	在\[\{\hat H,\hat L^2,\hat J^2,\hat J_z\}\]下的本征态中, 将哈密顿量写作
+	  	\begin{align}
+	  	 \hat H &= \hat H_0 + \frac{Be}{2m_e}\hat S_z \\
+	  	 \hat H_0 &= -\frac{\hbar^2}{2m_e}\nabla^2 + V(r) + \frac{Be}{2m_e}\hat J_z \nonumber \\ &\quad + \xi(r)\hat{\vec L}\cdot\hat{\vec S}
+	  	\end{align}
+	  	做微扰论
+	 \end{itemize}
+  \item 量子双态系统:\\
+  	能级分裂, 双态振荡
+  \item Stark 效应\\
+  	原子能级在静电场中的分裂, \\
+  	氢原子, 静电场\[\vec E = E\hat z\]
+  	\begin{equation}
+  	 \hat H' = eEr\cos\theta
+  	\end{equation}
+  	做微扰展开\footnote{波函数的对称性会使得微扰矩阵的多数元素为零}, 
+  	\begin{align}
+  	 E_n^{(0)} &= -\frac{\mu k_1^2 e^4}{2\hbar^2n^2} \\
+  	 E_1^{(1)} &= 0 \\
+  	 E_2^{(1)} &= \pm 3eEa, 0, 0 \\
+  	 \psi_2^{(0)} &= \frac{1}{\sqrt 2}\left(\psi_{200}^{(0)} \pm \psi_{210}^{(0)}\right)
+  	\end{align}
+  \item 量子跃迁\\
+  	\[\hat H_0\]体系和\[\psi_n\]的定态波函数, 
+  	在含时微扰\[\hat H'(t)\]下, 从某个定态\[\psi_k\]跃迁, 
+	一级微扰的跃迁几率 (振幅):
+	\begin{align}
+	 a_{k'\neq k}(t) &= \frac{1}{\mi\hbar}\int_0^t H'_{k'k}(t')\e^{\mi\omega_{k'k}t'}\diff t' \\
+	 P_{k\to k'} &= \frac{1}{\hbar^2}\left|\int_0^t H'_{k'k}(t')\e^{\mi\omega_{k'k}t'}\diff t'\right|^2
+	\end{align}
+	选择定则:\[H_{k'k}\neq 0\]的条件
+	\begin{itemize}
+	 \item \[H_{k'k}\neq 0\]时跃迁是允许的
+	 \item \[H_{k'k} = 0\]时跃迁是禁戒的
+	\end{itemize}
+	常出现的是简谐微扰
+	\begin{equation}
+	 \hat H'(t) = \hat F\sin\omega t
+	\end{equation}
+	从而:
+	\begin{align}
+	 a_{k\to k'}(t) &= -\frac{F_{k'k}}{2\mi\hbar}\left(\frac{\e^{\mi(\omega_{k'k} + \omega)t}-1}{\omega_{k'k} + \omega} \right.\nonumber\\ & \quad \left. - \frac{\e^{\mi(\omega_{k'k} - \omega)t}-1}{\omega_{k'k} - \omega}\right) \\
+	 P_{k\to k'}(t) &\overset{t\to\infty}{\longrightarrow} \frac{|F_{k'k}|^2}{2\hbar^2}\pi t\delta(\omega_{k'k}\pm\omega)
+	\end{align}
+	结论:
+	\begin{itemize}
+	 \item 仅在\[\omega = \pm\omega_{k'k}\]处显著跃迁 (共振跃迁), \\
+		 \[E_k' = E_k \pm\hbar\omega\], \\
+		 \[+\]共振吸收,\[-\]共振发射
+	 \item 量子尺度足够长时间后, 跃迁速率是常数\\
+	 	\[\dif P/\dif t = \mbox{const.}\]\\
+	 	从而有衰变的指数定律
+	 \item 细致平衡原理: \[P_{k\to k'} = P_{k'\to k}\]
+	\end{itemize}
+  \item 光的辐射和吸收 (电偶极跃迁)\footnote{长波近似的情形, 电磁场未做量子化}
+  	\begin{equation}
+  	 \hat H' = e\vec r\cdot\vec E_0\sin\omega t
+  	\end{equation}
+  	套用量子跃迁的公式, 
+  	\begin{align}
+  	 F_{k'k} &= \braket{\psi_{k'}|e\vec r\cdot\vec E_0|\psi_k} \\
+  	 &= -\braket{\psi_{k'}|\vec D|\psi_k}\cdot\vec E_0
+  	\end{align}
+  	其中\[\vec D = -e\vec r\]是电子电偶极矩\\
+  	选择定则:
+  	\begin{equation}
+  	 \Delta l = \pm 1, \quad \Delta m = 0, \pm 1
+  	\end{equation}
+  \item 自发辐射的 Einstein 理论
+  \item Aharonov-Bohm 效应
+  	\begin{equation}
+  	 \braket{b|a}_{\vec A} = \braket{b|a}_{\vec A = 0}\exp\left(\frac{\mi}{\hbar}\int_a^b q\vec A\cdot\dif\vec l\right)
+  	\end{equation}
+  	\[\exp\left(\frac{\mi}{\hbar}\int_a^b q\vec A\cdot\dif\vec l\right)\]称为不可积相因子
+  \item 散射问题\\
+  	微分散射截面
+  	\begin{equation}
+  	 \sigma (\theta,\varphi) = \frac{1}{N\phi}\frac{\dif n}{\dif \Omega}
+  	\end{equation}
+  	其中\[N\]是靶物质粒子数, \\
+  	\[\phi\]是粒子流密度,\\
+  	\[n\]是散射粒子数.\\
+  	总散射截面
+  	\begin{equation}
+  	 \sigma_{\mathrm{t}} = \int\sigma(\theta,\varphi)\diff \Omega
+  	\end{equation}
+  	设波函数的形式为
+  	\begin{equation}
+  	 \psi\overset{r\to\infty}{\longrightarrow}\e^{\mi k z} + f(\theta,\varphi)\frac{\e^{\mi k r}}{r}
+  	\end{equation}
+  	满足方程
+  	\begin{equation}
+  	 \nabla^2\psi + [k^2 - U(\vec r)]\psi = 0
+  	\end{equation}
+  	\[f(\theta,\varphi)\]是散射振幅, 
+  	\begin{equation}
+  	 \sigma(\theta,\varphi) = |f(\theta,\varphi)|^2
+  	\end{equation}
+  \item 分波法处理散射问题:\\
+  	用于中心势场\[V = v(r)\],设波函数形式
+  	\begin{equation}
+  	 \psi = \psi(r,\theta ) = \sum_{l=0}^\infty R_l(r)P_l(\cos\theta)
+  	\end{equation}
+  	从而有约化方程
+  	\begin{equation}
+  	 \frac{\dif^2 u_l}{\dif r^2} + \left(k^2 - U(r) - \frac{l(l+1)}{r^2}\right)u_l = 0
+  	\end{equation}
+  	其中\[u_l(r) = krR_l(r)\]
+  	\begin{equation}
+  	 u_l(r) \overset{r\to\infty}{\longrightarrow} A_l\sin\left(kr - \frac{l\pi}{2}+\delta_l\right)
+  	\end{equation}
+  	\[\delta_l\]称为\[l\]阶相移\\
+  	与一般的散射形式对比, 得到
+  	\begin{align}
+  	 A_l &= (2l+1)\mi^l\e^{\mi\delta_l} \\
+  	 f &= \frac 1k\sum_l(2l+1)\sin\delta_l\e^{\mi\delta_l}P_l(\cos\theta)
+  	\end{align}
+  	据此定义\[l\]阶分波振幅
+  	\begin{equation}
+  	 f_l(\theta) = \frac 1k(2l+1)\sin\delta_l\e^{\mi\delta_l}P_l(\cos\theta)
+  	\end{equation}
+  	总散射截面不含交叉项
+  	\begin{equation}
+  	 \sigma_{\mathrm{t}} = \frac{4\pi}{k^2}\sum_l(2l+1)\sin^2\delta_l
+  	\end{equation}
+  	设力程为\[a\], 具有显著贡献的分波是
+  	\begin{equation}
+  	 l\le ka
+  	\end{equation}
+  	S波散射: 适用于短程相互作用和低能粒子流的情形, \[ka\ll 1\], 仅考虑\[l=1\]的分波\\
+  	如球方势垒: 
+  	\begin{align}
+  	 V(r) = \left\{\begin{array}{ll}
+  	 V_0(>0),	&(r<a) \\
+  	 0,		&(r>a)
+  	 \end{array}\right.
+  	\end{align}
+  	在\[ka\to 0\]的极限下: 
+  	\begin{align}
+  	 \delta_0 &= \arctan\left(\frac{k}{\alpha} \tanh \alpha a\right) - ka \\
+  	 &\approx \frac{k}{\beta}\tanh\beta a - 1 \\
+  	 \beta &= \sqrt{\frac{2\mu V_0}{\hbar^2}}\\
+  	 \alpha &= \sqrt{\beta^2 - k^2} \\
+  	 \sigma(\theta) &= \left(\frac{a}{\beta}\tanh\beta a - a\right)^2 \\
+  	 \sigma_{\mathrm{t}} &= 4\pi \left(\frac{a}{\beta}\tanh\beta a - a\right)^2
+  	\end{align}
+  	\[V_0\to\infty\]是刚性球模型, 截面\[4\pi a^2\]s是经典模型的\[4\]倍, 来源于量子干涉效应\\
+  	定义散射长度
+  	\begin{align}
+  	 a_0 &= -\frac{1}{k}\tan\delta_0 \\
+  	 \sigma_{\mathrm{t}} &= 4\pi a_0^2
+  	\end{align}
+ \end{enumerate} 
+\section{近似方法}
+	\subsection{不含时微扰论}
+	求解的 Hamiltonian 形如: 
+	\begin{equation}
+	 \hat H = \hat H^{(0)} + \hat H'
+	\end{equation}
+	其中\[\hat H^{(0)}\]是可解的, \[\hat H'\]是微扰 Hamiltonian.\\
+	微扰适用条件:
+	\begin{equation}
+	 \left|\frac{\braket{\psi_m^{(0)}|\hat H'|\psi_n^{(0)}}}{E_n^{(0)}- E_m^{(0)}}\right|\ll 1
+	\end{equation}
+	设关于\[\hat H'\]的展开式:
+	\begin{align}
+	 E_n &= E_n^{(0)} + E_n^{(1)} + E_n^{(2)} + \cdots \\
+	 \psi_n &= \psi_n^{(0)} + \psi_n^{(1)} + \psi_n^{(2)} + \cdots
+	\end{align}
+	满足方程
+	\begin{align}
+	 \hat H^{(0)}\psi_n^{(0)} &= E_n^{(0)}\psi_n^{(0)} \\
+	 (\hat H^{(0)} - E_n^{(0)})\psi_n^{(1)} &= -(\hat H' - E_n^{(1)})\psi_n^{(0)} \\
+	 (\hat H^{(0)} - E_n^{(0)})\psi_n^{(2)} &= -(\hat H' - E_n^{(1)})\psi_n^{(1)} \nonumber \\
+	 &\qquad + E_n^{(2)}\psi_n^{(0)} \\
+	 &\cdots \nonumber
+	\end{align}
+	一般取归一化方案\footnote{总的波函数是否归一化和取法有关, 计算时要注意}
+	\begin{equation}
+	 (\psi_n^{(0)},\psi_n^{(1)}) = 0
+	\end{equation}
+	\subsubsection{非简并的情形}
+	前两级:\\
+	一级微扰能
+	\begin{equation}
+	 E_n^{(0)} = \braket{\psi_n^{(0)}|\hat H'|\psi_n^{(0)}} = H'_{nn}
+	\end{equation}
+	一级微扰波函数
+	\begin{equation}
+	 \psi_n^{(1)} = \sum_{m\neq n}\frac{\braket{\psi_m^{(0)}|\hat H'|\psi_n^{(0)}}}{E_n^{(0)} - E_m^{(0)}}\psi_m^{(0)}
+	\end{equation}
+	二级微扰能
+	\begin{equation}
+	 E_n^{(2)} = \sum_{m\neq n}\frac{\left|\braket{\psi_m^{(0)}|\hat H'|\psi_n^{(0)}}\right|^2}{E_n^{(0)} - E_m^{(0)}}
+	\end{equation}
+	\subsubsection{简并的情形}
+	设\[k\]重简并:
+	\begin{equation}
+	 \hat H^{(0)}\psi_{ni}^{(0)} = E_n^{(0)}\psi_{ni}^{(0)}, \quad (i=1,2,\cdots,k)
+	\end{equation}
+	定义
+	\begin{equation}
+	 H'_{ij} = \braket{\psi_{ni}^{(0)}|\hat H'|\psi_{nj}^{(0)}}
+	\end{equation}
+	则
+	\begin{equation}\label{equjianb}
+	 \sum_i\ket{\psi_{ni}^{(0)}}\braket{\psi_{ni}^{(0)}|\hat H'|\psi_n^{(0)}} = E_n^{(1)}\ket{\psi_n^{(0)}}
+	\end{equation}
+	得到一级微扰能和相应的零级波函数, 简并情形和加微扰后的简并情形相同. \\
+	从式\ref{equjianb}得到久期方程:
+	\begin{equation}
+	 \det\left|H'_{ij} - E_n^{(1)}\delta_{ij}\right|=0
+	\end{equation}
+	\subsection{含时微扰}
+	将 Hamiltonian 写成两项
+	\begin{equation}
+	 \hat H = \hat H_0 + \hat H'(t)
+	\end{equation}
+	不含时部分本征函数:
+	\begin{equation}
+	 \hat H_0\psi_n = E_n\psi_n
+	\end{equation}
+	设总的波函数
+	\begin{equation}
+	 \Psi(t) = \sum_n a_n(t)\e^{-\mi E_n t/\hbar}\psi_n
+	\end{equation}
+	从而:
+	\begin{align}
+	 \mi\hbar\frac{\dif a_m}{\dif t} &= \sum_n H'_{mn}(t)\e^{\mi\omega_{mn}t}a_n(t) \\
+	 H'_{mn}(t) &= \braket{\psi_m|\hat H'(t)|\psi_n} \\
+	 \omega_{mn} &= \frac{E_m - E_n}{\hbar}
+	\end{align}
+	应用微扰方法:
+	\begin{align}
+	 a_n(t) &= a_n^{(0)} + a_n^{(1)} + a_n^{(2)} + \cdots \\
+	 \frac{\dif a_n^{(0)}}{\dif t} &= 0 \\
+	 \frac{\dif a_n^{(j+1)}}{\dif t} &= \frac{1}{\mi\hbar}\sum_m H'_{nm}\e^{\omega_{nm}t}a^{(j)}_n(t)
+	\end{align}
+	通常初态设为某个定态\[\psi_k\], 即\[a_n^{(0)}(0) = \delta_{nk}\],
+	于是一级微扰修正:
+	\begin{align}
+	 a_{k'\neq k}(t) &= \frac{1}{\mi\hbar}\int_0^t H'_{k'k}(t')\e^{\mi\omega_{k'k}t'}\diff t'
+	\end{align}
+ 
+\end{document}

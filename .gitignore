@@ -1,0 +1,13 @@
+# LaTeX:
+*.aux
+*.log
+*.synctex.gz
+*.bak
+*.fdb_latexmk
+*.toc
+$ BibTeX
+*.bbl
+*.blg
+*.nav
+*.out
+*.snm

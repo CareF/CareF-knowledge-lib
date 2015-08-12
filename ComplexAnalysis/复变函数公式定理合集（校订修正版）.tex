@@ -1,0 +1,247 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用），ctexcap套用中文格式（等同于\documentclass{ctexart}）
+\usepackage[top=2.54cm,bottom=2.54cm,left=3.18cm,right=3.18cm]{geometry}%页边距设置：数据来自MS word的默认值
+
+\usepackage{amsmath,amssymb,array,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[2]%允许多行公式间换页，用//*表示不允许换页
+\newcommand\dif{\mathrm{d}}
+\newcommand\diff{\,\mathrm{d}}
+\usepackage{bm}%加粗（用于vector）
+\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+
+\usepackage[CJKbookmarks]{hyperref}
+
+\renewcommand{\m}[1]{~$\displaystyle#1$~}
+\newcommand{\p}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\psq}[2]{\ensuremath{\frac{\partial^2 #1}{\partial #2^2}}}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}
+\newcommand\E{\mathrm{E}}
+\newcommand\re{\mathop{\rm Re~}}
+\newcommand\im{\mathop{\rm Im~}}
+\newcommand\res{\mathop{\rm res~}}
+\newcommand{\lnb}[1]{\ln\left(#1\right)}
+\newcommand{\summ}[1]{\sum_{n=#1}^\infty}
+\usepackage{extarrows}
+\usepackage{upgreek}
+
+\begin{document}
+\title{复变函数公式定理合集}
+\author{吕铭\quad 物理21}
+\maketitle
+%\renewcommand\theenumi{\chinese{enumi}}
+%\renewcommand\theenumii{\arabic{enumii}}
+%\renewcommand\labelenumii{\theenumii.}
+\section{解析函数}
+    \begin{enumerate}
+      \item 柯西~--~黎曼方程:\m{\p{u}{x} = \p{v}{y}};\m{\p{u}{y} = -\p{v}{x}}
+          (~$\Leftrightarrow$\m{\mi\p{f}{x} = \p{f}{y}}$\Leftrightarrow$\m{\p{f}{z^*} = 0})\\
+          $$\left(\p{u}{y},-\p{u}{x}\right)\begin{pmatrix}\partial v/\partial y\\-\partial v/\partial x\end{pmatrix} = 0$$
+          $$\psq{u}{x}+\psq{u}{y} = \psq{v}{x} + \psq{v}{y} = 0$$
+          函数可导的充要条件是柯西~--~黎曼方程成立且\m{u}和\m{v}可微.
+      \item \m{\sin \mi z = \mi\sinh z};\m{\cos \mi z = \cosh z}
+      \item \m{\sinh^{-1}z = \lnb{z+\sqrt{z^2+1}}};\m{\cosh^{-1}z = \lnb{z + \sqrt{z^2-1}}}
+      \item \m{\arcsin z = \frac 1\mi \lnb{\mi z+\sqrt{1 - z^2}}};\m{\arccos z = \frac 1\mi\lnb{z+\sqrt{z^2-1}}}
+      \item 黎曼存在定理:在扩充的复平面上任意两单连通区域存在唯一的（单叶）保角映射使得两区域可以相互变换.
+      \item 保角变换: 对于\m{f(x + \mi y) = \xi + \mi \eta};
+        \begin{eqnarray*}
+          &&\left[\psq{}{x} + \psq{}{y}\right]u(x,y) = \rho(x,y)\\
+          \Longleftrightarrow&& \left[\psq{}{\xi} + \psq{}{\eta}\right]u(x(\xi,\eta),y(\xi,\eta)) = \frac 1{|f'(z)|^2} \rho(x(\xi,\eta),y(\xi,\eta))
+        \end{eqnarray*}
+    \end{enumerate}
+  \section{复变积分}
+    \begin{enumerate}
+      \item 柯西定理:\m{\oint_Cf(z)\diff z = 0};\m{\oint_{C_0}f(z)\diff z = \sum_{i=1}^{n}\oint_{C_i}f(z) \diff z}\\
+        \m{f(z)}在\m{\overline{G}}内解析,\m{C}是\m{\overline{G}} 内的一个分段光滑闭合围道, 也可以是\m{\overline{G}} 的边界.
+      \item \m{\oint_{\partial G}(z-a)^n\diff z = \begin{cases}2\pi\mi,&n = -1,\,a\in G\\0,&\mbox{其他情况}\end{cases}}
+      \item \m{\lim_{\delta\to0}\int_{C_\delta}f(z)\diff z = \mi k\left(\theta_2 - \theta_1\right)}\\
+        \m{\theta_1\leq\arg\left(z-a\right)\leq\theta_2}(闭?);\m{\lim_{z\to a}\left(z-a\right)f(z) = k}(一致地?);\m{f(z)} 在\m{z = a}的（空心）邻域内连续.
+      \item \m{\lim_{R\to\infty}\int_{C_R}f(z)\diff z = \mi K\left(\theta_2 - \theta_1\right)}\\
+        当\m{\theta_1\leq\arg z\leq\theta_2}且\m{\lim_{z\to \infty}zf(z) = K}(一致地?);\m{f(z)} 在\m{\infty}的邻域内连续.
+      \item 柯西积分公式:\m{f(a) = \frac 1{2\pi\mi}\oint_C \frac{f(z)}{z-a}\diff z}\\
+        （有界区域）\m{f(z)}在区域\m{\overline{G}}内单值解析, \m{C = \partial G}分段光滑,\m{a\in G};\\
+        （无界区域）\m{C}顺时针, \m{f(z)}在\m{C}上和外解析, 且\m{\lim_{z\to\infty} f(z) = 0}, \m{a}在\m{C}外.
+      \item 均值定理\m{f(a) = \frac 1{2\pi}\int_0^{2\pi}f(a+R\e^{\mi\theta})\diff\theta}
+      \item \m{f^{(n)}(z) = \frac{n!}{2\pi\mi}\oint_{\partial G}\frac{f(\zeta)}{(\zeta - z)^{n+1}}\diff \zeta}.要求\m{f(z)}在\m{\overline G}内解析,\m{z\in G}
+      \item 柯西型积分: \m{\phi(\zeta)}是在曲线\m{C}上的连续函数, 定义\m{f(z) = \frac 1{2\pi\mi}\int_C\frac{\phi(\zeta)}{\zeta-z}\diff \zeta}是\m{C}外的解析函数, 有\m{f^{(p)}(z) = \frac{p!}{2\pi\mi}\int_C\frac{f(\zeta)}{(\zeta - z)^{p+1}}\diff \zeta}.
+      \item \m{F(z) = \int_C f(t,z)\diff t\Rightarrow F'(z) = \int_C \p{f(t,z)}{z}\diff t}\\
+        要求\m{f(t,z)}单值解析, \m{C}分段光滑（可以是实轴的一部分）.
+      \item \m{\zeta\in\partial G};\m{z\in G};\m{|f(\zeta)|\leq M};\m{|\zeta - z|\geq R}有\m{\left|f^{(n)}(z)\right|\leq\frac{n!M}{R^n}}\\
+        最大模定理: 解析函数\m{f(z)}模\m{|f(z)|}在定义域的内不存在极值,除非\m{f(z)}是常函数（令\m{n = 0}）\\
+        刘维尔定理: 在全平面上解析且有界的函数为常函数（令\m{n = 1,R\to\infty}）
+      \item* 泊松公式: 对于\m{f(x+\mi y) = u + \mi v}:
+        \begin{eqnarray*}
+        % \nonumber to remove numbering (before each equation)
+          u(x,y) &=& \frac 1\pi \int_{-\infty}^{\infty}\frac {(\xi - x)v(\xi,0)}{(\xi - x)^2 + y^2}\diff\xi \\
+                 &=& \frac 1\pi \int_{-\infty}^{\infty}\frac {yu(\xi,0)}{(\xi - x)^2 + y^2}\diff\xi \\
+          v(x,y) &=& -\frac 1\pi \int_{-\infty}^{\infty}\frac {(\xi - x)u(\xi,0)}{(\xi - x)^2 + y^2}\diff\xi \\
+                 &=& \frac 1\pi \int_{-\infty}^{\infty}\frac {yv(\xi,0)}{(\xi - x)^2 + y^2}\diff\xi
+        \end{eqnarray*}
+    \end{enumerate}
+  \section{级数展开}
+    \begin{enumerate}
+      \item 绝对收敛判定:
+        \begin{eqnarray*}
+          \sum_{n=0}^{\infty} u_n\mbox{~绝对收敛} &\Leftarrow& \exists.\{v_n\}\quad v_n\geq |u_n| ,\quad v_n\mbox{~收敛} \\
+           &\Leftarrow& \forall.n,\quad \left|\frac {u_{n+1}}{u_n} \right|<\rho<1 \\
+           &\Leftarrow& \varlimsup_{n\to\infty}\left|\frac {u_{n+1}}{u_n} \right|<l<1 \\
+           &\Leftarrow& \varlimsup_{n\to\infty}|u_n|^{1/n}<1
+        \end{eqnarray*}
+      \item 绝对收敛的性质:
+        \begin{enumerate}
+          \item 改换次序;
+          \item 可以把一个绝对收敛级数拆成几个子级数，每个子级数仍绝对收敛;
+          \item 两个绝对收敛级数之积仍然绝对收敛.
+        \end{enumerate}
+      \item 收敛判定:
+        \begin{eqnarray*}
+          \sum_{n=0}^{\infty} u_n\mbox{~收敛} &\Leftrightarrow& \forall.\epsilon>0,\quad \exists.n,\quad \forall.p>0,|u_{n+1}+u_{n+2}+\cdots+u_{n+p}|<\epsilon\\
+          &\Leftarrow& u_n = v_n w_n,\{S_n = \sum_{k=1}^n v_k\}\mbox{~有界},v_n\mbox{~正项递减},\lim_{n\to\infty}v_n = 0\\
+          &\Leftarrow& u_n = v_n w_n,\{S_n = \sum_{k=1}^n v_k\}\mbox{~收敛},v_n\mbox{~单调有界}
+        \end{eqnarray*}
+      \item 维尔斯特拉斯的~M~判别法:\\
+        $$\forall.z\in G,|u_k(z)|<a_k,\sum_{k=1}^{\infty}a_k\mbox{~收敛}\Rightarrow \sum_{k=1}^{\infty}u_k(z)\mbox{~绝对而且一致收敛}$$
+      \item 一致收敛级数的性质:
+        \begin{enumerate}
+          \item \m{u_k(z)\mbox{~连续}\Rightarrow S(z) = \sum_{k=1}^{\infty} u_k(z)\mbox{~连续}}
+          \item \m{\int_C\sum_{k=1}^{\infty} u_k(z)\diff z = \sum_{k=1}^{\infty} \int_C u_k(z)\diff z}(\m{C}分段光滑)
+          \item \m{\left(\sum_{k=1}^{\infty} u_k(z)\right)^{(p)} = \sum_{k=1}^{\infty} u_k^{(p)}(z)}
+        \end{enumerate}
+      \item 渐近级数（在一定辐角范围内）\m{w(z)\sim\sum_{k=1}^{\infty} \psi_k(z)\Leftrightarrow w(z)- \sum_{k=1}^{n-1} \psi_k(z)\sim \psi_n(z)}
+      \item 阿贝尔定理:
+        \begin{enumerate}
+          \item \m{\sum_{n=0}^{\infty} c_n(z-a)^n}在\m{z = z_0}收敛, 则它在\m{|z-a|<|z_0 - a|}上绝对收敛, 内闭一致收敛\\
+          \item \m{\sum_{n=0}^{\infty} c_n(z-a)^n}在收敛圆\m{G}内收敛到\m{f(z)}且在收敛圆上一点\m{z_0}也收敛（到\m{S}）, 则\m{\lim_{z\to z_0,z\in G}f(z) = S}
+        \end{enumerate}
+      \item 收敛半径\m{R = \frac 1{\varlimsup_{n\to\infty}|c_n|^{1/n}} = \varlimsup_{n\to\infty}\left|\frac {c_n}{c_{n+1}}\right|}
+      \item 泰勒展开: \m{f(z)}在以\m{a}为圆心的元\m{C}内解析, 则在圆内
+        \begin{eqnarray*}
+            f(z) &=& \sum_{n=0}^{\infty} a_n(z-a)^n \\
+            a_n &=& \frac 1{2\pi\mi}\oint_C\frac{f(\zeta)}{(\zeta-a)^{n+1}}\diff \zeta
+        \end{eqnarray*}
+      \item 洛朗展开: \m{f(z)}在\m{G = \{z|R_z < |z-b| < R_2\}}内单值解析, 则\m{\forall.z\in G}
+        \begin{eqnarray*}
+            f(z) &=& \sum_{n=-\infty}^{\infty} a_n(z-a)^n \\
+            a_n &=& \frac 1{2\pi\mi}\oint_C\frac{f(\zeta)}{(\zeta-a)^{n+1}}\diff \zeta\quad(C\subset G)
+        \end{eqnarray*}
+      \item 解析函数的零点孤立性定理: 若\m{f(z)}不恒等于零, 且在包含\m{z = a}在内的区域内解析, 则必能找到圆\m{|z-a| < \rho}, 使在圆内除了\m{z = a}可能为零点外, \m{f(z)} 再无其他零点.\\
+          推论包括解析函数的唯一性定理, 解析延拓的意义等.
+      \item 奇点:
+        \begin{itemize}
+          \item 非孤立奇点（含枝点）
+          \item 孤立奇点
+            \begin{itemize}
+              \item 可去奇点: 展开式不含负幂项（\m{\infty}点为正幂项）, 在该点存在有限的极限.
+              \item 极点: 展开式含有限个负幂项（\m{\infty}点为正幂项）, 阶数与倒数的零点阶数相同, 在该点的极限是\m{\infty}.
+              \item 本性奇点: 展开式含无穷多负幂项（\m{\infty}点为正幂项）, 在本性奇点的任意一个小邻域内, 可以取（并且取无穷多次）任意的有限数值, 顶多可能有一个例外.
+            \end{itemize}
+        \end{itemize}
+      \renewcommand\B{\ensuremath{\mathrm{B}}}
+      \item* 伯努利数 \m{\frac{z}{\e^z-1} = \sum_{n=1}^{\infty} \frac {\B_n}{n!} z^n,\quad|z|<2\pi}\\
+        \begin{eqnarray*}
+        % \nonumber to remove numbering (before each equation)
+          &&\B_{2n+1} = -\frac 12\delta_{n0} \\
+          &&\sum_{n=0}^{[k/2]}\frac{k!}{(k-2n+1)!}\frac{\B_{2n}}{(2n)!} = \frac 12
+        \end{eqnarray*}
+        \begin{align*}
+          \B_2 &= \frac 16, \qquad &\B_4 &= -\frac 1{30}, \qquad &\B_6 &= \frac 1{42}, \qquad &\B_8 &= -\frac 1{30},\\
+          \B_{10} &= \frac 5{66} &\B_{12} &= -\frac {691}{2730} &\B_{14} &= \frac 76 &\B_{16} &= -\frac {3617}{510}, \qquad& \cdots
+        \end{align*}
+      \item* 欧拉数 \m{\frac{2\e^{z/2}}{\e^z+1} = \frac 1{\cos \frac z2} = \summ{0}\frac{\E_n}{n!}\left(\frac z2\right)^n,\quad|z|<\pi}\\
+        \begin{eqnarray*}
+          &&\E_{2n+1} = 0,\\
+          &&\sum_{l=0}^{k}\frac {(2k)!}{(2l)!(2k-2l)!}\E_{2l} = 0,\\
+          &&\E_0 = 1,\qquad \E_2 = -1,\qquad \E_4 = 5,\qquad \E_6 = -61,\qquad \cdots
+        \end{eqnarray*}
+      \item 常用展开:
+        \begin{align*}
+          \frac 1{1-z} &= \summ{0} z^n &&|z|<1\\
+          \e^z &= \summ{0} \frac {z^n}{n!} &&|z|<\infty\\
+          \ln(1-z) &= - \summ{1} \frac {z^n}{n} \quad \left(\left.\ln(1-z)\right|_{z=0} = 0\right)&&|z|<1\\
+          \cos z &= \summ{0} \frac {(-)^n z^{2n}}{(2n)!} &&|z|<\infty\\
+          \sin z &= \summ{0} \frac {(-)^n z^{2n+1}}{(2n+1)!} &&|z|<\infty\\
+          (1+z)^\alpha &= \summ{0} \binom{\alpha}{n} z^n\quad \left(\left.(1+z)^\alpha\right|_{z=0} = 1\right) &&|z|<1\\
+          \\
+          \frac z2\cot\frac z2 &= \summ{0}(-)^n\frac{\B_{2n}}{(2n)!}z^{2n} &&|z|<2\pi\\
+          \frac z2\tan\frac z2 &= \summ{1}(-)^{n-1}\frac{2^{2n} - 1}{(2n)!}\B_{2n}z^{2n} &&|z|<\pi\\
+          z\csc &= \frac {z}{\sin z} = \summ{0} (-)^{n-1} \frac {2(2^{2n-1} -1}{(2n)!}\B_{2n}z^{2n} &&|z|<\pi\\
+          \ln \frac{\sin z}z &= \summ{1} (-)^n \frac {2^{2n-1}}{n(2n)!}\B_{2n}z^{2n} &&|z|<\pi\\
+          \ln \cos z &= \summ{1}(-)^n \frac {2^{2n-1}(2^{2n}-1)}{n(2n)!}\B_{2n} z^{2n} &&|z|<\frac \pi 2\\
+          \ln \frac {\tan z}z &= \summ{1} (-)^{n-1}\frac {2^{2n}(2^{2n-1}-1)}{n(2n)!}\B_{2n}z^{2n} &&|z|<\frac \pi 2\\
+          \\
+          \tan z &= z + \frac {z^3}{3} + \frac{2z^4}{15} + O\left(z^6\right) &&|z|<\frac \pi 2\\
+          \cot z &= \frac 1z - \frac z3 - \frac{z^3}{45} - \frac{2z^5}{945} + O\left(z^6\right) &0<&|z|<\pi\\
+          \frac 1{\sin z} &= \frac 1z + \frac z6 + \frac{7z^3}{360} + \frac {31z^5}{15120} + O\left(z^6\right) &0<&|z|<\pi\\
+          \frac 1{\cos z} &= 1 + \frac{x^2}2 + \frac{5x^4}{24} + O\left(x^6\right) &0<&|z|<\frac \pi 2
+        \end{align*}
+    \end{enumerate}
+  \section{留数定理}
+    \begin{enumerate}
+      \item \m{\oint_C f(z)\diff z = 2\pi\mi\sum_{k=1}^{n} \res f(b_k)}, \m{b_k}为\m{f(z)}在\m{C}内的奇点
+      \item \m{z = b}是\m{f(z)}的\m{m}阶极点, \m{a_{-1} = \left.\frac 1{(m-1)!}\frac {\dif^{m-1}}{\dif z^{m-1}}(z-b)^{m}f(z)\right|_{z = b}}
+      \item \m{z = b}是\m{f(z)}的一阶极点, \m{a_{-1} = \lim_{z\to b}(z-b)f(z)}
+      \item \m{f(z) = \frac {P(z)}{Q(z)}}, \m{z = b}是\m{Q(z)}的一阶零点, \m{a_{-1} = \frac {P(z)}{Q'(z)}}
+      \item \m{\infty}点的留数是\m{-a_{-1}}, 不要求为奇点
+      \item 对于有限个奇点的解析函数,\m{\sum_{\mbox{扩充复平面}}\res f(b) = 0}
+      \item 约当引理: 在\m{0\leq \arg z \leq \pi}范围内, \m{|z|\to \infty}时\m{Q(z)} 一致地趋近于 0, 则\m{\lim_{R\to \infty}\int_{C_R} Q(z)e^{\mi pz}\diff z = 0}, 其中\m{p>0}, \m{C_R}是以原点为圆心, \m{R}为半径的半圆弧.\\
+          在不同辐角范围内满足相似条件也可成立.
+      \item \m{I_n \equiv \int_{-\infty}^{\infty} \frac {\sin^n x}{x^n} \diff x = \frac \pi{(n-1)!}\sum_{k=0}^{[n/2]} {n\choose k} \left(\frac {n-2k}{2}\right)^{n-1}}\\
+          \begin{equation*}
+            I_1 = \pi,\quad I_2 = \pi, \quad I_3 = \frac 34 \pi, \quad I_4 = \frac 23 \pi,\quad I_5 =\frac {115}{192}\pi,\quad I_6 = \frac {11}{20}\pi, \cdots
+          \end{equation*}
+      \item \m{\summ{1}\frac 1{n^2} = \frac {\pi^2}6}
+      \item \m{\int_0^{\infty} \frac {x^{\alpha-1}}{x+\e^{\mi\varphi}}\diff x = \frac \pi{\sin \pi\alpha}\e^{\mi\varphi(\alpha -1)}}\\
+          \begin{eqnarray*}
+          \int_0^{\infty} \frac {x^{\alpha-1}}{1+x}\diff x &=& \frac \pi{\sin \pi\alpha}\\
+          \int_0^{\infty} \frac {x^{\alpha-1}}{x^2+2x\cos\varphi+1}\diff x &=& \frac \pi{\sin \pi\alpha}\frac {\sin(1-\alpha)\varphi}{\sin\varphi}
+          \end{eqnarray*}
+      \item 辐角原理~\m{w(z)}满足: 在简单闭合曲线\m{C}内除极点外解析; 在\m{C}上解析且不为零, 则
+        $$\frac 1{2\pi\mi}\oint_C \frac {w'(z)}{w(z)}\diff z = N(w,C) - P(w,c) = \frac {\Delta_C \arg w(z)}{2\pi}$$
+        其中其中\m{N(w,C)}与\m{P(w,C)}分别表示\m{w(z)}在\m{C}内零点与极点的个数（一个\m{m}阶零点算作\m{m}个零点; 一个\m{n}阶极点算\m{n} 个极点）.
+      \item 儒歇定理~函数\m{w(z)}和\m{\varphi(z)}在简单闭合曲线\m{C}内以及\m{C}上解析, 且在\m{C}上恒满足\m{|w(z)| > |\varphi(z)|}, 则函数\m{w(z)}与\m{w(z) + \varphi(z)}在\m{C}内有同样多的零点（几阶算几个）.
+      \item 威尔斯特拉斯定理~设整函数（在复平面上无奇点）\m{f(z)}只有不为\m{0}的一阶零点\m{\{a_1,a_2,\cdots\}}, \m{\lim_{n\to\infty}a_n = \infty}, 且存在围道序列\m{C_m}（围道内包含\m{m}个零点a1; \m{\{a_1,a_2,\cdots,a_m\}}），在其上满足\m{\left|\frac{f'(z)}{f(z)}\right| < M}, \m{M}为与\m{m}无关的正数，则\m{f(z)}可以展为无穷乘积
+          $$f(z)= f(0)\e^{\frac {f'(0)z}{f(0)}}\prod_{n=1}^{\infty}\left[(1-\frac z{a_n})\e^{\frac z{a_n}}\right]$$
+    \end{enumerate}
+  \newcommand\psif{\mathrm{\uppsi}}
+  \section{\texorpdfstring{\m{\Gamma}函数}{Gamma~函数}}
+    \begin{enumerate}
+      \item \m{\Gamma(z) = \int_1^{\infty}\e^{-t}t^{z-1}\diff t + \summ{0}\frac {(-)^n}{n!}\frac 1{n+z} \xlongequal{\re z>0}\int_0^{\infty}\e^{-t}t^{z-1}\diff t}\\
+          也可以将积分范围改为\m{\re t\to+\infty}的一个曲线.
+      \item \m{\Gamma(1) = 1 \qquad \Gamma \left(\frac 12\right) = \sqrt(\pi)}
+      \item \m{\Gamma(z+1) = z\Gamma(z)}
+      \item \m{\Gamma(n) = (n-1)!}
+      \item 互余宗量定理~\m{\Gamma(z)\Gamma(1-z) = \frac \pi{\sin \pi z}}
+      \item \m{\Gamma(z)\neq 0}
+      \item 倍乘公式~\m{\Gamma(2z) = 2^{2z-1}\pi^{-\frac12}\Gamma(z)\Gamma(z+\frac 12)}
+      \item 斯特林公式（\m{|z|\to\infty,\quad |\arg z|<\pi}）
+        \begin{eqnarray*}
+        % \nonumber to remove numbering (before each equation)
+          \Gamma(z) &\sim& z^{z-\frac 12}\e^{-z}\sqrt{2\pi}\left(1+\frac 1{12z}+\frac 1{288z^2}-\frac {139}{51840z^3}-\frac {571}{2488320z^4}+\cdots\right) \\
+          \Gamma(z+1) &\sim& \sqrt{2\pi z}\left(\frac z\e\right)^z \\
+          \ln \Gamma(z) &\sim& \left(z-\frac 12\right)\ln z - z +\frac 12\ln (2\pi) +\frac 1{12z} -\frac 1{360z^3}+\frac 1{1260z^5}-\cdots\\
+          \ln n! &\sim& n\ln n - n
+        \end{eqnarray*}
+      \item 外氏无穷乘积~\m{\frac 1{\Gamma(z)} = ze^{\gamma z}\prod_{n=1}^{\infty}\left[\left(1+\frac zn\right)\e^{-\frac zn}\right]}
+      \item \m{\psif(z) = \frac {\dif\ln\Gamma(z)}{\dif z} = \frac {\Gamma'(z)}{\Gamma(z)}}
+      \item \m{z = 0,-1,-2,\cdots}都是\m{\psif(z)}的一阶极点, 留数均为\m{-1}; 除了这些点以外, \m{\psif(z)}在全平面解析.
+      \item \m{\psif(z+n) = \psif(z) + \sum_{k=0}^{n-1}\frac z{z+k}}
+      \item \m{\psif(1-z) = \psif(z) + \pi\cot\pi z}
+      \item \m{\psif(z) - \psif(-z) = -\frac 1z -\pi\cot\pi z}
+      \item \m{\psif(2z) = \frac 12\psif(z) + \frac 12\psif(z+\frac 12) + \ln 2}
+      \item \m{\psif(z) \sim \ln z - \frac 1{2z} - \frac 1{12z^2} + \frac 1{120z^4} - \frac 1{252z^6} + \cdots\quad(z\to\infty,|\arg z|<\pi)}
+      \item \m{\lim_{n\to\infty}[\psif(z+n)-\ln n] = 0}
+      \item \m{\psif(z)}的特殊值
+        \begin{align*}
+          \psif(1) &=-\gamma, &\psif'(1) &= \frac {\pi^2}6,\\
+          \psif\left(\frac 12\right) &= -\gamma - 2\ln 2, &\psif'\left(\frac 12\right) &= \frac {\pi^2}2,\\
+          \psif\left(-\frac 12\right) &= -\gamma - 2\ln 2 + 2 , &\psif'\left(-\frac 12\right) &= \frac {\pi^2}2 +4,\\
+          \psif\left(\frac 14\right) &= -\gamma - \frac \pi 2 - 3\ln 2, &\psif\left(\frac 34\right) &= -\gamma + \frac \pi 2 - 3\ln 2,\\
+          \psif\left(\frac 13\right) &= -\gamma - \frac \pi {2\sqrt{3}} - \frac 32\ln 3, &\psif\left(\frac 34\right) &= -\gamma + \frac \pi {2\sqrt{3}} - \frac 32\ln 3,
+        \end{align*}
+      \item 欧拉常数~\m{\gamma = -\psif(1) = 0.57721566\cdots}
+      \newcommand\Beta{\ensuremath{\mathrm{B}}}
+      \item \m{\Beta(p,q) = \int_0^1 t^{p-1}(1-t)^{q-1}\diff t = 2\int_0^{\frac \pi 2}\sin^{2p-1}\theta\cos^{2q-1}\theta\diff \theta}\\
+        要求\m{(\re p>0,~\re q>0)}
+      \item \m{\Beta (p,q) = \frac {\Gamma(p)\Gamma(q)}{\Gamma(p+q)}\quad(\mbox{延拓到全平面})}
+    \end{enumerate}
+\end{document}

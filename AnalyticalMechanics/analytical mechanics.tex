@@ -1,0 +1,335 @@
+\documentclass[11pt,a4paper]{article}%titlepage表示标题单独页
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用），ctexcap套用中文格式（等同于\documentclass{ctexart}）
+
+\usepackage[top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}%页边距设置：数据来自MS word的默认值
+%\usepackage[CJKbookmarks]{hyperref}%给pdf文档添加互动式链接和书签
+
+\usepackage{amsmath,amssymb,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[0]%允许多行公式间换页，用//*表示不允许换页
+\usepackage{bm}%加粗（用于vector）
+%\usepackage{textcomp}%符号包，不能用于数学模式，建议不要和SIunits混用
+\usepackage[squaren]{SIunits}%科学单位包，可以用于数学模式（为了统一不要和textcomp混用），squaren选项消除和amssymb的冲突
+\usepackage{graphicx}%插图宏包
+\usepackage{picinpar}%图文绕排
+\usepackage{array}%表格宏包
+\usepackage{longtable}%长表格宏包
+%\usepackage{multirow}%多行合并的表格宏包
+%\usepackage{booktabs}%表格线宏包
+
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}%电路图宏包
+%\usepackage[normalem]{ulem}%下划线，删除线等宏包，参数表示不修改\emph{}格式
+%\usepackage{mychemistry}%化学宏包，包含mhchem和chemfig
+%\usepackage[symbol]{footmisc}%脚注拓展，选项表示用符号做脚注记号
+\usepackage{extarrows}
+
+\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\diff}{\,\mathrm{d}}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}%定义数学模式中常用的正体字符
+\renewcommand{\[}{~$\displaystyle}
+\renewcommand{\]}{$~}%$只是用来少打空格……
+\newcommand{\pard}[2]{\ensuremath{\frac{\partial #1}{\partial #2}}}
+\newcommand{\pardsq}[2]{\ensuremath{\frac{\partial^2 #1}{\partial #2^2}}}
+\newcommand{\dt}{\ensuremath{\frac \dif {\dif t}}}
+\newcommand{\dtb}[1]{\ensuremath{\frac \dif {\dif t}\left(#1\right)}}
+
+\begin{document}
+\title{分析力学整理}
+\author{整理人:\quad 物理21\quad 吕铭}
+\maketitle
+约定: \\
+\[s\]通常表示系统自由度 \\
+\[\bm q\]在多自由度下表示矢量\[(q_1,q_1,\dots)^{\mathrm T}\], \[\frac{\partial }{\partial \bm q}\]在多自由度情况下表示梯度,\[\bm p\]同理 \\
+定义\[\bm q \cdot \bm p = \sum_i q_ip_i\], \[\frac{\partial u}{\partial \bm q}\cdot\frac{\partial v}{\partial \bm q} \equiv \sum_i\frac{\partial u}{\partial q_i}\frac{\partial v}{\partial q_i}\]
+\section{关于动力学方程的基本原理}
+\subsection{力学原理}
+等价的力学第一性原理: 
+   \begin{enumerate}
+      \item 牛顿定律
+      \item 达朗伯原理(d'Alembert's principle): 理想约束下\[\sum_i(\vec{F}_i - m_i\ddot{\vec{r}}_i)\cdot\delta\vec{r}_i = 0\]
+      \item 拉格朗日方程(Lagrange equation):
+      $$\dtb{\pard{L}{\dot{\bm q}}} - \pard{L}{\bm q} =0$$
+      对于理想约束, 完整系, 在经典条件下\[L = T - V\], \\
+      电磁相互作用下\[L = \frac 12 m\vec{v}^2 -q\varphi + q\vec{A}\cdot\vec{v}\], \\
+      狭义相对论下, 拉氏量\[L = -m_0c^2\sqrt{1-\beta^2} - V\]
+	  \item 哈密顿 (正则) 方程 (Hamilton's equations): 
+	  \begin{align*}
+	  \left\{
+	  \begin{aligned}
+	  \dot{q}_i &= \frac{\partial H}{\partial p_i} = [q_i,H]\\
+	   \dot{p}_i &= -\frac{\partial H}{\partial q_i} = [p_i,H]
+	  \end{aligned}\right.
+	  \end{align*}
+	  哈密顿量(Hamiltonian)\[H(p,q,t) = \dot{\bm q}\cdot \bm p_k - L\]是拉格朗日量的勒让德变换 (Legendre transform)\\
+	  	\[\frac {\dif H}{\dif t} = \frac{\partial H}{\partial t} = -\pard{L}{t}\];不含时的哈密顿量\[H = E = T+V\]
+	  \item 哈密顿(最小作用量)原理(Hamilton's priciple): 作用量(action)\[S\]满足\\
+	  	$$\delta S = \delta \int_{t_1}^{t_2} L\diff t = 0$$
+	  	对于约束\[G_j(q_i,t) = 0\], 令\[S = \int L+\lambda_jG_j\diff t\]其拉氏乘子\[\lambda_j\]以及与\[q_i\]相关的约束力\[R_i\]关系如下: 
+	  	$$R_i = \sum_j \lambda_j\pard{G_j}{q_i}$$
+	  \item 哈密顿-雅克比方程 (Hamilton-Jacoby equation, HJE)\\
+	  第一类
+	  \begin{align*}
+	  &H\left(q,\frac{\partial S(q,t)}{\partial q},t\right) + \frac{\partial S(q,t)}{\partial t} = 0 \\
+	  &\left\{\begin{aligned}
+	  p =\frac{\partial S}{\partial q}\\
+	  \xi = \frac{\partial S}{\partial \eta}
+	  \end{aligned}\right.
+	  \end{align*} 
+	  其中\[\eta\]是积分常量, 和\[\xi\]共同构成一组正则变换下的守恒正则变量, 取值决定于初始条件. 大括号中\[2s\]个方程中科院得到\[p,q\]共\[2s\]个表达式\\
+	  第二类 (要求哈密顿量不含时)
+	  \begin{align*}
+	  &H\left(q,\frac{\partial W(q)}{\partial q},t\right) = E
+	  \end{align*}  
+   \end{enumerate}
+   
+   %我个人倾向于认为拉格朗日量, 哈密顿量或者作用量是一个函数而不是一个物理量, 函数表达式的形式表示了这个系统的性质, 函数值意义并不大. 以上几条原理相互之间是等价的, 我倾向于不认为我们用牛顿定律推导出了拉格朗日量或者哈密顿量的表达式, 而是找到了拉格朗日体系或者哈密顿体系中相关量的表达式. 就如牛顿力学实际上是通过\[F = \dot p\]定义了力一样, 而后研究物理规律就是在不同的体系下找力的表达式, 研究物理规律在拉格朗日体系下就是找在这个体系下拉格朗日量的表达式.
+   
+\subsection{相关概念}
+  \begin{enumerate}
+	  \item 约束方程: \[f_i(\vec{r}_i,\dot{\vec r}_i,t) = 0\]: \\
+	  	完整约束~(holonomic constraints): \[\pard{f}{\dot{\vec r}_i} = 0\], 完整系; \\
+	  	稳定约束~(sleronomic constraints): \[\pard{f}{t} = 0\]
+	  \item 理想约束: \[\sum_i \vec{R}_i\cdot \delta\vec{r}_i = 0\]
+	  \item 广义力(generalized force): \[Q_j = \sum_i \vec{F}_i\cdot\pard{\vec{r}_i}{q_j}\]
+	  \item 正则共轭动量(canonically conjugate momentum): \[p_i = \pard{L}{\dot{q}_i}\]
+	  \item \[p,q\]坐标的\[2s\]维空间称为相空间, 粒子在相空间中的轨迹称为相轨迹. 对于保守系统 (哈密顿量不含时) 相轨迹不相交, 不经过奇点和平衡点. 对于含时的体系, 可以将相空间推广到\[p,q,t\]的\[2s+1\]维空间中. 
+  \end{enumerate}
+  \subsubsection{泊松括号 (Poisson bracket)}
+  定义
+  $$[f(q,p,t),g(q,p,t)] = \frac{\partial f}{\partial \bm q}\cdot\frac{\partial g}{\partial \bm p} - \frac{\partial f}{\partial \bm p}\cdot\frac{\partial g}{\partial \bm q}$$
+  可以正面, 使用不同正则变量得到的结果是一样的. 
+  
+  性质
+  \begin{align*}
+   &[u,u] = 0\\
+   &[u,v] = -[v,u] \\
+   &[\alpha u+\beta v,w] = \alpha[u,w] + \beta[v,w]\\
+   &[uv,w] =[u,w]v + u[v,w] \\
+   &[u,[v,w]] + [v,[w,u]] + [w,[u,v]] = 0
+  \end{align*}
+  表现在正则方程中, 
+  \begin{align*}
+   &\frac{\dif f}{\dif t} = [f,H] + \frac{\partial f}{\partial t} \\
+   &[q_i,f] = \frac{\partial f}{\partial p_i}\\
+   &[p_i,f] = -\frac{\partial f}{\partial q_i} \\
+   &\frac{\dif u}{\dif t} = \frac{\dif v}{\dif t} = 0 \Rightarrow \frac{\dif}{\dif t}[u,v] = 0
+  \end{align*}
+  \subsubsection{正则变换 (canonical transformation)}
+  \begin{enumerate}
+   \item 定义: 变换
+    \begin{align*}
+    \left\{\begin{aligned}
+    Q = Q(q,p,t) \\
+    P = P(q,p,y)\end{aligned}\right.
+    \end{align*}
+    在变换后仍然满足正则方程的非异变换 (要求自由度未变). 通常来说等价于 $$\lambda(\dot{\bm q} \cdot \bm p - H) = \dot{\bm Q}\cdot \bm P - H^* + \frac{\dif F}{\dif t}$$但\[\lambda\]表示标度变换, 以下讨论\[\lambda = 1\]的情况 (单价正则变换)
+    \item 正则变换的几个等价的充要条件
+    \begin{enumerate}
+     \item 存在生成函数$$\exists F. \quad\dot{\bm q} \cdot \bm p  - H = \dot{\bm Q}\cdot \bm P - H^* + \frac{\dif F}{\dif t}$$
+     \item 辛条件 \\
+     定义\[2s\]维矢量\[\bm\xi = (q_1,q_2,\dots,q_s,p_1,p_2,\dots,p_s)^{\mathrm T}\]和变换后的\[\bm \Xi = (\bm Q,\bm P)^{\mathrm T}\], 正则变换满足条件: 
+     $$
+     J^{\mathrm T}\Omega J = \Omega
+     $$
+     其中雅可比矩阵\[J_{ij} = \frac{\partial \Xi_i}{\partial \xi_j}\], 辛连结矩阵\[\Omega = \begin{pmatrix}0&I_{s\times s}\\-I_{s\times s} &0 \end{pmatrix}\]
+     \item 基本泊松不变量
+      \begin{align*}
+       [Q_j, Q_k] = [P_j, P_k] = 0\\
+       [Q_j, P_k] = -[P_j, Q_k] = \delta_{jk}
+      \end{align*}
+     \item 泊松括号的相等\[\forall f,g. [f,g]_{P,Q} = [f,g]_{p,q}\]
+    \end{enumerate}
+    \item 常用的四类生成函数 (原则上\[F\]只要是关于\[P,Q\]和\[p,q\]中各\[s\]个坐标构成的函数即可)
+  \newcommand{\case}[1]{\left\{\begin{aligned}#1\end{aligned}\right.}
+    \begin{align*}
+    &\case{F &=F_1(q,Q,t)\\P &= - \frac{\partial F_1}{\partial Q} \\ p &= \frac{\partial F_1}{\partial q}\\ H^* &= H + \frac{\partial F_1}{\partial t}}&
+    &\case{F &=F_2(q,P,t) -\bm Q \cdot\bm P \\Q &= \frac{\partial F_2}{\partial P} \\ p &= \frac{\partial F_2}{\partial q}\\ H^* &= H + \frac{\partial F_2}{\partial t}}\\
+    &\case{F &=F_3(p,Q,t) + \bm q \cdot \bm p  \\ P &= -\frac{\partial F_3}{\partial Q}\\q &= - \frac{\partial F_3}{\partial p}\\ H^* &= H + \frac{\partial F_3}{\partial t}}&
+    &\case{F &=F_4(p,P,t)+ \bm q \cdot \bm p  -\bm Q \cdot\bm P \\Q &=  \frac{\partial F_4}{\partial P} \\ q &= -\frac{\partial F_4}{\partial p}\\ H^* &= H + \frac{\partial F_4}{\partial t}}
+    \end{align*}
+
+  \end{enumerate}
+  \subsubsection{通用积分不变量}
+  一类: Poincar\'e -Cartan 积分不变量: 
+  $$\frac{\dif }{\dif t}\oint_{C(t)}p\diff q - H\diff t = 0$$
+  
+  取\[C(t)\]在一个时间截面上, 有Poincar\'e 线性相对积分不变量: 
+  $$\frac{\dif }{\dif t}\oint_{C(t)}p\diff q = 0$$
+  
+  另一类在正则变换下不变的积分
+  $$\int_{\Sigma}\dif^s q\dif^s p = \int_{\Sigma^*} \dif^s Q\dif^s P$$
+  
+  \subsubsection{作用变量-角变量 (Action-Angle variables)}
+  是一组适应于周期运动的正则坐标, 作用变量\[I\]和角变量\[\Psi\], 使得\[I\]是常数而\[\Phi\]线性增长且一个周期增长\[2\pi\]. 一维情形是
+  \begin{align*}
+   I &= \frac{1}{2\pi}\oint_{C}p\diff q = \frac{2}{2\pi}\iint\dif q\dif q \\
+   \dot \Psi &= \omega = \frac{\partial H}{\partial I}
+  \end{align*}
+  其中\[C\]是周期运动的闭合相轨迹. 这个结论可以用不含时的第一类生成函数得到.
+  
+  \subsubsection{可积系统, 不变环, 绕数}
+  对于\[s\]个自由度的系统, 如果有\[s\]个相容的守恒量 (运动常数), 则称之为可积系统. 哈密顿量不显含时间的一维系统总是可积系统.
+
+\subsection{衍生定理}
+\begin{enumerate}
+  \item 诺特定理 (Noether's theorem):对称性对应守恒量, 对于\[\left. Q_i(s,t)\right|_{s=0} = q_i(t)\]
+  	$$\frac{\dif L}{\dif s} = 0 \Leftrightarrow \sum_i p_i\pard{Q_i}{s} = \mbox{const.}$$
+  \item 刘维尔定理 (Liouville's theorem): 哈密顿系统中, 正则变量相空间中的相流体不可压缩. 
+  \item 彭加莱回复定理 (Poincaré recurrence theorem): 有限相空间内的相流体, 在足够长的有限时间内, 能够回到与初始相空间位置差异任意小的位置. 
+  \item 维里定理~(Virial theorem) \[U(\alpha \vec{r}_i) = \alpha^k U(\vec{r}_i) \Rightarrow k\bar{U} = 2\bar{T}\]
+\end{enumerate}
+
+
+\section{一些数学方法}
+	\begin{enumerate}
+	  \item 关于多元函数微分
+	  \begin{align*}
+	    \dif f &= \left(\frac{\partial f}{\partial x}\right)_{xy}\dif x + \left(\frac{\partial f}{\partial y}\right)_{xy}\dif y \\
+	    &= \left(\frac{\partial f}{\partial x}\right)_{xz}\dif x + \left(\frac{\partial f}{\partial z}\right)_{xz}\dif z
+	  \end{align*}
+	  \item 罗斯函数 (Routhian): 当\[\pard{L}{q_i} = 0\]时, 罗斯函数 \[R = L - p_i\dot{q}_i\]是个关于其他广义坐标的拉格朗日量
+	  \item 勒让德变换 (Legendre transform): \[f(x,y)\rightarrow g(u,x) = ux-f\]其中\[u = \frac{\partial f}{\partial x}\], 从而有
+	  \begin{align*}
+	   \frac{\partial g}{\partial u} &= x \\
+	   \frac{\partial g}{\partial y} &= -\frac{\partial f}{\partial y}
+	  \end{align*}
+	  \item 变分法
+	  \item 微扰方法: \\
+	  对于非线性方程如\[\ddot q + \omega_0 q + \epsilon q^3 = 0\], 令
+	  \begin{align*}
+	   a &= \sum_{k=0}^{\infty}\epsilon^k q_k \\
+	   \omega &= \sum_{k=0}^{\infty} \epsilon^k \omega_k \\
+	   \tau &= \omega t
+	  \end{align*}
+	  关于\[\epsilon\]逐项求解, 并调整\[\omega_k\]使得发散项系数为0即可. \\
+	  类似的, 对于受迫振动\[\ddot q + \omega_0 q + \epsilon q^3 = F_0 \cos \omega t\], 令
+	  \begin{align*}
+	   a &= \sum_{k=0}^{\infty}\mu^k q_k \\
+	   \delta &= \sum_{k=0}^{\infty}\mu^k\delta_k \\
+	   \tau &= \omega t + \delta
+	  \end{align*}
+	  \item 格林函数方法什么的……（数理方程讲的要深入多了。。）
+	\end{enumerate}
+
+\section{几种模型}
+	\subsection{有心力}
+	\begin{enumerate}
+	  \item 开普勒运动(Kapler problem):\\
+	  	$$\mu\ddot{r} = \frac {l^2}{\mu r^3} - \frac{k}{r^2} \xLongrightarrow{u = \frac 1r} \frac {\dif^2u}{\dif\phi^2} + u = \frac{\mu k}{l^2}$$
+	  	相关量:
+	  	\begin{align*}
+	  	  r &= \frac p{1+\epsilon\cos\theta} & p &= \frac{l^2}{\mu k}\\
+	  	  \epsilon &= \sqrt{1+\frac{2El^2}{\mu k^2}} & a &= \frac p{1-\epsilon^2}\\
+	  	  E &= \frac k{2p}(\epsilon^2-1) = -\frac k{2a} & \tau &= 2\pi\sqrt{\frac \mu k}a^{\frac 32}
+	  	\end{align*}
+	  	开普勒方程(Kepler's Equation)
+	  	\begin{eqnarray*}
+	  	  T(\mathcal{E}) &=& \sqrt{\frac{\mu a^3}k}(\mathcal{E} - \epsilon\sin\mathcal{E})\\
+	  	  r &=& a(1 - \epsilon\cos\mathcal{E})\\
+	  	  x &=& a(\cos\mathcal{E} - \epsilon),\quad y = a\sqrt{1 - \epsilon^2}\sin\mathcal{E}
+	  	\end{eqnarray*}
+	  \item 微分散射截面(轴对称入射)\[\sigma(\phi) = \frac \rho{\sin \phi}\left|\frac{\dif\rho}{\dif\phi}\right|\]\\
+	  	总截面\[\sigma_{\mbox{tot}} = \int \sigma(\phi)\diff\Omega\]
+	  \item 卢瑟福散射截面公式\[\sigma(\phi) = \left(\frac k{2mv_{\infty}}\right)^2\frac 1{\sin^4\frac\phi 2}\]
+	\end{enumerate}
+	
+	\subsection{微振动}
+	\begin{enumerate}
+	\item 受迫振动\[\ddot q + \frac 1Q \dot q + \omega_0 q = F(t)\], 对于\[F(t) = F_0\cos \Omega t\], 
+	  \begin{align*}
+	   q(t) &= \frac{F_0}{\sqrt{\left(\Omega^2 - \omega_0^2+\frac 1{2Q^2}\right)^2 + \frac{\omega_0^2}{Q^2}}} \cos(\Omega t + \varphi) \\
+	   \tan \varphi &= \frac{\Omega / Q}{\omega_0^2 - \Omega^2}
+	  \end{align*}
+	  半高宽 (Full width at half maximum, FWHM) \[\frac{\Delta \omega}{\omega} = \frac 1Q\] (\[Q\gg 1\])
+	\item 耦合摆
+	\item 多自由度的简正坐标, 简正模
+	\end{enumerate}
+	
+	在平衡点, 势能\[\frac{\partial V}{\partial q} = 0\], 因而将势能泰勒展开到二阶, \[V = V_0 + \frac{1}{2}\sum_{ij}\frac{\partial^2 V}{\partial q_i\partial q_j}q_iq_j\], 矩阵\[v_{ij} = \frac{\partial^2 V}{\partial q_i\partial q_j}\]是实对称的矩阵, 对于稳定平衡是正定的. 
+	
+	动能\[T = \sum_i \frac 12 m_i r_i^2 = \sum_i \frac 12 m_i \left(\sum_k\frac{\partial r_i}{\partial q_k}\dot q_k\right)^2 = \frac{1}{2}\sum_{ij}t_{ij}\dot q_i\dot q_j\], \[t_{ij}\]是正定的实对称矩阵. 
+	
+	代入入相关方程可以得到\[\forall i. \sum_j \left(t_{ij}\ddot q_j + v_{ij}q_j\right) = 0\]
+	
+	解相应的本征值问题\[\det|v-\omega^2t|=0\]得到的本征矢量几位简正坐标, 本征值\[\omega^2\]可以得到简正频率. 
+	
+	出现简并会导致对于同一个简正频率有不同的简正坐标写法. 
+
+	\subsection{刚体}
+	\begin{enumerate}
+	 \item 转动惯量\[I = \begin{pmatrix}
+	 I_{xx}&I_{xy}&I_{xz}\\I_{yx}&I_{yy}&I_{yz}\\I_{zx}&I_{zy}&I_{zz}
+	 \end{pmatrix}\] 其中
+	 \begin{align*}
+	  I_{xx} &= \int y^2+z^2 \diff m \\
+	  I_{xy} &= -\int xy\diff m
+	 \end{align*}
+	 是正定的实对称矩阵, 可以对角化. 本征矢量是惯量主轴, 本征值是主轴的转动惯量. 
+	 \item 转动动能\[T = \frac 12 \bm\omega^{\mathrm T}I\bm\omega\], 角动量\[\bm J = I\bm \omega\]
+	 \item 随体坐标系: 在惯量主轴重合的直角坐标下描述转动最为方便, 但此坐标系的位置和刚体角度有关. 注意: 随体坐标系不是随体参考系, 这仍然是相对质心静止的参考系, 是针对一个特定的角度临时建立的惯性参考系.
+	 \item 欧拉角: 进动角\[\phi\], 章动角\[\theta\]和自转角\[\theta\], 从\[K'\]系 (实验室系)\[x'y'z'\]到\[K\]系 (随体坐标系)\[xyz\]的变换为:
+	 $$
+	  K'\stackrel{U_1}\longrightarrow K_1 \stackrel{U_2}\longrightarrow K_2 \stackrel{U_3}\longrightarrow K
+	 $$
+	 其中:
+	 \begin{align*}
+	  U_1 &= \begin{pmatrix}\cos \phi & \sin \phi &0\\-\sin \phi &\cos \phi & 0\\ 0 &0&1\end{pmatrix} \\
+	  U_2 &= \begin{pmatrix}1&0&0 \\0 & \cos \theta & \sin \theta \\0 & -\sin \theta &\cos \theta\end{pmatrix} \\
+	  U_3 &= \begin{pmatrix}\cos \psi & \sin \psi &0\\-\sin \psi &\cos \psi & 0\\ 0 &0&1\end{pmatrix}
+	 \end{align*}
+	 \item 欧拉运动学方程
+	 \renewcommand{\T}{^{\mathrm T}}
+	 \begin{align*}
+	  \bm\omega &= U_3U_2U_1 (0,0,\dot\phi)\T + U_3U_2(\dot\theta,0,0)\T + U_3(0,0,\dot\psi)\T \\
+	   &= \begin{pmatrix}\dot \theta\cos\psi + \dot\phi\sin\psi\sin\theta \\ -\dot\theta\sin\psi + \dot\phi\cos\psi\sin\theta \\ \dot\phi\cos\theta + \dot\psi\end{pmatrix} \\
+	   \bm\omega' &= U_1\T (0,0,\dot\phi)\T + U_1\T U_2\T(\dot\theta,0,0)\T + U_1\T U_2\T U_3\T(0,0,\dot\psi)\T \\
+	   &= \begin{pmatrix}\dot \theta\cos\phi + \dot\phi\sin\phi\sin\theta \\ \dot\theta\sin\phi - \dot\phi\cos\phi\sin\theta \\ \dot\phi + \dot\psi\cos\theta\end{pmatrix}
+	 \end{align*}
+	 \item 欧拉动力学方程: 在随体坐标系下, 
+	 \begin{align*}
+	 &\bm M = \dot {\bm J} = \dot J \hat{\bm J} + \bm\omega\times \bm J \\
+	 \Leftrightarrow&\left\{\begin{aligned}
+	   I_{11} \dot\omega_1 - (I_{22} - I_{33})\omega_2\omega_3 = M_1 \\
+	   I_{22} \dot \omega _2 - (I_{33} - I_{11})\omega_3\omega_1 =M_2 \\
+	   I_{33} \dot \omega_3 - (I_{11}-I_{22})\omega_1\omega_2 = M_3	 
+	   \end{aligned}\right.
+	 \end{align*}
+	 其中\[1,2,3\]分别代表三个惯量主轴. 
+	 \item 刚体的自由转动 (欧拉-潘索情况, Poinsot's construction) \\
+	 也即\[\bm M = 0\]
+	 \begin{enumerate}
+	  \item 守恒量\[T = \frac 12 \sum_i I_{ii}\omega_i^2 = \mbox{const.}\], \[\bm J = \sum_i I_{ii}\omega_i \hat{\bm i} = \mbox{const.}\]
+	  \item 惯性椭球
+	  $$F(\bm \omega) = \frac{\omega_1^2}{2T/I_{11}} + \frac{\omega_2^2}{2T/I_{22}} + \frac{\omega_3^2}{2T/I_{33}} = 1$$
+	  椭球上的点表示角速度, 满足:\\
+	  点的法向\[\bm n = \nabla_{\bm \omega}F = \frac{\bm J}{T} = \mbox{const.}\], \[\bm\omega\cdot\frac{\bm n}{|\bm n|} = \frac{2T}{|\bm J|} =\mbox{const.}\]\\
+	  相应的几何阐释为自由刚体的转动等效于中心到一固定平面距离\[\frac{2T}{|\bm J|}\]的惯量椭球的滚动.
+	  \item 本体瞬心迹, 切点在惯量椭球上的轨迹, 也即随体坐标系下的\[\bm \omega\]轨迹. 
+	  \item 空间瞬心迹, 切点在平面上的轨迹, 也即实验室系下的\[\bm \omega\]轨迹. 
+	  \item 对称刚体的两个瞬心迹是圆.
+	  \item 这个几何阐释并未给出运动方程, 只是指明了运动轨迹, 或者说放弃了时间信息. 
+	 \end{enumerate}
+	 \item 拉格朗日陀螺 (有一个固定点的对称陀螺)\\
+	 对称陀螺\[I_{11} = I_{22} = I_1\]受到重力力矩, \[\bm M = mg \bm r \times \hat{\bm z}\]
+	 \begin{enumerate}
+	  \item 拉格朗日量\[L = T-V =\frac{1}{2}I_1(\dot \theta^2 + \dot\phi^2\sin^2\theta) + \frac 12I_3(\dot\psi+\dot\phi\cos\theta)^2 - mgl\cos\theta\]
+	  \item 守恒量\[p_\psi =\frac{\partial L}{\partial \dot\psi} =  I_3\omega_3 = J_3 = \mbox{const.}\], \[p_\phi =\frac{\partial L}{\partial \dot\phi}= \mbox{const.}\], \\
+	  \[E = \frac{1}{2}I_1(\dot \theta^2 + \dot\phi^2\sin^2\theta) + \frac 12I_3(\dot\psi+\dot\phi\cos\theta)^2 + mgl\cos\theta = \mbox{const.}\]
+	  \item 运动方程
+	   \begin{align*}
+	    \dot\phi &= \frac{p_\phi - p_\psi\cos\theta}{I_1\sin^2\theta} \\
+	    \dot\psi &= \frac{p_\psi}{I_3} - \frac{p_\phi - p_\psi\cos\theta}{I_1\sin^2\theta}\cos\theta \\
+	    E &= \frac 12 I_1\dot\theta^2 + \frac 12 I_1 \left( \frac{p_\phi - p_\psi\cos\theta}{I_1\sin\theta} \right)^2 + mgl\cos\theta + \frac{p_\psi^2}{2I_3}
+	   \end{align*}
+	   \[u = \cos\theta\], \[\alpha = \frac{2E}{I_1} - \frac{p_\psi^2}{I_1I_3}\], \[\beta = \frac{2mgl}{I_1}\], \[a = \frac{p_\psi}{I_1}\], \[b = \frac{p_\phi}{I_1}\]有
+	   \begin{align*}
+	   \dot u^2 &= (1-u^2)(\alpha - \beta u) - (b-au)^2 \equiv f(u) \\
+	   \dot\phi &= \frac{b - au}{1-u^2}
+	   \end{align*}
+	 \item 运动情况分类: \\
+	 \[u\in [-1,1]\],  同时,\[\lim_{u\to\pm\infty}f(u) = \pm\infty\], \[f(\pm 1) = -(b\pm a)^2\le 0\], 而在运动过程中有\[f(u) = u^2 \ge 0\],因此允许的运动范围和运动情况定性地决定于\[f(u)\]在\[[1,-1]\]区间零点的性质 (决定章动) 和\[f(u)>0\]处的\[b-au\]符号 (决定进动). 
+	 \end{enumerate}
+	\end{enumerate}
+
+\end{document}

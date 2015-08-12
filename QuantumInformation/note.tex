@@ -1,0 +1,805 @@
+%!TEX program = xelatex
+%!TEX encoding = UTF-8 Unicode  
+\documentclass[11pt,a4paper]{article}%titlepage表示标题单独页
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+%\renewcommand{\thefigure}{\chinese{figure}}%将图片计数改为汉字数字
+%\renewcommand{\thetable}{\chinese{table}}%将表格计数改为汉字数字
+\usepackage[top=0.75in,bottom=0.75in,left=1in,right=1in]{geometry}%页边距设置：数据来自MS word的默认值
+%\usepackage[CJKbookmarks]{hyperref}%给pdf文档添加互动式链接和书签
+
+\usepackage{amsmath,amssymb,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[0]%允许多行公式间换页，用//*表示不允许换页
+\numberwithin{equation}{section}
+\usepackage{bm}%加粗（用于vector）
+%\usepackage{textcomp}%符号包，不能用于数学模式，建议不要和SIunits混用
+\usepackage[squaren]{SIunits}%科学单位包，可以用于数学模式（为了统一不要和textcomp混用），squaren选项消除和amssymb的冲突
+\usepackage{graphicx}%插图宏包
+%\usepackage{picinpar}%图文绕排
+\usepackage{array}%表格宏包
+%\usepackage{longtable}%长表格宏包
+\usepackage{multirow}%多行合并的表格宏包
+%\usepackage{booktabs}%表格线宏包
+\usepackage{braket}
+\usepackage{mathrsfs}%数学字体
+
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}%电路图宏包
+%\usepackage[normalem]{ulem}%下划线，删除线等宏包，参数表示不修改\emph{}格式
+%\usepackage{mychemistry}%化学宏包，包含mhchem和chemfig
+%\usepackage[symbol]{footmisc}%脚注拓展，选项表示用符号做脚注记号
+
+\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式，这里是加粗
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\diff}{\,\mathrm{d}}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}%定义数学模式中常用的正体字符
+\newcommand\kk{\rangle\!\rangle}
+\newcommand\bb{\langle\!\langle}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\St}{{\mathsf{St}}}
+\newcommand{\rank}{{\mathsf{rank}}}
+\newcommand{\Span}{{\mathsf{Span}}}
+
+\begin{document}
+\title{Note for Quantum Information}
+\author{吕铭 Lyu Ming}
+\maketitle
+\section{Basic definitions and tools} % (fold)
+\label{sec:basic_definitions_and_tools}
+\begin{enumerate}
+    \item Mutually unbiased bases:
+    \begin{equation}
+     \{\psi_m\}_{m=0}^d,\{\phi_n\}_{n=0}^d,\braket{\psi_m|\phi_n} = 1/d
+    \end{equation}
+    \item The Pavia notation (double ket notation):
+    \begin{align}
+        |\Psi\kk &= \sum_{m,n} \braket{m|\Psi|n}\ket{m}\ket{n} \\
+        \bb\Phi|\Psi\kk &=\Tr [\Phi^\dagger\Psi]\\
+        (A\otimes B)|\Psi\kk &= |A\Psi B^T\kk \\
+        \big|\ket \alpha \bra \beta\big\rangle\!\big\rangle &= \ket\alpha\ket{\beta^*}\\
+        \bra\alpha\bra\beta\Psi\kk &= \braket{\alpha|\Psi|\beta^*}
+    \end{align}
+    Unlike the Dirac notation, he notation is basis dependent.
+    \item CHSH inequality (special case of Bell inequality)
+    \begin{align}
+        \omega_C &= \sum_\lambda p(\lambda)\left[\frac 14 \sum_{a,b\in\{0,1\}}\sum_{x,y\in\{0,1\}} (-)^{x+y+ab}p_A(x|a,\lambda)p_B(y|b,\lambda)\right] \\
+        &\le \frac 14\sum_{a,b}(-)^{f_A(a)+f_B(b)+ab} \le \frac 12 \\
+        \omega_Q &= \frac 14 \sum_{a,b}\sum_{x,y}(-)^{x+y+ab}\left|\langle x,\theta_a|\langle y,\tau_b|\Psi^+\rangle \right|^2 \\
+        &= \frac 14\sum_{a,b}(-)^{ab}\cos (\theta_a - \tau_b)\le \frac 1{\sqrt 2}
+    \end{align}
+    \item Doing partial trace to get marginal states
+    \item Bell states for $d$ dimensions: 
+    \begin{equation}
+        \ket{\Phi_{p,q}} := (S^pM^q\otimes I)\ket\Phi
+    \end{equation}
+    where $S = \sum \ket{(n+1)\mod d}\bra n$, and $M = \sum \exp (2\pi\mi n/d)\ket n\bra n$
+    \item Trace-norm: Let $\Psi: \mathcal H_B \to \mathcal H_A$ and its sigular balue decomposition (SVD): $\Psi = \sum_n\lambda_n\ket{\alpha_n}\bra{\beta_n}$:
+    \begin{equation}
+        \Vert \Psi \Vert_1 := \sum_n|\lambda_n|
+    \end{equation}
+    Alternative characterization of the trace norm:
+    \begin{equation}
+        \Vert\Psi\Vert_1 = \max_{V:\mathcal H_A\to\mathcal H_B , V^\dagger V = I_A}\Tr[\Psi V]
+    \end{equation}
+    For pure states:
+    \begin{equation}
+        \Vert \pi_0\ket{\psi_0}\bra{\psi_0} - \pi_1\ket{\psi_1}\bra{\psi_1}\Vert_1 = \sqrt{1-4\pi_0\pi_1|\braket{\psi_0|\psi_1}|^2}
+    \end{equation}
+    $p$-norm:
+    \begin{equation}
+        \Vert \Psi \Vert_p := \left(\sum_n |\lambda_n|^p\right)^{1/p}
+    \end{equation}
+    \begin{itemize}
+        \item $\forall c\in\mathbb C.\Vert\Psi\Vert = |c|\Vert\Psi\Vert$
+        \item $\Vert\Psi\Vert = 0\Leftrightarrow \Psi = 0$
+        \item $\Vert\Psi + \Psi'\Vert\le\Vert\Psi\Vert + \Vert\Psi'\Vert$
+        \item $\Vert M\otimes N\Vert = \Vert M\Vert \Vert N\Vert$ 
+    \end{itemize}
+\end{enumerate}
+% section basic_definitions_and_tools (end)
+
+\section{General math model for Quantum computing} % (fold)
+\label{sec:general_math_model_for_quantum_computing}
+\begin{enumerate}
+    \item Quantum state as density matrix $\rho$: 
+    \begin{equation}
+      \rho^\dagger = \rho, \quad \rho \ge 0,\quad \Tr[\rho] = 1
+    \end{equation}
+    The set of all density matrices is convex. The set of all pure states is the collection of all its extreme points.
+    \item Quantum evolution as Quantum channel $\mathscr C(\rho)$:
+    \begin{align}
+      &\mbox{linear:}&&\mathscr C(\alpha\rho_1 + \beta \rho_2) = \alpha\mathscr C(\rho_1) + \beta\mathscr C(\rho_2),\\
+      &\mbox{trace-preserving:}&&\Tr[\mathscr C(\rho)] = \Tr[\rho],\\
+      &\mbox{completely positive:}&&\forall \mathcal H_B,\rho\ge 0. \mathscr C\otimes \mathscr I_B (\rho) \ge 0
+    \end{align}
+    \begin{enumerate}
+        \item Physical implementation:
+        \begin{equation}
+          \mathscr C(\rho) = \Tr_{B'}\left[U_{AB\rightarrow A'B'}(\rho_A\otimes\sigma_B)U^\dagger_{AB\rightarrow A'B'}\right]
+        \end{equation}
+        \item Mathematical description (Kraus theorem):
+        \begin{equation}
+          \mathscr C(\rho) = \sum_k C_k \rho C_k^\dagger, \quad \mbox{where }\sum_kC_k^\dagger C_k = I_A
+        \end{equation}
+        \item isometric encoding: To encode the information carried by a system $A$ into a larger system $A'$.
+        \begin{equation}
+            \mathscr V(\rho) = V\rho V^\dagger
+        \end{equation}
+        where $V^\dagger V = I_A$
+    \end{enumerate}
+    \item Quantum measurement as POVM (\textit{positive operator-valued measure}) $\{P_n\}$:
+    \begin{equation}
+      p(n) := \Tr[P_n\rho],\quad P_n\ge 0,\quad \sum_n P_n = I
+    \end{equation}
+    \begin{enumerate}
+        \item Physical implementation:
+        \begin{equation}
+          p(n) = \sum_k\braket{n|\mathscr C(\rho)|n} = \Tr\left[\sum_k C_k^\dagger\ket{n}\bra{n}C_k\rho\right]
+        \end{equation}
+        On the other hand:
+        \begin{equation}
+          \mathscr C(\rho) := \sum_n \Tr[P_n \rho] \ket n\bra n
+        \end{equation}
+        \item Example: describing not-accurate ONB measurement
+        \begin{align}
+            P_0 &= \int p(\theta)\ket{0,\theta}\bra{0,\theta}\diff\theta \\
+            P_1 &= \int p(\theta)\ket{1,\theta}\bra{1,\theta}\diff\theta
+        \end{align}
+        \item Naimark's theorem: \\
+        For every POVM $\{P_n\}$ there exists a system $B$ and a pure state $\ket\beta \in \mathcal H_B$ and a projective POVM $\{E_n\}$
+        \begin{equation}
+          \Tr[P_n\rho] = \Tr[E_n(\rho\otimes\ket\beta\bra\beta)]
+        \end{equation}
+    \end{enumerate}
+    % \item Bayes rule for quantum states: Fot the state $\sigma_{AB}$ with measurement in system $B$: $\{Q_n\}$, the state of system $A$ conditional to the outcome $n$ is
+    % \begin{equation}
+    %     \sigma_{A|n} = \frac{\Tr_B [(I_A\otimes Q_n)\sigma_{AB}]}{\Tr [(I_A\otimes Q_n)\sigma_{AB}]}
+    % \end{equation}
+    \item Indirect measurement as Quantum Instrument $\{\mathscr Q_n(\rho)\}$: 
+    \begin{align}
+        &\mathscr Q = \sum_n \mathscr Q_n \mbox{ is a quantum channel}\\
+        &p_n = \Tr [\mathscr Q_n(\rho)] \\
+        &\rho_{|n} = \mathscr Q_n(\rho) / \Tr[\mathscr Q_n(\rho)] \mbox{ (Bayes rule for quantum states)}
+    \end{align}
+    where we also call $\mathscr Q_n$ quantum operation.
+    \begin{enumerate}
+        \item Physical implementation: 
+        \begin{equation}
+            \mathscr Q_n(\rho) := \Tr_B [(I_A\otimes Q_n)\mathscr C(\rho)]
+        \end{equation}
+        where we can define:
+        \begin{align}
+            \mathscr C (\rho) &:= \sum_n \mathscr Q_n(\rho)\otimes\ket n\bra n \\
+            Q_n &:= \ket n\bra n
+        \end{align}
+    \end{enumerate}
+\end{enumerate}
+% section general_math_model_for_quantum_computing (end)
+
+\section{Some mathematical operations} % (fold)
+\label{sec:some_mathematical_operations}
+\begin{enumerate}
+    \item Purification:\\
+    \begin{enumerate}
+        \item The Schmidt decomposition:  
+        \begin{align}
+            \rho_A &= \sum_{m=1}^r p_m\ket{\alpha_m}\bra{\alpha_m} = \Tr_B[\sum_{m=1}^r\sqrt{p_m}\ket{\alpha_m}\ket{\beta_m}]
+        \end{align}
+        where $\{\ket{\alpha_m}\}$ and $\{\ket{\beta_m}\}$ are ONBs. The proof is an immediate consequence of the singular value decomposition (SVD).
+        \item The uniqueness:
+        \begin{align}
+            &\rho_A = \Tr_A[\ket\Psi\bra\Psi] = \Tr_A[\ket{\Psi'}\bra{\Psi'}] \\
+            \Rightarrow & \ket{\Psi'} = (I_A\otimes S)\ket\Psi
+        \end{align}
+        where $S$ is a partial isometry ($SS^\dagger$ and $S^\dagger S$ are projectors).
+    \end{enumerate}
+    \item Universal steering:\\
+    Let $\ket\Psi\in\mathcal H_A\otimes\mathcal H_B$ be a purification of $\rho_A$, then for every decomposition $\rho_A = \sum_m p_m\rho_m$, there exists a POVM on $B$: $\{Q_m\}$:
+    \begin{equation}
+        \Tr_B[I_A\otimes Q_m\ket\Psi\bra\Psi] = p_m\rho_m
+    \end{equation}
+    \begin{itemize}
+        \item From Bell state $\ket\Phi = \frac 1{\sqrt d}|I\kk$ to any state $\rho$ with POVM $\{\rho^T, I-\rho^T\}$:
+        \begin{equation}
+             \Tr_B[(I_A\otimes\rho^T)\ket\Phi\bra\Phi] = \frac\rho d
+        \end{equation} 
+    \end{itemize}
+    \item Encoding a quantum operation in a quantum state: Choi matrix
+    \begin{align}
+        \Phi_{\mathscr M} &:= (\mathscr M\otimes \mathscr I)(|\Phi\kk\bb\Phi|) \\
+        \mathscr M(\rho) &= d\Tr_B[(I_A\otimes \rho^T)\Phi_{\mathscr M}]
+    \end{align}
+    \begin{itemize}
+        \item ``Diagonalize'' Kraus representation: $\mathscr C(\rho) = \sum_i C_i\rho C_i^\dagger$ with $\Tr[C_j^\dagger C_i] = \delta_{ij}p_id_A$
+    \end{itemize}
+    \item No information without disturbance: \\
+    For the quantum instrument $\{\mathscr Q_n|\sum_n \mathscr Q_n = \mathscr I\}$ (that's the condition of non-disturbing), the outcome does not depend on measured system.
+    \begin{equation}
+        \sum_n\Phi_{\mathscr Q_n} = |\Phi\kk\bb\Phi| \Rightarrow \mathscr Q_n = p_n\mathscr I_n
+    \end{equation}
+    \item The no-cloning theorem: \\
+    For two distinct non-orthogonal states $\ket{\varphi_0}$ and $\ket{\varphi_1}$, there is no quantum channel such that:
+    \begin{equation}
+        \forall i\in\{0,1\}. \mathscr C (\ket{\varphi_i}\bra{\varphi_i}) = (\ket{\varphi_i}\bra{\varphi_i})^{\otimes 2}
+    \end{equation}
+    What we still can do:
+    \begin{itemize}
+        \item Cloning orthogonal states
+        \item The universal cloning machine
+        \begin{equation}
+            \mathscr C(\rho) = \frac 1{2(d+1)}(I + \mathtt{SWAP})(\rho\otimes I_B)(I + \mathtt{SWAP})
+        \end{equation}
+        \item Probabilistic cloning?..
+    \end{itemize}
+    Corollary:
+    \begin{itemize}
+        \item No-distinguishability theorem: It is impossible to construct a machine that distinguishes perfectly between two non-orthogonal states $\ket{\psi_0}$ and $\ket{\psi_1}$.
+        \item Secure key distribution: the BB84 protocol (Bennett and Brassard, 1984).
+    \end{itemize}
+    \item Quantum teleportation (discribed as a quantum instrument)
+    \begin{equation}
+        \Tr_{A'A}[(I_B\otimes P_n)(\ket{\Phi_0}\bra{\Phi_0}_{BA'}\otimes\rho_A)] = \frac 14 U_n^\dagger\rho_A U_n
+    \end{equation}
+    where $\ket{\Phi_0} = (\ket{00}+\ket{11})/\sqrt 2$, $\ket{\Phi_i} = |\sigma_i\kk/\sqrt 2$ are Bell states, $U_0 = I$, $U_i = \sigma_i$, $P_n = \ket{\Phi_n}\bra{\Phi_n}$, means keep the state but transform it to another system. For higher dimension system:
+    \begin{equation}
+        \Tr_{AA'}[(\ket{\Phi_{pq}}\bra{\Phi_{pq}}_{AA'}\otimes I_B)(\rho_A\otimes\ket{\Phi_{00}}\bra{\Phi_{00}}_{A'B})] = \frac 1{d^2} U_{pq}^\dagger \rho_B U_{pq}
+    \end{equation}
+\end{enumerate}
+% section some_mathematical_operations (end)
+
+\section{Quantum discrimination}
+    \subsection{State discrimination} % (fold)
+    \label{sub:state_discrimination}
+    \begin{enumerate}
+        \item Helstrom's minimum error decoder:
+        \begin{equation}
+            \omega := p_{\mbox{succ}} - p_{\mbox{err}} = \sum_{x,y\in\{0,1\}} (-)^{x+y}\Tr [P_y\rho_x]\pi_x \le \Vert \Delta\Vert_1 := \sum|\delta_n|
+        \end{equation}
+        where $\delta_n$ is the eigenvalues of $\Delta = \pi_0\rho_0 - \pi_1\rho_1 = \sum_n\delta_n\ket{\psi_n}\bra{\psi_n}$. We reach the upper bound by:
+        \begin{align*}
+            P_0 &= \sum_{\delta_n > 0} \ket{\psi_n}\bra{\psi_n}\\
+            P_1 &= \sum_{\delta_n \le 0} \ket{\psi_n}\bra{\psi_n}
+        \end{align*}
+        \begin{itemize}
+            \item For pure state $\rho_0 = \ket{\psi_0}\bra{\psi_0}$, $\rho_1 = \ket{\psi_1}\bra{\psi_1}$, 
+            \begin{equation}
+                \omega_{\mbox{max}} = \sqrt{1-4\pi_0\pi_1 F},\quad F:= |\braket{\psi_0|\psi_1}|^2
+            \end{equation}
+            \item Fidelity for mixed states:
+            \begin{equation}
+                1-\sqrt{4\pi_0\pi_1F(\rho_0,\rho_1)}\le \Vert\pi_0\rho_0 - \pi_1\rho_1\Vert_1\le\sqrt{1-4\pi_0\pi_1F(\rho_0,\rho_1)}
+            \end{equation}
+            where:
+            \begin{equation}
+                F(\rho_0,\rho_1) := \sup_{\mathcal H_A} \max_{\Tr_A[\ket{\Psi_0}\bra{\Psi_0}] = \rho_0} \max_{\Tr_A[\ket{\Psi_1}\bra{\Psi_1}] = \rho_1} |\braket{\Psi_0|\Psi_1}|^2
+            \end{equation}
+            \item Uhlmann's theorem
+            \begin{equation}
+                F(\rho_0,\rho_1) = \Vert \sqrt\rho_0\sqrt\rho_1\Vert_1^2
+            \end{equation}
+            \item Minimum of the Bhattacharya coefficient:
+            \begin{equation}
+                F(\rho_0,\rho_1) = \min_N \min_{\forall \mbox{POVM}\{P_n\}_{n=1}^N}\left(\sum_n \sqrt{\Tr[P_n\rho_0]\Tr[P_n\rho_1]}\right)^2
+            \end{equation}
+            \item Quantum Chernoff bound: Error probability in distinguishing two states with $N$ copies goes to zero at rate $O(C^N)$ where 
+            \begin{equation}
+                C = \min_{p:0\le p\le 1}\Tr[\rho_0^p\rho_1^{1-p}] (<\sqrt{F(\rho_0,\rho_1)})
+            \end{equation}
+        \end{itemize}
+        \item The unambiguous state discriminator: to distinguish $\{\ket{\psi_i}\}$, we use POVM $\{ P_i, P_?\}$, where we get answer without error or we don't know about the answer:
+        \begin{align}
+            \braket{\psi_i|P_j|\psi_i} = p_i\delta_{ij}\\
+            P_? = I - \sum_i P_i
+        \end{align}
+        It is possible if and only if $\{\ket{\psi_n}\}_{n=1}^N$ are linearly independent.
+        \begin{align}
+            P_n &= p\Phi^{-1}\ket{\psi_n}\bra{\psi_n}\Phi^{-1}\\
+            \Phi&:= \sum_n\ket{\psi_n}\bra{\psi_n}
+        \end{align}
+        For $N=2$ system $p_? = \sqrt F$
+    \end{enumerate}
+    % subsection state_discrimination (end)
+
+    \subsection{Channel discrimination} % (fold)
+    \label{sub:channel_discrimination}
+    \begin{enumerate}
+        \item Input any state:
+        \begin{equation} 
+         \omega_{\mathrm{max}} = \max_{\ket\alpha\in\mathcal H_A}\Vert \pi_0\mathscr C_0(\ket\alpha\bra\alpha) - \pi_1\mathscr C_1(\ket\alpha\bra\alpha)\Vert_1
+        \end{equation}
+        \item Input an entangled state:
+        \begin{equation}
+         \omega_{\mathrm{max}}^{\mathrm{ent}} = \max_{\mathcal H_B}\max_{\ket\Psi\in\mathcal H_A\otimes \mathcal H_B}\Vert \pi_0(\mathscr C_0\otimes\mathscr I_B)(\ket\Psi\bra\Psi) - \pi_1(\mathscr C_1\otimes\mathscr I_B)(\ket\Psi\bra\Psi)\Vert_1
+        \end{equation}
+        \item diamond norm
+        \begin{equation}
+            \Vert\Delta\Vert_\diamond = \max_{\ket\Psi\in\mathcal H_A\otimes \mathcal H_A}\Vert \Delta\otimes\mathscr I_A(\ket\Psi\bra\Psi)\Vert_1
+        \end{equation}
+        \item For unitary operator $U_0$, $U_1$. For eigenvalues $\e^{\mi\theta_m}$ of $U_0^\dagger U_1$: 
+        \begin{equation}
+            \omega = \sqrt{1-4\pi_0\pi_1F} = \sqrt{1-4\pi_0\pi_1\left|\sum_mp_m\e^{\mi\theta_m}\right|}
+        \end{equation}
+        \begin{itemize}
+            \item Entanglement does not help
+            \item Certainty answer can be get within finite number of times.
+            \item Extend to more gates
+        \end{itemize}
+    \end{enumerate}
+    % subsection channel_discrimination (end)
+
+\section{Quantum programming} % (fold)
+\label{sec:quantum_programming}
+\begin{enumerate}
+    \item programmable machine:
+    \begin{equation}
+     V\ket\alpha\ket n = U_n\ket\alpha\ket n
+    \end{equation}
+    Example: $V = \sum_n U_n\otimes\ket n\bra n
+    $
+    \item No-programming theorem (Nielsen-Chuang, PRL 1997): In order to program $N$ distinct unitary gates, one needs N orthogonal program states.
+    \item Universal set of quantum gates: Every qubit gate can be approximated with arbitrary precision with a circuit consisting only of 2 elementary gates. And for a system in dimension $d\ge 2$, it is enough to use $O(\log^2d)$ gates.
+    \begin{itemize}
+        \item For $N$ qubits system (dimension $2^N$), It is enough to have a universal set for every qubit and a entangling gate $W_{ij}$ on every two qubits.
+        \item Usually we use $\{H,T,\mathtt{CNOT}\}$:
+        \begin{align}
+            H &= \frac{1}{\sqrt{2}}\begin{pmatrix}
+            1 &1 \\
+            1 &-1\end{pmatrix}\\
+            &= \mi\exp\left[\frac{-\mi\pi\vec n\cdot\vec\sigma}2\right] \qquad \vec n = \frac1{\sqrt2}(1,0,1)^T \\
+            T &= \exp\left[\frac{-\mi\pi\sigma_z}8\right]\\
+            \mathtt{CNOT} &= \ket0\bra0\otimes I + \ket1\bra1\otimes\sigma_x
+        \end{align}
+        \item Solovay-Kitaev's Theorem: Let $\mathtt U$ be a universal set of unitary gates in dimension $d$ with the property that $\forall U\in\mathtt U.\quad U^\dagger\in\mathtt U$. Then, every unitary gate in dimension $d$ can be approximated within an error $\epsilon$ as a product of $N$ gates in $\mathtt U$, where $N\sim O(-\log^c\epsilon)$, where $0<c<2$ is a suitable constant.
+        \item No theory about $O(\log^\alpha d)$.. 
+    \end{itemize}
+\end{enumerate}
+% section quantum_programming (end)
+
+\section{Quantum Error Correction} % (fold)
+\label{sec:quantum_error_correction}
+\begin{enumerate}
+    \item Basic steps:
+    \begin{enumerate}
+        \item Encoding : $\mathscr V(\rho) = V\rho V^\dagger$ (with isometry $V: \mathcal H_A\mapsto \mathcal H_{A'}, V^\dagger V = I$)
+        \item Error: a quantum channel $\mathscr E: \mathcal H_{A'}\mapsto \mathcal H_{A'}$
+        \item Measurement: a quantum instrument $\{\mathscr Q_i\}$
+        \item Recovery: a unitary gate $U_i$ according to the outcome
+        \item Decoding: $\mathscr D$
+    \end{enumerate}
+    The recovery channel $\mathscr R$: the last three steps together, $\mathscr R(\rho) := \sum_i\mathscr D\left(U_i\mathscr Q_i(\rho)U_i^\dagger\right)$\\
+    Therefore here we require:
+    \begin{equation}
+        \mathscr{REV} = \mathscr I_A
+    \end{equation}
+    \item Definitions:
+    \begin{itemize}
+        \item A quantum channel $\mathscr C:\mathcal H_A\mapsto\mathcal H_{A'}$ is correctable iff $\exists \mathscr R.\quad \mathscr{RC} = \mathscr I$
+    \end{itemize}
+    \item Knill-Laflamme (KL) condition: A channel $\mathscr C(\rho) = \sum_i C_i\rho C_i^\dagger$ is correctable iff:
+    \begin{equation}
+        C_j^\dagger C_i = \sigma_{ij} I_a
+    \end{equation}
+    where $\sigma\in\St(\mathcal H)$. 
+    \begin{enumerate}
+        \item if $A = A'$, $\mathscr C$ is unitary, i.e. $\mathscr C(\rho) = U\rho U^\dagger$ 
+        \item KL condition is equivalent to $\mathscr C(\rho) = \sum_m p_m V_m\rho V_m$ where $V_m^\dagger V_n = \delta_{mn}I_A$. That means the correctable channels are those that encode randomly the state into different \textbf{orthogonal subspaces}.
+        \item Correction: measurement with $\{\mathscr Q_m\}$ and corresponding recovery $\mathscr R_m$:
+        \begin{align}
+            \mathscr Q_m(\rho) &= P_m\rho P_m, \qquad (P_m = V_m V_m^\dagger, P_0 = I_{A'} - \sum P_m )\\
+            \mathscr R_m(\rho) &= V_m^\dagger \rho V_m + \Tr[(I_{A'} - V_mV_m^\dagger)\rho]\ket0\bra0
+        \end{align}
+        \item physical meaning of $\sigma$: If we generally define the channel $\mathscr C(\rho) = \Tr_B[W\rho W^\dagger]$ and its \emph{complementary channel} $\tilde{\mathscr C}(\rho) = \Tr_{A'}[W\rho W^\dagger]$, we have
+        \begin{equation}
+            \forall \rho\in\St(\mathcal H_A).\qquad \tilde{\mathscr C}(\rho) = \sigma
+        \end{equation}
+        which means that a channel is correctable iff its complementary channel is an erasure channel.
+        \item KL condition for good codes: Let error $\mathscr E(\rho) = \sum_i E_i\rho E_i^\dagger$ ans the subspace $\mathcal S$ is a good code for $\mathscr E$ iff
+        \begin{equation}
+            PE_j^\dagger E_i P = \sigma_ij P
+        \end{equation}
+        where $\sigma\in\St(\mathcal H)$ ans $P$ is a projector on $\mathcal S$
+    \end{enumerate}
+    \item Quantum packing bound: $d_{A'}\ge d_A\rank(\sigma) =d_A\rank(\Phi_{\mathscr C})$
+    \item Quantum packing bound non-degenerate codes: if given an orthogonal Kraus representation for $\mathscr E(\rho = \sum_i^k E_i\rho E_i^\dagger$, than $d_{A'}\ge d_Ak$. In principle degenerate code could probably do better.
+    \item the quantum Hamming bound for arbitrary Pauli errors:
+    \begin{equation}
+        \mathscr E(\rho) =(1-p)\rho + \frac pt\sum_{m=1}^t\frac {m!(N-m)!}{N!3^m}\sum_{\vec n}\sum_{\vec k}\mathscr U_{\vec n,\vec k}(\rho)
+    \end{equation}
+    where $\vec n = (n_1,\cdots,n_m)$ labels $m$ qubits affected and $\vec k = (k_1,\cdots, k_m)$ the Pauli matrix acted. To encode $K$ qubits into $N$ qubits, the quantum packing bound for non-degenerate codes gives
+    \begin{equation}
+        2^{N-K} \ge \sum_{m=0}^t\frac{N!3^m}{(N-m)!m!}
+    \end{equation}
+    Whether there is better code is an open question.
+    \item Correct one to correct them all: Let two channel $\mathscr C(\rho) = \sum C_i\rho C_i^\dagger$ and $\mathscr D(\rho) = \sum D_j \rho D_j^\dagger$ with $D_j\in\Span\{C_i\}$, and if $\mathscr C$ is correctable, $\mathscr D$ is also correctable with same recovery channel and good code subspaces.
+    \begin{itemize}
+        \item Specially for arbitrary Pauli errors
+        \begin{equation}
+             \mathscr E(\rho) = (1-p)\rho + \frac p{3N}\sum_{n=1}^N\sum_{k=1}^3\mathscr U_{n,k}(\rho)
+         \end{equation} 
+        where $\mathscr U_{n,k}$ is $\sigma_k$ applied on $n$-th qubit. A good code for $\mathscr E$ is a good code for any quantum channel acting on a single qubit, even erasure channel.
+    \end{itemize}
+\end{enumerate}
+% section quantum_error_correction (end)
+
+\section{Quantum entropy} % (fold)
+\label{sec:quantum_entropy}
+\begin{enumerate}
+    \item LOCC protocol and one-way LOCC protocol %补充定义
+    \item Lo-Popescu theorem: LOCC protocol and one-way LOCC protocol are equivalent.
+    \item $\ket\Psi$ is more entangled than $\ket{\Psi'}$ iff there exists a LOCC channel that transforms $\ket{\Psi}$ into $\ket{\Psi'}$
+    \begin{itemize}
+        \item A product state is less entangled than any other bipartite state.
+        \item Bell states is more entangled than any other bipartite state.
+    \end{itemize}
+    \item $\rho\in\St(\mathcal H)$ is more mixed than $\rho'\in\St(\mathcal H)$ iff $\rho$ can be obtained by applying a \emph{random-unitary (RU) channel}:
+    \begin{equation}
+         \rho = \sum_i p_iU_i\rho' U_i^\dagger
+     \end{equation} 
+    \begin{itemize}
+        \item Every state $\rho$ is more mixed than a \textbf{pure state} $\rho' = \ket\psi\bra\psi$
+        \item No state $\rho$ is more mixed than the state $\rho' = I/d$ (\textbf{maximally mixed state}), $\rho'$ is more mixed than any other state
+    \end{itemize}
+    \item Let $\ket\Psi,\ket{\Psi'}\in\mathcal H_A\otimes\mathcal H_B$ be two \emph{pure} bipartite states, the following are equivalent
+    \begin{itemize}
+        \item $\ket\Psi$ is more entangled
+        \item the marginal of $\ket\Psi$ is more mixed
+    \end{itemize}
+    \item Generalization: Let $\rho\in\St(\mathcal H_A)$ and $\rho'\in\St(\mathcal H_{A'})$, $\rho$ is more mixed than $\rho'$ iff $\rho\otimes\ket{\alpha'}_{A'}\bra{\alpha'}_{A'}$ is more mixed than $\ket{\alpha}_A\bra\alpha_A\otimes\rho'$
+    \item The majorization criterion: Let $\rho = \sum_i p_{i}\ket{\alpha_{i}}\bra{\alpha_{i}}$ with $p_{1}\ge p_{2}\ge\cdots\ge p_{d}\ge 0$, than $\rho$ is more mixed than $\rho'$ iff $\vec p$ is majorized by $\vec p'$ ($\vec p \preceq\vec p'$)
+    \begin{equation}
+        \forall k\in\{1,\cdots,d-1\},\qquad \sum_{i=1}^k p_{i}\ge\sum_{i=1}^k p'_{i}
+    \end{equation}
+    \item Measurement of mixedness: Schur-concave function %定义?
+    \item R\'enyi entropies: a group of Schur-concave functions
+    \begin{equation}
+        H_\alpha = \frac 1{1-\alpha}\log\left[\sum_{i=1}^dp_i^\alpha\right]\qquad \alpha\ge 0
+    \end{equation}
+    And quantum R\'enyi entropies\footnote{Here for convenience to discuss bits and qubits, the $\log\cdot$ means $\log_2\cdot$.}
+    \begin{equation}
+        S_\alpha = \frac{\alpha}{1-\alpha}\log\Vert\rho\Vert_\alpha
+    \end{equation}
+    \begin{itemize}
+        \item $\forall\alpha.\quad S_\alpha(\rho) = 0\Leftrightarrow \rank\rho = 1$
+        \item $\forall\alpha>0.\quad S_\alpha = \log d\Leftrightarrow \rho = I/d$
+        \item $\forall\alpha.\quad 0\le S_\alpha(\rho)\le\log d$
+        \item Additivity property: $S_\alpha(\rho\otimes\sigma) = S_\alpha(\rho) + S_\alpha(\sigma)$
+    \end{itemize}
+    Special values of $\alpha$:
+    \begin{enumerate}
+        \item $\alpha = 0$, max-entropy
+        \begin{equation}
+             S_0(\rho) = \log[\rank(\rho)]
+         \end{equation} 
+        \item $\alpha\to\infty$, min-entropy
+        \begin{equation}
+            S_\infty(\rho) = -\log p_1
+        \end{equation}
+        \item $\alpha\to 1$ classically Shannon entropy, and quantumly von-Neumann entropy
+        \begin{equation}
+            S(\rho):=\lim_{\alpha\to 1}S_\alpha(\rho) = -\Tr[\rho\log\rho]
+        \end{equation}
+    \end{enumerate}
+    \item Asymptotic transformations
+    \begin{enumerate}
+        \item A rate $R$ is achievable if for every $N$ there exists a LOCC channel $\{\mathscr L_N\}_{N\in\mathbb N}$
+        \begin{equation}
+            \lim_{N\to\infty}\Vert\mathscr L_N((\ket\Psi\bra\Psi)^{\otimes N})-(\ket{\Psi'}\bra{\Psi'})^{\otimes RN}\Vert_1 = 0
+        \end{equation}
+        \item Achievable rates and von-Neumann entropy
+        \begin{equation}
+            \sup\{R|R\mbox{ is achievable}\} = \frac{S(\rho)}{S(\rho')}
+        \end{equation}
+    \end{enumerate}
+    \item *Concurrence: measurement of entanglement, PhysRevLett.78.5022 \\
+    For two qubit system with states$\ket\psi = \sum_i\alpha_i\ket{\Phi_i}$ with Bell bases defined as 
+    \begin{align}
+        \ket{\Phi_1} &= (\ket{00}+\ket{11})/\sqrt2 \\
+        \ket{\Phi_2} &= \mi(\ket{00}-\ket{11})/\sqrt2 \\
+        \ket{\Phi_3} &= \mi(\ket{01}+\ket{10})/\sqrt2 \\
+        \ket{\Phi_4} &= (\ket{01}-\ket{10})/\sqrt2
+    \end{align}
+    Calculate the von-Neumann entropy of the marginal we get the measurement of its entanglement
+    \begin{equation}
+        E(\psi) = \mathcal E(C(\psi))
+    \end{equation}
+    with $\mathcal E(x) := H(\frac 12+\frac 12\sqrt{1-x^2})$, $H(x) := -[x\log x + (1-x)\log (1-x)]$, and the concurrence $C(\psi)$ monotonical to $E$
+    \begin{equation}
+        C(\phi) = \left|\sum_i \alpha_i^2\right|
+    \end{equation}
+\end{enumerate}
+\subsection{Quantum data compression} % (fold)
+\label{sub:quantum_data_compression}
+\begin{enumerate}
+    \item Encoding channel $\mathscr E: \mathcal H_A \mapsto \mathcal H_B$ with $d_B<d_A$ and decoding channel $\mathscr D:\mathcal H_B \mapsto\mathcal H_A$ so that the average fidelity 
+    \begin{equation}
+        F = \sum_x p_x\braket{\psi_x|\mathscr D\mathscr E(\ket{\psi_x}\bra{\psi_x})|\psi_x}
+    \end{equation}
+    is close to $1$.
+    \item Compressing entanglement:
+    \begin{equation}
+        F_{\mathrm{ent}} = \braket{\Psi|(\mathscr D\mathscr E\otimes\mathscr I_R)(\ket\Psi\bra\Psi)|\Psi}\le F
+    \end{equation}
+    \item Subspace encodings:
+    \begin{equation}
+        \mathscr E(\rho) = P\rho P + \Tr[(I-P)\rho]\ket{\psi_0}\bra{\psi_0}
+    \end{equation}
+    where $P$ is the projector on subspace $\mathcal S$ and $\ket{\psi_0}$ is in the orthogonal complement of $\mathcal S$
+    \begin{equation}
+        F_{\mathrm{ent}}\ge\left|\sum_xp_x\braket{\psi_x|P|\psi_x}\right|^2 := p_{\mathrm{yes}}^2
+    \end{equation}
+    \item asymptotic scenario: compression $\rho^{\otimes N}$ into $\mathcal S_N$ with dimension $d_N$, define the compression rate
+    \begin{equation}
+        R:=\limsup_{N\to\infty}\frac{\log d_N}N
+    \end{equation}
+    And achievable rate requires a sequence of coding so that
+    \begin{equation}
+        \limsup_{N\to\infty}F_N = 1
+    \end{equation}
+    \begin{enumerate}
+        \item Define the description of $\rho^{\otimes N}$:
+        \begin{equation}
+            \rho^{\otimes N} = \sum_{\vec m}q_N(\vec m)\ket{\psi_{\vec m}}\bra{\psi_{\vec m}}
+        \end{equation}
+        where
+        \begin{itemize}
+            \item $\vec m = (m_1,\cdots, m_N)\in\{1,\cdots,d_A\}^{\times N}$
+            \item $q_N(\vec m)$ is the probability $q_N(\vec m) = \prod_i q_{m_i}$ 
+            \item $\ket{\psi_{\vec m}}$ is the product vector $\ket{\psi_{\vec m}} := \ket{\psi_{m_1}}\ket{\psi_{m_2}}\cdots\ket{\psi_{m_N}}$
+        \end{itemize}
+        \item the type of a sequence $\vec m$ defined by $t_{\vec m}:=(N_1/N,\cdots,N_{d}/N)$
+        \begin{enumerate}
+            \item total number of types: $T_N \sim 1$
+            \item the number of sequences of type $t$: 
+            \begin{equation}
+                S_{N,t} \sim \exp[N H(t)]
+            \end{equation}
+            where $H(t_{\vec m}) := -\sum_{i=1}^d t_i\ln t_i$ is the Shannon entropy
+            \item the probability that a sequence is of type $t$:
+            \begin{equation}
+                 Q_{N,t}\sim \exp[-ND(t\Vert q)]
+            \end{equation}
+            where $D(t\Vert q) := \sum_{i=1}^d t_i\ln\frac{t_i}{q_i}$ is the Kullback-Leibler divergence
+        \end{enumerate}
+        Kullback-Leibler divergence satisfies the following properties
+        \begin{itemize}
+            \item $D(t\Vert q)\ge 0$ and the equality holds iff $t = q $
+            \item if $\lim_{N\to\infty}D(t_N\Vert q) =0$, than $\lim_{N\to\infty}H(t_N) =H(q)$
+        \end{itemize}
+        From which we can see
+        \begin{align}
+            &\sum_{t:D(t\Vert q)\le\epsilon_N} Q_{N,t} \sim 1-\exp[-N\epsilon] \\
+            &\sum_{t:D(t\Vert q)\le\epsilon_N} \frac{\log S_{N,t}}N = H(q)%这个式子背后的物理是什么?
+        \end{align}
+        \item Schumacher's theorem, direct part: Let $\rho \in \St(\mathcal H)$, then every compression rate $R\ge S(\rho)$ is achievable
+        \item Schumacher's theorem, strong converse: Let $\rho = \sum_i q_i\ket{\psi_i}\bra{\psi_i}$ be a diagonalization of $\rho$ and let $F_N$ be the fidelity of data compression for the states $\{\ket\psi_i\}$ with probabilities $\{q_i\}$, then for every $R < S(\rho)$, $\lim_{N\to \infty} F_N = 0$
+        \item Entanglement dilution: Using LOCC to produce $M_N$ pairs of $\ket\Psi$ from $N$ pairs of Bell state $\ket{\Phi^+}$, the achievable rate
+        \begin{equation}
+            R_{\mathrm{dil}} =\liminf_{N\to\infty}\frac{M_N}N < 1/S(\Tr_A[\ket\Psi\bra\Psi])
+        \end{equation}
+        \item Entanglement distillation: Using LOCC to produce $M_N$ pairs of Bell state $\ket{\Phi^+}$ from $N$ pairs of $\ket\Psi$, the achievable rate
+        \begin{equation}
+            R_{\mathrm{dist}} = \liminf_{N\to\infty}\frac{M_N}N < S(\Tr_A[\ket\Psi\bra\Psi])
+        \end{equation}
+        \item Asymptotic transformations of pure entangled states:$R = S(\Tr_A[\ket\Psi\bra\Psi])/S(\Tr_A[\ket{\Psi'}\bra{\Psi'}])$
+    \end{enumerate}
+\end{enumerate}
+% subsection quantum_data_compression (end)
+% section quantum_entropy (end)
+\section{Quantum algorithm} % (fold)
+\label{sec:quantum_algorithm}
+\subsection{Grover's quantum search algorithm} % (fold)
+\label{sub:quantum_search}
+\begin{enumerate}
+    \item Classic model: from a function 
+    \begin{equation}
+        f:\{1,\cdots,N\}\mapsto\{0,1\}
+    \end{equation}
+    find $n$ so that $f(n) = 1$. Usually we assume that $S = |\{n|f(n)=1\}|\ll N$. Time complexity $O(N)\times O(f)$
+    \item Two quantum version: 
+    \begin{itemize}
+        \item we have the system
+        \begin{equation}
+            \ket\alpha = \ket{f(1)}\ket{f(2)}\cdots\ket{f(N)}
+        \end{equation}
+        And define the control unitary gate
+        \begin{equation}
+            U = \sum_{n=1}^NZ_n\otimes\ket n\bra n 
+        \end{equation}
+        with Pauli gate defined by $Z_n\ket\alpha = (-)^{f(n)}\ket\alpha$. \\
+        For simplicity we define the \emph{Grover's gate} $V_f$ on the control system as
+        \begin{equation}
+            V_f = \sum_{n=1}^N(-)^{f(n)}\ket n\bra n
+        \end{equation}
+        which comes from $U\ket\alpha\ket\beta = \ket\alpha(V_f\ket\beta)$\footnote{In the following we discuss the \emph{query complexity} defined by the number of uses of gate $V_f$, and ignore the elementary gates needed to perform $V_f$ (which leads to \emph{gate complexity}).}
+        \item We may describe the classic search as:
+        \begin{equation}
+            \mathscr (\rho) = \sum_n\braket{n|\rho|n}\ket{f(n)}\bra{f(n)} \left( \Tr_A\left[U_f(\rho\otimes\ket0\bra0)U_f^\dagger\right]\right)
+        \end{equation}
+        And quantum version by the gate $U_f = \sum_n\ket n\bra n\otimes X^{f(n)}$, which also leads to Grover's gate $V_f$ by
+        \begin{equation}
+            U_f\ket\beta\ket- = (V_f\ket\beta)\ket-
+        \end{equation}
+        This version seems to show how quantum version of $U_f$ is more powerful than $\mathscr C_f$ and show that preparing a huge system of $\ket\alpha$ is not necessary.
+    \end{itemize}
+    \item The algorithm ($O(\sqrt N)$):
+    \begin{enumerate}
+        \item prepare system in Fourier basis state
+        \begin{equation}
+            \ket{e_N} = \frac 1{\sqrt N}\sum_{n=1}^N\ket n
+        \end{equation}
+        \item Apply Grover's gate $V_f$ \label{algo_gg}
+        \item Apply the gate
+        \begin{equation}
+            W = 2\ket{e_N}\bra{e_N} - I
+        \end{equation}\label{algo_w}
+        \item Repeat steps \ref{algo_gg} and \ref{algo_w} for $k$ times, where
+        \begin{equation}
+            k = \frac\pi4\sqrt{\frac NS}
+        \end{equation}
+        \item Measure the system on computational basis, with probability of success
+        \begin{equation}
+            p_{\mathrm{succ}} \ge 1-\frac SN
+        \end{equation}
+    \end{enumerate}
+    Proof of the algorithm:\\
+    The input state can be expressed as:
+    \begin{equation}
+        \ket{e_N} = \sqrt{1-\frac SN}\ket{\psi_+} + \sqrt{\frac SN}\ket{\psi_-} := \cos\theta\ket{\psi_+} + \sin\theta\ket{\psi_-}
+    \end{equation}
+    where $\ket{\psi^+}$ and $\ket{\psi_-}$ are eigenstates of $V_f$ with eigenvalue $\pm 1$:
+    \begin{align}
+        \ket{\psi_+} &:= \frac 1{\sqrt{N-S}}\sum_{n:f(n)=0}\ket n \\
+        \ket{\psi_-} &:= \frac 1{\sqrt S}\sum_{n:f(n)=1}\ket n 
+    \end{align}
+    And $\ket{e_N}$ and $\ket{e_N^\perp}:=-\sin\theta\ket{\psi_+} + \cos\theta\ket{\psi_-}$ are eigenstates of $W$ with eigenvalue $\pm 1$. So
+    \begin{equation}
+        WV_f(\cos\alpha\ket{\psi_+} + \sin\alpha\ket{\psi_-}) = \\\cos(\alpha+2\theta)\ket{\psi_+} + \sin(\alpha+2\theta)\ket{\psi_-}
+    \end{equation}
+    therefore
+    \begin{equation}
+        (WV_f)^k\ket{e_N} = \cos[(2k+1)\theta]\ket{\psi_+} + \sin[(2k+1)\theta]\ket{\psi_-}
+    \end{equation}
+    with $(2k+1)\theta\approx\pi/2$, we have the conclusion above.
+    \item Dependence of the algorithm on the number of solutions. Quantum phase estimation algorithm allows us to find out the angle $\tau = 2\arcsin\sqrt{S/N}$ within an interval of size $1/M$ with the control-unitary gate
+    \begin{equation}
+        T = \sum_{m=1}^MV^m_f\otimes\ket m\bra m
+    \end{equation}
+    \item $O(\sqrt N)$ is the best scaling allowed by quantum mechanics\\
+    \textbf{Proof}: For simplicity here we only discuss the case $S=1$, with
+    \begin{equation}
+        V_f = -\ket x\bra x + \sum_{n\neq x}\ket n\bra n =: V_x
+    \end{equation}
+    Generally the algorithm could be
+    \begin{equation}
+        \ket{\Psi_{k,x}} = U_k(V_x\otimes I_B)U_{k-1}\cdots U)1(V_x\otimes I_B)\ket{\Psi_0}
+    \end{equation}
+    with $\ket{\Psi_0}\in\mathcal H_A\otimes \mathcal H_B$ be the input system combined with a auxiliary system $B$. And we hope to get the result $\ket{\Phi_{k,x}} = \ket x\ket{\beta_{k,x}}$, which leads to the quality of the algorithm (average on $x$)
+    \begin{align}
+        \eta_{k}&:=\frac 1N\sum_{x=1}^N\left\Vert\ket{\Psi_{k,x}}-\ket{\Phi_{k,x}}\right\Vert^2 \\
+        &\ge \frac 1N\sum_x\bigg(\left\Vert\ket{\Psi_{k,x}}-\ket{\Psi_{k}}\right\Vert - \left\Vert\ket{\Psi_{k}}-\ket{\Phi_{k,x}}\right\Vert\bigg)^2 \\
+        &\ge \frac 1N\left(\sqrt{\sum_x\left\Vert\ket{\Psi_{k,x}}-\ket{\Psi_{k}}\right\Vert^2} - \sqrt{\sum_x\left\Vert\ket{\Psi_{k}}-\ket{\Phi_{k,x}}\right\Vert^2}\right)^2 \\
+        &:= \left(\frac{\Vert\vec a_k\Vert - \Vert \vec b_k\Vert}{\sqrt N}\right)^2
+    \end{align}
+    where $\ket{\Psi_k}:=U_k U_{k-1}\cdots U_1\ket\Psi$ and the items
+    \begin{align}
+        \Vert\vec a_k\Vert &= \sqrt{\sum_x\left\Vert\ket{\Psi_{k,x}}-\ket{\Psi_{k}}\right\Vert^2} \le 2k \\
+        \Vert\vec b_k\Vert &= \sqrt{\sum_x\left\Vert\ket{\Psi_{k}}-\ket{\Phi_{k,x}}\right\Vert^2} \\
+        &\ge \sqrt{2\left(N-\sqrt N\right)}
+    \end{align}
+    So to promise $\eta_k\to 0$, it have to be $k = \Theta(\sqrt N)$
+    \begin{itemize}
+        \item It makes no difference to use $U_x = \sum_n\ket n\bra n\otimes X^{f(n)}$ because
+        \begin{equation}
+            U_x = I_A\otimes\ket+\bra+ + V_x\otimes\ket-\bra-
+        \end{equation}
+        \item The proof holds even if we use the gate $V_x^t\otimes I_B$ as one step, which means the optimal of $\Theta(\sqrt N)$ is not only the times needed to use $V_x$ but also the steps needed
+    \end{itemize}
+\end{enumerate}
+% subsection quantum_search (end)
+\subsection{Shor's algorithm} % (fold)
+\label{sub:shors_algorithm}
+\begin{enumerate}
+    \item From period finding to factoring:
+    \begin{enumerate}
+        \item Take a random integer $a < N$ and check if $a$ divides $N$\label{algo_rda}
+        \item If a divides $N$, you are done: this means that either $a = p$ or $a = q$. If not, then proceed to the next step
+        \item Find the period of the function $f(x) = ax \mod N$. Call the period $r$
+        \item If $r$ is odd, then go back to first step. If $r$ is even, then proceed to the next step
+        \item Compute $x_+ = a^{r/2} + 1$ and $x = a^{r/2} - 1$.
+        \item If $x_+ = 0 \mod N$, then go back to first step. Otherwise, proceed to the next step
+        \item Output the solution $\{p, q\} = \{\operatorname{gcd}(N,x_+),\operatorname{gcd}(N,x_-)\}$.
+    \end{enumerate}
+    \item Quantum period-finding algorithm (Shor's algorithm) with the gate $U_f$
+        \begin{equation}
+            U_f := \sum_{x=1}^{d}\ket x\bra x\otimes S^{f(x)}
+        \end{equation}
+        with $f(x)$ a ``strong periodic'' function
+        \begin{equation}
+            f(x) = f(y) \Longleftrightarrow x = y+kr,k\in\mathbb Z
+        \end{equation}
+        (for example what we need in factorization $f(x) = a^x\mod N$) and shift gate $S = \sum\ket{i\oplus 1}\bra{i}$
+    \begin{enumerate}
+        \item Prepare system $A$ in Fourier state $\ket{e_0} = \frac 1{\sqrt{d_A}}\sum_x\ket x$ and system $B$ in $\ket0$
+        \item Apply $U_f$
+        \item Measure $B$ in the computational basis
+        \item Measure $A$ in the Fourier basis with result $\ket{e_n}$
+        \item In the easy case where $d$ is a multiple of the period, it is enough to compute the fraction $n/d$ and reduce it to minimal terms $n/d = k_0/r_0$, in this case, $r_0$ is a divisor of the period.
+    \end{enumerate}
+    \textbf{Proof}
+    \begin{align}
+        U_f\ket{e_0}\ket0 &= \frac 1{\sqrt d}\sum_{x=1}^d\ket x\ket{f(x)} \\
+        &= \frac 1{\sqrt d}\sum_{x=1}^r\left(\sum_{m=0}^{M_x-1}\ket{x+mr}\right)\ket{f(x)}
+    \end{align}
+    After the measurement of system $B$, the state of system $A$ becomes
+    \begin{equation}
+        \ket{\psi_x} = \frac 1{\sqrt{M_x}}\sum_{m=0}^{M_x-1}\ket{x+mr}
+    \end{equation}
+    and the result of measurement of system $A$ is 
+    \begin{align}
+        p(n|x) &= |\braket{e_x|\psi_x}|^2 \\
+        &= \frac 1{M_x}\left|\sum_{m=0}^{M_x-1}\braket{e_n|x+mr}\right|^2 \\
+        &= \frac 1{M_x d}\left|\sum_{m=0}^{M_x-1}\exp\left[-\frac{2\pi\mi nmr}d\right]\right|^2
+    \end{align}
+    If $d = rM$ (means d is a multiple of the period), then the probability is independent on $x$
+    \begin{equation}
+        p_n = \frac 1r\left|\frac 1M\sum_{m=0}^{M-1}\exp\left[-\frac{2\pi\mi nm}M\right]\right|^2 = \frac 1r\sum_{k=1}^r \delta_{n,kM}
+    \end{equation}
+    Therefore the outcome $n = kM$, and $n/d = k/r$, so $r_0$ should be a divisor of $r$\\
+    If $d$ is not a multiple of the period, it is easy to see that with large $M_x$ (or large $d$, for example $d\sim N^2$), the probability is peaked around $n = kd/r$
+    \begin{itemize}
+        \item The complexity:
+        \begin{itemize}
+            \item the gate $U_f$ with $f = a^x\mod N$: $O(L^3)$
+            \item prepare the Fourier basis: the ``multiply operator'' $\ket{e_k} = M^k\ket{e_0}$
+            \begin{equation}
+                M = \sum_{n=1}^N\exp\left[\frac{2\pi\mi n}N\right]\ket n\bra n
+            \end{equation}
+            And to express in binary qubit:
+            \begin{equation}
+                \ket x = \ket{x_1}\ket{x_2}\cdots\ket{x_L}
+            \end{equation}
+            with $x_i\in\{0,1\}$ and $x = \sum_i 2^{L-i}x_i$, than we have:
+            \begin{equation}
+                \ket{e_0} = \ket+^{\otimes L} = (H\ket 0)^{\otimes L}
+            \end{equation}
+            And ``multiply operator''
+            \begin{align}
+                M\ket n &= \bigotimes_{i=1}^L\left[\exp\left(\frac{2\pi \mi n_i}{2^i}\right)\ket{n_i}\right] \\
+                &= R_1\ket{n_1}\otimes R_2\ket{n_2}\otimes\cdots\otimes R_L\ket{n_L}
+            \end{align}
+            where the single-qubit gate
+            \begin{equation}
+                R_i := \begin{pmatrix}
+                    1 & 0\\
+                    0 & \exp\left(\frac{2\pi \mi}{2^i}\right)
+                \end{pmatrix}
+            \end{equation}
+            which can be realized with $O(-\log^c\epsilon)\sim O(1)$, and so is $M^k$ (leads to multiple of $L$). And all these sums up to the complexity $O(L)$
+            \item measurement on the Fourier basis: The key is to realize the Fourier gate:
+            \begin{equation}
+                F = \sum_{n=1}^N\ket{e_n}\bra n
+            \end{equation}
+            Define the control-unitary gate on the control $n$ and target $m$
+            \begin{equation}
+                C_i^{(mn)} := I^{(m)}\otimes\ket0_n\bra0_n + R^{(m)}_i\otimes\ket1_n\bra1_n
+            \end{equation}
+            and gates (the Hadamard gate $H$ defined above)
+            \begin{align}
+                U_1 &:= C_L^{(1L)}\cdots C_3^{(13)}C_2^{(12)}H^{(1)} \\
+                U_2 &:= C_{L-1}^{(2L)}\cdots C_3^{(24)}C_2^{(23)}H^{(2)} \\
+                &\vdots \\
+                U_L &:= H^{(L)}
+            \end{align}
+            And the Fourier gate
+            \begin{equation}
+                F = U_L U_{L-1}\cdots U_2 U_1
+            \end{equation}
+            with complexity $O(L^2)$ to realizing a physical Fourier transform\footnote{Classically we need $\Theta(N\log N)$ to perform \emph{fast Fourier transform}. It does not mean we could do better in quantum computation because we cannot get all factors in $F\ket k$.}
+        \end{itemize}
+        All above sums up to $O(L^3)$
+    \end{itemize}
+    %RSA code?
+\end{enumerate}
+% subsection shors_algorithm (end)
+% section quantum_algorithm (end)
+\end{document}

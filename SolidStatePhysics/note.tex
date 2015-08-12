@@ -1,0 +1,680 @@
+%!TEX program = xelatex
+%!TEX builder = latexmk
+%!TEX root = ...
+\documentclass[11pt,a4paper]{article}%titlepage表示标题单独页
+\usepackage{ctex}%ctex套用英文标题格式（建议在英文论文混排中文时使用）, ctexcap套用中文格式（等同于\documentclass{ctexart}）
+\renewcommand{\figurename}{图}
+\renewcommand{\tablename}{表}
+\renewcommand{\contentsname}{目录}
+\renewcommand\refname{参考文献}
+%\renewcommand{\thefigure}{\chinese{figure}}%将图片计数改为汉字数字
+%\renewcommand{\thetable}{\chinese{table}}%将表格计数改为汉字数字
+\usepackage[top=0.75in,bottom=0.75in,left=1in,right=1in]{geometry}%页边距设置
+%\usepackage{multicol}页面内多行包
+\usepackage[CJKbookmarks]{hyperref}%给pdf文档添加互动式链接和书签
+%\userpackage{wrapfig}%图文绕排
+
+\usepackage{amsmath,amssymb,esint}%数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[0]%允许多行公式间换页, 用//*表示不允许换页
+\numberwithin{equation}{section}%公式编号包含章节
+\usepackage{bm}%加粗（用于vector）
+%\usepackage{textcomp}%符号包, 不能用于数学模式, 建议不要和SIunits混用
+%\usepackage[squaren]{SIunits}%科学单位包, 可以用于数学模式（为了统一不要和textcomp混用）, squaren选项消除和amssymb的冲突
+\usepackage{siunitx}%淘汰掉上面这个宏包吧, 现在用的是\num{123}, \si{kg.m/s^2}, \si{\electronvolt\per\square\clight}, \SI{123}{\micro\metre}
+%\usepackage{extarrows}%长箭头, 长等号etc.
+\usepackage{graphicx}%插图宏包
+%\usepackage{picinpar}%图文绕排
+\usepackage{array}%表格宏包
+%\usepackage{longtable}%长表格宏包
+\usepackage{multirow}%多行合并的表格宏包
+%\usepackage{booktabs}%表格线宏包
+\usepackage{braket}
+
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}%电路图宏包
+%\usepackage[normalem]{ulem}%下划线, 删除线等宏包, 参数表示不修改\emph{}格式
+%\usepackage{mychemistry}%化学宏包, 包含mhchem和chemfig
+%\usepackage[version=3]{mhchem}%化学宏包, 包含mhchem和chemfig
+%\usepackage[symbol]{footmisc}%脚注拓展, 选项表示用符号做脚注记号
+%\usepackage{listings}%代码段宏包
+%\lstset{numbers=left,frame=shadowbox,basicstyle=\ttfamily, commentstyle=\fontseries{lc}\selectfont\itshape, columns=fullflexible, breaklines=true, escapeinside={(*@}{@*)}}
+
+\renewcommand*{\vec}[1]{\bm{#1}}%矢量的格式, 这里是加粗
+\newcommand{\dif}{\,\mathrm d}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}}%定义数学模式中常用的正体字符
+
+\begin{document}
+\title{固体物理整理}
+\author{吕铭 Lyu Ming}
+\maketitle
+\tableofcontents
+\section{晶格的性质} % (fold)
+\label{sec:crystal_lattice}
+\subsection{晶体结构} % (fold)
+关于晶格结构的描述默认使用 Einstein 求和规则
+\label{sub:crystal_str}
+\begin{enumerate}
+	\item 晶体 = 基元 (basis) + 点阵 (lattice)
+	\item Bravais lattice: 描述晶格的平移对称性, 格矢 $\vec R_l = l_i\vec a_i$ 每个格点表示一个原胞 (primitive cell)
+	\item reciprocal lattice: 倒易空间中的格子, 倒格矢 $\vec G_h = h_i \vec b_i$, 满足 $\exp[\mi\vec G\cdot\vec R] = 1$
+	其中
+	\begin{equation}
+		\vec b_i = \frac{\pi}{\Omega_c}\epsilon^{ijk}\vec a_j\times\vec a_k = \frac{6\pi\epsilon^{ijk}\vec a_j\times\vec a_k}{\epsilon^{pqr}\vec a_p\cdot(\vec a_q\times\vec a_r)}\quad\Leftarrow\quad
+		\vec a_i\cdot\vec b_j = 2\pi\delta_{ij} 
+	\end{equation}
+	\item 典型 Bravais 格子的倒格子: %\\
+	\begin{center}
+		\begin{tabular}{cc}
+		Bravais 格子 & 倒格子 \\\hline
+		\textit{sc} (简单立方)  & \textit{sc} \\
+		\textit{fcc} (面心立方) & \textit{bcc} \\
+		\textit{bcc} (体心立方) & \textit{fcc} \\
+		\textit{hcp} (六角密排) &
+		\end{tabular}
+	\end{center}
+	\item 方向表示: (用 $\overline l$ 表示 $-l$)
+	\begin{itemize}
+		\item 晶向 $[l_1, l_2, l_3]$ 与对应的等效晶向 $\left\langle l_1,l_2,l_3\right\rangle$
+		\item 晶面 $(h_1, h_2, h_3)$ 与对应的等效晶面 $\{h_1,h_2,h_3\}$
+	\end{itemize}
+	\item Wigner-Seitz 原胞, 布里渊区 (Brillouin zone)
+	\item 常见晶体结构
+	\item 晶格上的傅里叶展开
+	\begin{align}
+		& V(\vec r) = \sum_h A(\vec G_h)\e^{\mi\vec G_h\cdot\vec r} \\
+		& A(\vec G_h) = \frac 1{\Omega_c}\int_{\Omega_c}\dif\vec r V(\vec r)\e^{-\mi\vec G_h\cdot\vec r }\\
+		& \int_V\dif\vec r\e^{\mi\vec k\cdot\vec r} = V\delta_{\vec k,0} \\
+		&\int_{\Omega_c}\dif\vec r\e^{\mi\vec G\cdot\vec r} = {\Omega_c} \delta_{\vec G, 0}
+	\end{align}
+	\item 衍射, 形状因子, 几何结构因子
+\end{enumerate}
+% subsection crystal_str (end)
+\subsection{晶体的结合} % (fold)
+\label{sub:cry_comp}
+\begin{enumerate}
+	\item Madelung 常数, van der Waals 势, Lennard-Jones 势
+\end{enumerate}
+% subsection cry_comp (end)
+\subsection{晶格振动与晶体热学性质} % (fold)
+\label{sub:cry_oscillate}
+\begin{enumerate}
+	\item 绝热近似
+	\item Born-von Karman 周期性边界条件
+	\item 原子链模型
+	\item $d$ 维空间, 每个原胞 $n$ 个原子, 有 $d$ 个声学波和 $dn - d$ 个光学波
+	\item 声子态密度
+	\item 晶体热容, Einstein 模型与 Debye 模型
+	\item 非谐效应与热胀
+	\item 散射实验
+	\item 黄方程
+	\item 晶格热传导
+\end{enumerate}
+% subsection cry_oscillate (end)
+% section crystal_lattice (end)
+\section{电子能带论} % (fold)
+\label{sec:elec_band}
+\begin{enumerate}
+	\item 静态近似 (static approximation): 
+	\begin{align}
+		\hat H &= [T_e + V_{ee}(r) + V_{eL}(r,R_0)] + [T_L + V_{nm}(R)] + [V_{eL}(r,R) - V_{eL}(r,R_0)]  \\
+		&= \hat H_e(r,R_0) + \hat H_L(R) + \hat H_{e-ph}(R)
+	\end{align}
+	$\hat H_{e-ph}$ 保留 $\hat H_e$ 和 $\hat H_L$ 共同本征态的对角项. 非对角项专门用于研究电声子作用
+	\item 单电子近似: 电子-电子相互作用用平均场替代. 不适用于强关联系统
+	\item 周期性边界条件, $\vec k = \sum h_i \vec b_i / N_i$
+\end{enumerate}
+\subsection{自由电子 Fermi 气} % (fold)
+\label{sub:free_e_fermi_gas}
+能量 $E_k =\hbar^2 k^2/(2m)$, 分布 $f(E) = 1/(\e^{\beta(E-E_F)}+1)$.
+
+统计力学方法得到热容, 化学势. 由于只有费米面附近电子激发, 因此比热主要由费米面附近电子影响.
+
+热导率: 绝缘体声子传热. 金属主要电子传热. $\kappa = \frac 13 C_v v\lambda$
+% subsection free_e_fermi_gas (end)
+\subsection{Bloch 定理} % (fold)
+\label{sub:bloch_thm}
+对于 $H = -\hbar^2/2m\nabla^2 + V$ 中具有周期性的势 $V(\vec r + \vec R_l) = V(\vec r)$, 则波函数可以表示为
+\begin{equation}
+	\psi_{\vec k}(\vec r + \vec R_l) = \e^{\mi\vec k\cdot\vec R_l}\psi_{\vec k}(\vec r),
+	\quad \vec k = \sum \frac{h_i}{N_i}\vec b_i
+\end{equation}
+据此定义 $\psi_{\vec k}(\vec r) = \e^{\mi\vec k\cdot\vec r}u_{\vec k}(\vec r)$ 其中 $u_{\vec k}$ 是周期 $\vec R$ 的原胞周期函数
+\begin{itemize}
+	\item 此定义中 $\hbar\vec k$ 未必是 $-\mi\hbar\nabla$ 的本征值, 除非 $u$ 是常数, 即自由电子的情况
+\end{itemize}
+% subsection bloch_thm (end)
+\subsection{近自由电子近似} % (fold)
+\label{sub:nearly_free_e}
+哈密顿量 $H = T + V = (T+\overline V) + V(\vec r)-\overline V \equiv H_0 + \Delta V$. 远离布里渊区边界的微扰结果: 
+\begin{align}
+	&E_k^{(0)} = \frac{\hbar^2 k^2}{2m} + \overline V, &&\psi_k^{(0)} = \ket{k} = \frac 1{\sqrt{N\Omega}}\e^{\mi \vec k\cdot\vec r}  \\
+	&E_k^{(1)} = \braket{k|\Delta V|k}, &&\psi_k^{(1)} = \sum_{k'\neq k}\frac{\ket{k'}\braket{k'|\Delta V|k}}{E_k^{(0)} - E_{k'}^{(0)}}\\
+	&E_k^{(2)} = \sum_{k'\neq k}\frac{|\braket{k'|\Delta V|k}|^2}{E_k^{(0)}-E_{k'}^{(0)}}
+\end{align}
+注意到: 
+\begin{align}
+	&\braket{k|\Delta V|k} = \frac 1{\Omega_c}\int_{\Omega_c}\dif\vec r\e^{-\mi\vec k\cdot\vec r}(V-\overline V)\e^{\mi\vec k\cdot\vec r} = \overline V - \overline V = 0 \\
+	&\braket{k'|\Delta V|k} = \frac 1{\Omega_c}\int_{\Omega_c}\dif\vec r\e^{\mi(\vec k - \vec k')\cdot\vec r} V = V_h\delta_{\vec k-\vec k', \vec G_h}
+\end{align}
+因此微扰结果中的求和仅需对于 $k' = k + G_h$ 即可. 
+
+上述做法在布里渊区边界不适用, 由于接近简并. 使用简并的做法, 在 $\ket{k}$ 和 $\ket{k'} = \ket{k+G_h}$ 上的哈密顿量和能级
+\begin{equation}
+	H = \begin{pmatrix}
+		E_k^{(0)} & V_h^* \\
+		V_h       & E_{k'}^{(0)}
+	\end{pmatrix}, \quad
+	E_\pm = \frac{E_k^{(0)}+E_{k'}^{(0)}}2 \pm \sqrt{\left( \frac{E_k^{(0)}-E_{k'}^{(0)}}2\right)^2 + |V_h|^2}
+\end{equation}
+上述结果在 $ \left|E_k^{(0)}-E_{k'}^{(0)}\right| \gg |V_h|$ 时回到微扰结果. 而在布里渊区边界附近, $\left|E_k^{(0)}-E_{k'}^{(0)}\right| \ll |V_h|$ , 特别的边界上 $E_k^{(0)}-E_{k'}^{(0)} = 0$\footnote{零级能量相等即 $|\vec k + \vec G_h| = |\vec k|$, 可得 $\vec k$ 在倒格矢中垂面上, 即布里渊区界面上.}, 产生带隙 $\Delta E = 2|V_h|$. 
+
+更严格的情况是对于相差倒格矢的波数一起做本征值问题, 对于倒格矢做截断. 
+
+分割开的能带在各自布里渊区内 (准) 连续, 不同布里渊区间有带隙. 每个能带容纳 $2N$ 个电子态.
+
+引入第一布里渊区简约波矢标记$\vec\kappa$, 通过 $\vec k = \vec G_h + \vec \kappa$将上述能带平移到第一布里渊区
+% subsection nearly_free_e (end)
+\subsubsection{赝势} % (fold)
+\label{subs:pseudo_potential}
+离子实的吸引作用和内部电子的正交性要求等效的排斥作用 (非厄米). 要求得到真实能量. 
+
+$V(\vec r)$ 傅里叶展开的系数选取参数或者经验公式
+% subssection pseudo_potential (end)
+\subsection{紧束缚近似} % (fold)
+\label{sub:LCAO}
+对于单原子波函数 $[T + V(\vec r - \vec R_l)]\psi_i(\vec r - \vec R_n) = \varepsilon_i\psi_i(\vec r - \vec R_l)$. 忽略不同原子波函数重叠: 
+\begin{equation}\label{equ:otho_bt_atom}
+ 	\int \dif\vec r\psi_i^*(\vec r - \vec R_m)\psi_i(\vec r -\vec R_n) = \delta_{mn}
+\end{equation} 
+以及定义矩阵元 (微扰):
+\begin{equation}
+	J(\vec R_n) = -\int\dif\vec r\psi_i^*(\vec r - \vec R_n)\left[U(\vec r) - V(\vec r)\right]\psi_i(\vec r)
+\end{equation}
+于是晶体电子波函数是原子轨道线性叠加 (LCAO) $\psi(\vec r) = \sum a_m\psi_i(\vec r - \vec R_m)$ 表示满足方程
+\begin{equation}
+	\varepsilon_i a_n - \sum_m J(\vec R_n - \vec R_m)a_m = Ea_n
+\end{equation}
+波函数解为 Bloch 和
+\begin{equation}
+	\psi_k(\vec r) = \frac 1{\sqrt{N}}\sum_m\psi_i(\vec r - \vec R_m)\e^{\mi\vec k\cdot\vec R_m};\qquad
+	E_k = \varepsilon_i - \sum_m J(\vec R_m)\e^{-\mi\vec k\cdot\vec R_m}
+\end{equation}
+
+对于 $J$ 取最近邻近似, 即只保留 $J_0 = J(0), J_{\pm1i} = J(\pm\vec a_i)$ 可以看出能带结构, 如 \textit{sc} 晶体
+\begin{equation}
+	E_k = \varepsilon_s - J_0 - 2J_1(\cos k_x a + \cos k_y a + \cos k_z a)
+\end{equation}
+
+总的来说, 随着原子间距减小, 单个能级展宽为能带. 内层电子能带窄, 外层能带宽. 对于诸如 $p_x, p_y, p_z$ 原子简并轨道, 考虑能带间相互作用. 对于原胞中含多个原子的, 需要构造不同杂化轨道的 Bloch 和: 原胞 $l$ 个原子, 每个原子 $m$ 个轨道, 则有 $lm$ 个 Bloch 和, $N$ 个 $\vec k$ 的取值, 共 $Nlm$ 个原子轨道. 
+
+当式(\ref{equ:otho_bt_atom}) 不成立时, 方法:
+\begin{itemize}
+	\item 重迭代积分
+	\item $J$ 积分参数化 ------ 经验紧束缚
+	\item 从能带 Bloch 函数构造 Wannier 函数 $W_n$: 
+	\begin{align}
+		&\psi_{nk}(\vec r) = \frac 1{\sqrt N}\sum_m W_n(\vec r - \vec R_m)\e^{\mi\vec k\cdot\vec R} \\
+		&\int\dif\vec r W_n^*(\vec r - \vec R_m)W_n(\vec r - \vec R_{m'}) = \delta_{mm'}
+	\end{align}
+\end{itemize}
+% subsection LCAO (end)
+\subsection[kp 微扰与有效质量近似]{$\vec k\cdot\vec p$ 微扰与有效质量近似} % (fold)
+\label{sub:kp_and_eff_mass}
+对于高对称点倒易空间 $\vec k_0$ 附近的能带, 设如下基函数, 并假定基函数正交完备
+\begin{equation}
+	\psi_{n}(\vec k, \vec r) = \sum_j A_{nj}(\vec k)\chi_j(\vec k,\vec r) = \sum_j A_{nj}(\vec k)\e^{\mi(\vec k - \vec k_0)\cdot\vec r}\psi_j(\vec k_0, \vec r)
+\end{equation}
+满足方程 (定义% $\Delta \vec k = \vec k - \vec k_0$ 和 
+Bloch 函数 $\psi_j(\vec k_0, \vec r) = \e^{\mi\vec k_0\cdot\vec r}u_j(\vec k_0,\vec r)$)
+\begin{align}
+	&E_n(\vec k)A_{nj}(\vec k) = \left[E_j(\vec k_0) + \frac{\hbar^2}{2m}\left(\vec k^2 - \vec k_0^2\right)\right]A_{nj}(\vec k) + \frac\hbar m\sum_i \left(\vec k - \vec k_0\right)\cdot\vec P_{ji}A_{ni}(\vec k) \\
+	&\vec P_{ji}\equiv\frac{(2\pi)^3}{\Omega_c}\int_{\Omega_c}\dif\vec r u_j^*(\vec k_0,\vec r)\vec p u_i(\vec k_0,\vec r) = \frac{(2\pi)^3}{\Omega_c}\int_{\Omega_c}\dif\vec r u_j^*(\vec k_0,\vec r)(-\mi\hbar\nabla) u_i(\vec k_0,\vec r)
+\end{align}
+在 $\vec k_0$ 附近, 取 $\Delta \vec k = \vec k - \vec k_0$ 是小量, 将 $\Delta\vec k\cdot\vec p$ 作为微扰处理 (非简并), 保留二阶能量和一阶波函数得到: 
+\begin{align}
+	&E_n(\vec k) = E_n(\vec k_0) + \frac{\hbar}{m}\Delta\vec k\cdot(\vec P_{nn} + \hbar\vec k_0) + \frac{\hbar^2}{2m}\Delta \vec k^2 + \frac{\hbar^2}{m^2}\sum_{j\neq n}\frac{\left|\Delta\vec k\cdot\vec P_{nj}\right|^2}{E_n(\vec k_0) - E_j(\vec k_0)} \\
+	&u_n(\vec k,\vec r) = u_n(\vec k_0,\vec r) + \frac{\hbar}{m}\sum_{j\neq n} \frac{\Delta\vec k\cdot\vec P_{jn}}{E_n(\vec k_0) - E_j(\vec k_0)}u_j(\vec k_0,\vec r)
+\end{align}
+当 $\vec k_0$ 是能带极值点时, $\vec P_{nn} + \hbar\vec k_0 = 0$ %$E_n(\Delta\vec k)\approx E_n(0) + \hbar^2\Delta\vec k^2/2m^*$
+可以定义有效质量张量 $m^*$
+\begin{equation}
+	\left(\frac{m}{m^*}\right)_{\alpha\beta}\equiv \frac{m}{\hbar^2}\frac{\partial^2 E_n(\vec k)}{\partial k_\alpha\partial k_\beta} 
+	= \delta_{\alpha\beta} + \frac 2m\sum_{j\neq n}\frac{\left|P^\alpha_{nj}\right|^2}{E_n(\vec k_0) - E_j(\vec k_0)}
+\end{equation}
+特别的, 取 $\vec k_0 = 0$ 得到的等效质量常用于描述全部 $\vec k$ 的能带.
+
+有效质量包络函数
+\begin{equation}
+	F_n(\vec r) = \sum_j A_{nj}(\vec k)\e^{\mi\vec k\cdot\vec r}
+\end{equation}
+
+可以描述电子波包运动...
+\begin{itemize}
+	\item 有效质量是对称张量,
+	\item 选择坐标轴为主轴使得其成为对角张量
+	\item 点群对称性能减少独立分量个数
+	\item 能带越宽, 有效质量越小
+	\item 能带底 $m^*>0$, 能带顶 $m^*<0$
+\end{itemize}
+% subsection kp_and_eff_mass (end)
+\subsection{密度泛函理论与自洽能带计算} % (fold)
+\label{sub:density_func}
+略
+% subsection density_func (end)
+\subsection{能带对称性} % (fold)
+\label{sub:band_sym}
+\begin{itemize}
+	\item 时间反演对称性: $E_n(\uparrow,k) = E_n(\downarrow,-k)$ (Kramers degeneracy)
+	\item 空间反演对称性: $E_n(\uparrow, k) = E_n(\downarrow,k)$ 或者 $E_n(k) = E_n(-k)$
+	\item 晶体的空间平移对称: 同一能带中 $E_n(\vec k + \vec G) = E_n(\vec k)$
+	\begin{itemize}
+		\item 周期布里渊区 (periodic zone)
+		\item 拓展布里渊区 (extended zone)
+	\end{itemize}
+	\item 其他点群对称性 $\alpha$: 
+	\begin{itemize}
+		\item 集合 $\vec k\mbox{-star} = \{\alpha\vec k\}$
+		\item 波矢群 $\mathrm{G}_{\vec k} = \{\beta|\beta\vec k = \vec k + \vec G_h\}$
+	\end{itemize}
+	\item 波函数的对称性
+\end{itemize}
+% subsection band_sym (end)
+\subsection{能态密度与费米面} % (fold)
+\label{sub:density_of_state}
+能态密度
+\begin{equation}
+	D(E) = \frac{\dif Z}{V\dif E} = \frac{2}{(2\pi)^d}\sum_n\int\frac{\dif S_{E_n}}{|\nabla_k E_n|}
+\end{equation}
+特别的当 $E = \hbar^2k^2/(2m^*)$ 时, 
+\begin{equation}
+	D(E) = \begin{cases}
+		\frac 1{2\pi^2}\left(\frac{2m^*}{\hbar^2}\right)^{3/2}\sqrt E & d=3 \\
+		\frac{m^*}{\pi\hbar^2} & d=2 \\
+		\frac 1{\pi\hbar}\sqrt\frac{2m^*}{E} & d=1
+	\end{cases}
+\end{equation}
+费米面: $T = \SI{0}{K}$ 时 $k$ 空间占据态的界面. 金属: 具有费米面的材料.
+\begin{itemize}
+	\item 电子恰好填满最低一系列能带 (价带), 再高的能带全空(导带). 两者间差称带隙. 绝缘体: 带隙宽度大的; 半导体: 带隙宽度小的
+	\item 存在部分填充的能带: 金属. 有分界面: 费米面
+	\item X 光子发射谱强度-频率关系, 由于费米面的存在, 金属是骤降的, 而非金属逐渐下降 (态密度随着 $k$ 接近于能带顶时候逐渐变小)
+\end{itemize}
+角分辩光电子谱测量能带
+% subsection density_of_state (end)
+% section elec_band (end)
+\section{晶体电子在外场中的运动} % (fold)
+\label{sec:e_in_outer_field}
+\subsection{准经典近似} % (fold)
+\label{sub:semi_classic}
+晶体电子到 Bloch 波包. 波包波数展宽 $\Delta k \ll 2\pi / a$ (从而波包远大于原胞). 波包看作准粒子, 波包中心的移动速度即群速度:
+\begin{equation}
+	\vec v = \frac 1\hbar \nabla_k E
+\end{equation}
+一般地 $\dif \hbar \langle\vec k\rangle/\dif t = \vec F$ (这里只需要假设 $\vec k$ 是平移算符本征矢量的标记并忽略能带间耦合, 从而可以自由加减倒格矢). 计算加速度
+\begin{equation}
+	a_\alpha = \frac{\dif v_\alpha}{\dif t} = \sum_\beta \frac 1{\hbar^2}\frac{\partial^2 E_n(\vec k)}{\partial k_\alpha\partial k_\beta} F_\beta = \sum_\beta \left(\frac 1{m^*}\right)_{\alpha\beta}F_\beta
+\end{equation}
+
+有效质量近似: 相当于求的波函数包络函数
+% subsection semi_classic (end)
+\subsection{Wannier 能级与 Bloch 振荡} % (fold)
+\label{sub:Wannier_bloch}
+忽略能带间耦合 (带间 Landau-Zener 隧穿可以忽略), 在恒定电场下得到的静态解能级. 当 $F$ 平行于某倒格矢时, 
+\begin{equation}
+	E_n = \frac{2\pi}\chi nF +\frac 1\chi\int_{-\chi/2}^{\chi/2}\dif k_x \left(E_l(\vec k) - FX_ll\right)
+\end{equation}
+外电场作用下能带倾斜, 电子在单一能带中移动, 出现 $\vec k$ 振荡即实空间振荡. 观察到的条件是振荡周期远小于弛豫时间 (很难实现, 在超晶格中观察到): 
+\begin{equation}
+	T = \frac{2\pi/a}{eE/\hbar} = \frac{2\pi\hbar}{eEa} \ll \tau
+\end{equation}
+
+Landau-Zener 隧穿几率
+\begin{equation}
+	\rho\propto E\exp\left[-\frac{\pi^2}{\hbar}\sqrt{2mE_g}\left(\frac{E_g}{eE}\right)\right]
+\end{equation}
+% subsection Wannier_bloch (end)
+\subsection{导电性的能带论解释} % (fold)
+\label{sub:why_conductor}
+自由电子气动力学方程 ($\dif t/\tau$ 几率发生散射)
+\begin{equation}
+	p(t+\dif t) = \left(1 - \frac{\dif t}{\tau}\right)p(t) + F(t)\dif t \quad\Rightarrow\quad
+	\frac{\dif p}{\dif t} = F - \frac p\tau
+\end{equation}
+于是平衡时 $p = F\tau$, 电流密度 $J = -nev = ne^2\tau E/m$
+
+能带论角度看
+\begin{equation}
+	J = -\frac{2e}{8\pi^3}\int\dif\vec k \vec v_n(\vec k)f(\vec k)
+\end{equation}
+满带电子 $\pm\vec k$ 相消从而不贡献电流: 绝缘体. 金属电子在 $k$ 空间分布偏移从而产生电流
+
+空穴: 波矢, 自旋, 电荷以及有效质量都与电子取反. 原因依次为: 满带总动量为零, 总自旋为零, 群速度不变 (能量和波矢量都取反) 且相比满带少了电子, 波矢量取反(?)
+\begin{itemize}
+	\item 金属
+	\item 半金属: 能带交叠
+	\item 半导体
+\end{itemize}
+% subsection why_conductor (end)
+\subsection{恒定磁场中的电子运动} % (fold)
+\label{sub:e_in_mag}
+磁场 $\vec B = B\hat z$, $\omega_c = eB/m$. Landau 规范下 $\vec A = -By\hat x$, 解薛定谔方程 $H = (\vec p + e\vec A)^2/2m $ 得到:
+\begin{align}
+	&E_n = \frac{\hbar^2k_z^2}{2m} + \varepsilon_n,
+	&&\psi_n = \varphi_n(y - y_0)\e^{\mi(k_xx+k_yy)} \\
+	&\varepsilon_n = \left(n+\frac 12\right)\hbar\omega_c,
+	&&\varphi_n(y) = \e^{-\omega_cy^2/2}H_n(\omega_c y)
+\end{align}
+二维情况下的简并度 (考虑自旋) $L_xL_y eB/(\pi\hbar)$
+
+晶体中采用有效质量近似直接将上述结果质量替换为有效质量.
+\subsubsection{回旋共振} % (fold)
+\label{ssub:cyc_resonance}
+垂直磁场方向加电场频率等于回旋频率 $\omega_c$. 不同与 Wannier 能级, 强磁场和低温下 $\omega_c\tau\gg 1$ 是可能的. 回旋共振可以测量有效质量: 回旋共振有效质量. 对于等能面是旋转椭球的情况, 若磁场与椭球纵轴 ($l$ 方向) 夹 $\gamma$ 角
+\begin{equation}
+	\frac 1{m_c^*} = \frac{\cos^2\gamma}{m_t^2} + \frac{\sin^2\gamma}{m_tm_l}
+\end{equation}
+% subsubsection cyc_resonance (end)
+\subsubsection{De Hass-van Alphen 效应} % (fold)
+\label{ssub:de_hass_van_alphen}
+磁化率随磁场倒数 $1/B$ 周期性振荡. Landau 能级简并度随着 $B$ 增加而增大, 未填满的能级填充情况随着 $B$ 强度周期变化: $\lambda D(B) = (\lambda - 1) D(B') = N$, 特别的, 二维的情形中, $D = L_xL_y eB/(\pi\hbar c)$, 于是振荡周期 $\Delta(1/B) = e/n\pi\hbar c$
+
+一般的, 通过测定 De Hass-van Alphen 效应的振荡周期能够计算极值截面 (与费米面相切的 Landau 能级对应圆柱面) 的面积, 从而刻画费米面的形状. 而对于电子轨迹超出第一布里渊区的情况, 可能出现开轨道, 这是没有 De Hass-van Alphen 效应, 但是有明显的磁阻效应.
+% subsubsection de_hass_van_alphen (end)
+% subsection e_in_mag (end)
+% section e_in_outer_field (end)
+\section{金属电子论} % (fold)
+\label{sec:e_in_metal}
+\subsection{功函数与接触电势} % (fold)
+\label{sub:work_func}
+热电子发射电流 $I\propto \exp[-W/k_BT]$, 其中 $W$ 称为功函数. 经典图像为 $W = \chi$ 是沿电流方向的逸出功/势阱深度. 量子解释加入费米统计后, 结果为 $W = \chi - \varepsilon_F$
+
+接触电势: 不同金属功函数不同导致化学势/费米能级对齐时出现电势差, 通过接触电势弥补费米能级差. 
+\begin{equation}
+	-e V_A - W_A = -e V_B - W_B\quad\Rightarrow V_A - V_B = \frac 1e(W_B - W_A)
+\end{equation}
+% subsection work_func (end)
+\subsection{Boltzmann 方程} % (fold)
+\label{sub:boltzmann_equ}
+对于分布函数 $f(\vec k,\vec r, t)$
+\begin{equation}
+	-\vec v\cdot\nabla_r f -\frac{\dif\vec k}{\dif t}\cdot\nabla_k f + \left(\frac{\partial f}{\partial t}\right)_c = \frac{\partial f}{\partial t}
+\end{equation}
+其中脚标 $c$ 表示碰撞项. 稳态时 $\partial f/ \partial t = 0$
+\begin{itemize}
+	\item 电子的情况: $\dot{\vec k} = -e\left(\vec E + \vec v\times\vec B\right)/\hbar$
+	\begin{align}
+		&\left(\frac{\partial f}{\partial t}\right)_c = b-a \\
+		&b = \frac 1{(2\pi)^3}\int\dif\vec k' f(\vec k', t)[1-f(\vec k, t)]\Theta(\vec k', \vec k) \\
+		&a = \frac 1{(2\pi)^3}\int\dif\vec k' f(\vec k, t)[1-f(\vec k', t)]\Theta(\vec k, \vec k')
+	\end{align}
+	其中 $\Theta(\vec k, \vec k')$ 表示从 $\vec k$ 跃迁到 $\vec k'$ 的几率
+	\item 声子的情况: $\nabla_r f = \partial f/\partial T \nabla_r T$; 碰撞项包含电声子散射和声子间散射
+\end{itemize}
+\subsubsection{弛豫时间近似和电导率} % (fold)
+\label{ssub:tau_and_conduct}
+弛豫时间近似, 设偏离平衡 ($f_0$) 较小时: 
+\begin{equation}
+	\left(\frac{\partial f}{\partial t}\right)_c = -\frac{f - f_0}{\tau(\vec k)}
+\end{equation}
+于是在只有外电场时 (通常磁场的作用比电场低一阶)
+\begin{equation}
+	-\frac{e}{\hbar}\vec E\cdot\nabla_k f = -\frac{f-f_0}{\tau}
+\end{equation}
+关于电场做微扰并只保留一阶项, 并且 $f(\vec k) = f(\varepsilon(\vec k))$, 可以得到: 
+\begin{align}
+	&\vec j = \frac 1{(2\pi)^3} \int \dif\vec k 2f(-e\vec v) = \sigma\vec E \\
+	&\sigma_{\alpha\beta} = -\frac {2e^2}{(2\pi)^3}\int\dif\vec k \tau v_\alpha v_\beta \frac{\partial f_0}{\partial \varepsilon}
+\end{align}
+其中出现 $\partial f_0/\partial\varepsilon$ 表明对于费米分布, 电导率主要由费米面附近电子贡献.
+
+各向同性时 $\varepsilon = \hbar^2 k^2/(2m^*)$, 并考虑温度不太高的情况
+\begin{equation}
+	\sigma = \frac{e^2}{3\pi^2 m^*}\int\dif\varepsilon k^3\tau\left(-\frac{\partial f_0}{\partial \varepsilon}\right) = \frac{e^2\tau}{3\pi^2m^*}k_F^3 = \frac{ne^2\tau}{m^*}
+\end{equation}
+% subsubsection tau_and_conduct (end)
+\subsubsection{各向同性散射求弛豫时间} % (fold)
+\label{ssub:col_for_tau}
+过程略...
+\begin{equation}
+	\frac 1{\tau(\vec k)} = \frac{1}{(2\pi)^3}\int\dif\vec k'\Theta(\vec k,\vec k')(1-\cos\eta)
+\end{equation}
+% subsubsection col_for_tau (end)
+\subsubsection{局限性和Kubo公式等} % (fold)
+\label{ssub:improve_boltzmann}
+局限性: 
+\begin{enumerate}
+	\item 波函数必须是 Bloch 函数, 避免原胞内离子势的剧烈变化
+	\item 空间势的变化比较缓, 电子的平均自由程远大于晶格常数
+	\item 外场足够弱, 不破坏能带图像 (从外场吸收能量小于带宽)
+	\item 外场随时间改变足够慢, 准静态过程
+	\item 假定碰撞是瞬时发生的 (相对于驰豫时间) : 弱散射
+\end{enumerate}
+解决方案: Kubo 公式, Wigner 分布函数, 非平衡 Green 函数
+% subsubsection improve_boltzmann (end)
+% subsection boltzmann_equ (end)
+\subsection{电声子散射和电导} % (fold)
+\label{sub:e_phonon}
+硬离子势近似: 晶格振动时离子势刚性移动, 不畸变, 不极化. 记格波 $\vec u_n$
+\begin{align}
+	&\delta V(\vec R_n) \approx - \vec u_n\nabla_r V(\vec r - \vec R_n) \\
+	&\vec u_n = \sum_{qj}A_{qj}\hat{\vec e_j}\e^{-\mi(\omega_q t - \vec q\cdot\vec R_n)} \\
+	&H_{\mbox{el-ph}} = \sum_n - \vec u_n\nabla_r V(\vec r - \vec R_n)
+\end{align}
+将电声作用视为微扰项计算跃迁几率
+\begin{equation}
+ 	\Theta(\vec k,\vec k') = \frac{2\pi^2}{\hbar}\left[|\braket{\vec k'|H|\vec k}|^2\delta(E' - E - \hbar\omega) + |\braket{\vec k'|H^\dagger|\vec k}|^2\delta(E' - E + \hbar\omega)\right]
+\end{equation}
+计算中引入 $\ket{\vec k}$ 的 Bloch 函数形式可以得到仅 $\vec k' - \vec k = \vec G_h\pm \vec q$ 时矩阵元非零. 另外 $\hbar\omega \ll E$, 近似弹性散射
+\begin{itemize}
+	\item U过程 $\vec G_h\neq 0$: 仅当 $\vec k,\vec k'$ 靠近布里渊区时候有明显影响
+	\item N过程 $\vec G_h = 0$ 准弹性散射, 散射率正比于费米面上电子态密度
+	\item 高温 $\Theta\propto|A|^2\propto T$; 低温仅低频声子有激发, 德拜模型 $|A|^2\sim T^3$, 同时小角度散射 $(1-\cos\eta)\sim T^2$, 从而 $\tau ^{-1}\propto T^5$. 电阻率 $\rho\propto\tau^{-1}\proptoT^5$
+\end{itemize}
+\subsubsection{其他影响电阻因素: 极化子, 杂质散射和 Kondo 效应} % (fold)
+\label{ssub:other}
+\begin{itemize}
+	\item 电子在离子晶体中运动时, 将使周围正负离子产生相对位移, 形成介质局域极化. 极化伴随电子, 相当于LO声子伴随电子, 形成 (电子+LO声子) 实体, 称为极化子.
+	\item 杂质散射一般独立于温度, Matthiessen's law: 电声子散射与杂质散射叠加
+	\begin{equation}
+		\frac 1\tau = \frac 1{\tau_L} + \frac 1{\tau_I}, \quad \rho = \rho_L + \rho_I
+	\end{equation}
+	\item Kondo (近藤) 效应: 稀磁合金电阻极小及相关的低温反常现象, 源自传导电子与磁性杂质原子反铁磁耦合
+\end{itemize}
+% subsubsection other (end)
+% subsection e_phonon (end)
+\subsection{典型金属元素的能带结构} % (fold)
+\label{sub:band_for_classic_metal}
+\begin{enumerate}
+	\item 一价碱金属, \textit{bbc} 结构, 近自由电子近似很好, Fermi 面接近球形, 完全在第一布里渊区
+	\item 二价金属, 立方晶系如 Ca, Sr, Ba 等, 一部分电子进入第二布里渊区; 六角晶系如 Be, Mg, Zn, Cd, 每个原胞 4 个 s 电子, 一部分电子填入高布里渊区, 奇形怪状的费米面. 特殊的菱面体 Hg
+	\item 三价金属, Al (\textit{fcc}), 3s$^2$3p$^1$, 近自由电子近似很好; In (\textit{fcc})沿一立方轴拉长. 自旋轨道耦合增强
+	\item 贵金属: s 带与 d 带重叠; d 带填满，$\varepsilon_F$ 离 d 带\SI{2}{eV}; s 带半满, $\varepsilon_F$ 在 s 带; 费米面与BZ边界面接触, 变形
+	\item IV 族金属和半金属
+	\item 半金属
+	\item 石墨: 范德瓦尔作用层内 sp$^2$ 杂化的共价键, 2p$_z$ 参与导电
+	\item 过渡金属: d 电子起主要作用, 近自由电子近似不适合, 紧束缚近似更好; 介于 d 壳层全满的贵金属与 d 壳层全空的碱金属之间, 面心, 体心, 六角结构
+	\item 稀土金属: 多种结构, 六角密排最常见, 单电子近似不合适, 强相互作用
+\end{enumerate}
+% subsection band_for_classic_metal (end)
+\subsection{介电屏蔽} % (fold)
+\label{sub:barrier}
+Hartree 近似, Hatree-Fock 近似 %(?6 P47-)
+
+电子气的介电常数...
+
+Thomas-Fermi 方法, Yukawa 屏蔽势 (交换作用的屏蔽: 消除费密面上群速度的奇异性)
+
+Lindhard 方法
+
+Friedel 振荡, 频率依赖的 Lindhard 屏蔽
+
+Landau 费米液体理论解释为什么单电子近似有效, 为什么电子相互作用对于 $E(k)$ 影响大而对于输运性质影响小. 准粒子: 不是独立电子, 而是独立的, 满足不相容原理的 something..
+
+Landau费密液体: 独立的, 满足不相容原理的准粒子的集合, 其在费米面附近寿命 $\tau^{-1} = a(E_1 - E_F)^2 + b(k_B T)^2$
+
+汤川势包含了库仑势傅里叶展开的短波部分, 长波部分产生集体激发 ------ plasma
+% subsection barrier (end)
+\subsection{金属绝缘体转变} % (fold)
+\label{sub:mit}
+Wilson 转变: 压力和温度导致的 MIT, 通常是晶格常数改变, 晶格对称性改变等
+
+Peierls 转变: 结构改变导致的 MIT
+
+Mott 转变: 多电子作用 (依赖电子浓度) 导致的 MIT
+
+Anderson 转变: 无序导致的 MIT, 改变费密能级与迁移率边的相对位置
+% subsection mit (end)
+% section e_in_metal (end)
+\section{半导体电子论} % (fold)
+\label{sec:semi_conduct_e}
+直接带隙半导体和间接带隙半导体. 最常见的结构是闪锌矿结构和钻石结构
+
+测量: 本征光吸收, 电导率随温度变化
+
+光学方法研究能带隙: 
+\begin{itemize}
+	\item 直接带隙: $\Delta \vec k = 0$ (光子动量远小忽略), $\Delta E = 2\pi\hbar c/\lambda$
+	\item 间接带隙 $\Delta \vec k = \pm\vec q$, $\Delta E = 2\pi\hbar c/\lambda$ (声子能量远小)
+\end{itemize}
+逆过程: 电子-空穴对复合发光. $\hbar\omega = \Delta E$. 直接带隙发光几率远大于间接带隙
+
+能带隙的一般特点
+\begin{itemize}
+	\item 轻原子倾向于X能谷最低; 重原子倾向于较小的能隙
+	\item 极性半导体倾向于直接能带隙; 锗特殊, 导带底在 L 谷
+\end{itemize}
+% subsection semi_band (end)
+\subsection{掺杂} % (fold)
+\label{sub:dopant}
+%掺杂
+\begin{itemize}
+	\item 本征半导体
+	\item 施主杂质: 提供电子到导带, 产生 N 型半导体, 往往距导带底比较近
+	\item 受主杂质: 接受满带跃迁的电子, 在满带产生空穴. 形成 P 型半导体, 往往距离价带顶比较近
+\end{itemize}
+\subsection{基本能带结构} % (fold)
+\label{sub:semi_band}
+浅杂质能级: 类氢轨道, 长程势, 离带边近. 施主杂质主要由导带态组成, 受主杂质主要由价带态组成. 包络波函数 $F(\vec r)$ 满足:
+\begin{equation}
+	\left(-\frac{\hbar^2}{2m^*} - \frac{q^2}{4\pi\varepsilon R}\right) f(\vec r) = E_n F(\vec r)
+\end{equation}
+参照氢原子的结论, 
+\begin{equation}
+	E_n = -\frac{m^* q^4}{32\pi^2\hbar^2\varepsilon^2}\frac 1{n^2}
+	=-\frac{m^*}{m\varepsilon_r^2}\frac{R_y}{n^2}, \quad
+	a_B^* = \frac{4\pi\hbar^2}{m^*}\frac{\varepsilon}{q^2} = \frac{\varepsilon_r m}{m^*} a_B
+\end{equation}
+其中 $R_y = \SI{13.6}{eV}$ 是氢原子电离能, $a_B = \SI{0.52}{\angstrom}$ 是氢原子半径. 基态波函数形如 $F(\vec r) \propto \exp(-r/a_B^*)$
+
+Deep level: 杂质离子短程势, 离能带边较远 (并非一定). 深能级杂质态波函数由多个能带态组成. 作用: 可以是有效复合中心, 降低载流子寿命; 非辐射复合中心, 影响发光效率; 补偿杂质提高电阻率
+% subsection dopant (end)
+\subsection{电子统计分布} % (fold)
+\label{sub:stat_semi_con}
+费米分布, 但 $\mu$ 在带隙内, 从而 $E_c-\mu\gg k_B T$ (电子); $\mu - E_v \gg k_B T$ (空穴), 于是两者的统计分布:
+\begin{align}
+	\mbox{电子 }\qquad &f(E) = \frac 1{\e^{(E-\mu)/k_BT}+1} \approx \e^{-(E-\mu)/k_B T} \\
+	\mbox{空穴 }\qquad &1-f(E) = 1-\frac 1{\e^{(E-\mu)/k_BT}+1} \approx \e^{-(\mu - E)/k_B T}
+\end{align}
+记导带底能量 $E_-$, 满带顶能量 $E_+$ (带隙 $E_- - E_+$), 在抛物色散, 有效质量近似下的态密度 $N$ 与载流子浓度 $n = \int f N\dif E$, $p = \int (1-f)N\dif E$
+\begin{align}
+	\mbox{电子 }\qquad &N_-(E) = \frac{4\pi}{h^3}(2m^*_-)^{3/2}\sqrt{E - E_-} 
+	&&n = N_-\e^{-(E_--\mu)/k_BT} \\
+	\mbox{空穴 }\qquad &N_+(E) = \frac{4\pi}{h^3}(2m^*_+)^{3/2}\sqrt{E_+ - E} 
+	&&p = N_+\e^{-(\mu-E_+)/k_BT} 
+\end{align}
+其中有效态密度
+\begin{equation}
+	N_\pm = 2\left(\frac{2\pi m^*_\pm k_BT}{h^2}\right)^{3/2}
+\end{equation}
+给定半导体给定温度, $np = N_-N_+\exp\left[-(E_--E_+)/k_BT\right]$ 是常数
+
+倒推化学势, 对于本征半导体 $n=p$, 从而
+\begin{equation}
+	\mu = \frac{E_- + E_+}{2} + \frac 34k_BT\ln\left(\frac{m^*_+}{m^*_-}\right)
+\end{equation}
+掺杂半导体, N 型为例, 施主浓度 $N_D$, 能级 $E_D$, $n = N_D[1-f_D]$, $f_D$ 在考虑自旋简并时, 如果两个态都被占据是能量提高 $\Delta$
+\begin{equation}
+	f_D = \begin{cases}
+		\frac 1{1 + \e^{(E_D - \mu)/k_B T}}   &\Delta\to 0\\
+		\frac 1{1 + \e^{(E_D - \mu)/k_B T}/2} &\Delta\to\infty
+	\end{cases}
+\end{equation}
+可以解得 (以下取 $\Delta\to\infty$, 否则对数中的 $4$ 改为 $2$)
+\begin{equation}
+	\mu = E_D + k_BT\ln\left(\frac{\sqrt{4+\chi^2} - \chi}{4\chi}\right),\qquad
+	\chi = \sqrt{\frac{N_-}{2N_D}}\e^{-(E_- - E_D)/2k_B T}
+\end{equation}
+一般 $N_D < N_-$ 低温时化学势随温度递减
+\begin{itemize}
+	\item 低温 $E_- - E_D \gg k_B T$, $n = \sqrt{N_D N_-/2}\exp[-(E_- - E_D)/2k_B T]$
+	\item 高温 $E_- - E_D \ll k_B T$, $n = N_D$, $\mu = E_- + k_B T\ln(N_D/N_-)$
+\end{itemize}
+
+P型掺杂, 受主浓度 $N_A$, 能级 $E_A$ 时
+\begin{equation}?
+	p = N_A\left(1-\frac{1}{1+\e^{(\mu-E_A)/k_B T}/g_A}\right) = \frac{N_A}{1+g_A\e^{(E_A-\mu)/k_B T}}
+\end{equation}
+% subsection stat_semi_con (end)
+\subsection{半导体电导} % (fold)
+\label{sub:conduct_in_semi}
+载流子浓度变化显著, 引入迁移率 (mobility) $\mu = q\tau/m^*$, 于是电导率$\sigma = nq\mu_- + pq\mu_+$. $\mu E$ 是在电场 $E$ 下的飘逸平均速度. 
+
+散射影响
+\begin{itemize}
+	\item 低温时电离杂质散射 (低掺杂时可以忽略)
+	\item 温度升高声学声子散射贡献增加
+	\item 极性半导体: Fr\"ohlich 散射
+\end{itemize}
+载流子浓度影响
+\begin{itemize}
+	\item 低温, 随着温度电离增加, 电导率上升
+	\item 中温, 电离饱和, 而迁移率下降, 电导率下降
+	\item 高温, 可能的本征激发增加
+\end{itemize}
+% subsection conduct_in_semi (end)
+\subsection{Hall 效应} % (fold)
+\label{sub:hall}
+$\vec E_H = R\vec B\times\vec j$, 其中 Hall 系数 $R$ 对于电子 $R = - 1/ne$, 对于空穴 $R = 1/ne$. $R$ 的正负性影响载流子类型. 一般的
+\begin{equation}
+	R\approx\frac 1e\frac{p\mu_+^2 - n\mu_-^2}{(p\mu_+ + n\mu_-)^2}
+\end{equation}
+% subsection hall (end)
+\subsection{非平衡载流子} % (fold)
+\label{sub:non_equi_e}
+热平衡下 $n_0p_0 = N_+N_-\e^{-E_g/k_BT}$, 光激发下产生非平衡载流子 $\Delta n = n-n_0 = \Delta p = p-p_0$, 主要影响少数载流子 (如 N 型中的空穴和 P 型中的电子). 非平衡载流子寿命 $\tau$
+\begin{equation}
+	\frac{\dif\Delta p}{\dif t} = -\frac{\Delta p}{\tau}
+\end{equation}
+寿命影响光电导 (即光照使半导体电导率明显增加). 深能级可直接影响非平衡载流子的寿命
+
+非平衡载流子的漂移 (在外场下运动) 和扩散 (非平衡少子的主要运动方式).
+% subsection non_equi_e (end)
+\subsection{PN 结} % (fold)
+\label{sub:pn_junc}
+与金属接触电势相似, 自建场使得化学势对齐. 
+\begin{equation}
+	qV_D = (E_F)_N - (E_F)_P,\qquad 
+	\frac{n_P^0}{n_N^0 } = \frac{p_N^0}{p_P^0} = \e^{-q V_D/k_B T}
+\end{equation}
+PN 结上加入正向电压 (电场 P 到 N) $V$ 时, 势垒高度降低 $q( V-V_D)$, 影响非平衡少数载流子
+\begin{equation}
+	n_P = n_N^0\e^{-q(V_D - V)/k_BT} = n_P^0\e^{qV/k_B T};\qquad
+	p_N = p_P^0\e^{-q(V_D - V)/k_BT} = p_N^0\e^{qV/k_B T}
+\end{equation}
+与边界平衡的 $n_P^0, p_N^0$ 不同, 导致扩散流, 
+\begin{equation}
+	j = -j_0\left(\e^{qV/k_BT} - 1\right); \qquad
+	j_0 = q\left(\frac{D_n}{L_n}n_P^0 + \frac{D_p}{L_p}p_N^0\right)
+\end{equation}
+反向电压上述取反号, 有饱和电流 $j = j_0$
+% subsection pn_junc (end)
+\subsection{MES, MIS, MOS 结; 异质结} % (fold)
+\label{sub:mes_mis_mos}
+MIS: 金属-绝缘体-半导体系统
+
+MOS: 金属-氧化物-半导体系统
+
+肖特基结, 欧姆结
+% subsection mes_mis_mos (end)
+% section semi_conduct_e (end)
+\end{document}
