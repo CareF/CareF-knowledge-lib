@@ -1,0 +1,1199 @@
+%!TEX program = xelatex
+%!TEX builder = latexmk
+% or can be latexmk texify
+%!TEX option = --output-driver="xdvipdfmx -V7"
+% -shell-escape -8bit % For minted package
+\documentclass[11pt,a4paper,twocolumn]{article} % titlepage表示标题单独页
+\usepackage{ctex} % ctex套用英文标题格式 (建议在英文论文混排中文时使用) ,
+% ctexcap套用中文格式 (等同于\documentclass{ctexart}) 
+% \renewcommand{\figurename}{图}
+% \renewcommand{\tablename}{表}
+% \renewcommand{\contentsname}{目录}
+% \renewcommand{\refname}{参考文献}
+% \renewcommand{\thefigure}{\chinese{figure}} % 将图片计数改为汉字数字
+% \renewcommand{\thetable}{\chinese{table}} % 将表格计数改为汉字数字
+\usepackage[top=0.75in,bottom=0.75in,left=0.5in,right=0.5in]{geometry} % 页边距设置
+% \usepackage{multicol}页面内多行包
+\usepackage[CJKbookmarks]{hyperref} % 给pdf文档添加互动式链接和书签
+% \userpackage{wrapfig} % 图文绕排
+% \usepackage{xeCJK} % to get my Chinese name
+% \setCJKmainfont{SimSun}
+% \usepackage[parfill]{parskip} % 增加段间行距
+\usepackage{amsmath,amssymb,esint} % 数学公式类宏包；最末为积分符号拓展
+\allowdisplaybreaks[1]% 允许多行公式间换页, 用//*表示不允许换页
+\numberwithin{equation}{section} % 公式编号包含章节
+\usepackage{bm} % 加粗 (用于vector) 
+\usepackage{mathrsfs} % mathscr font
+% \usepackage{textcomp} % 符号包, 不能用于数学模式, 建议不要和SIunits混用
+% \usepackage[squaren]{SIunits} % 科学单位包, 可以用于数学模式
+% (为了统一不要和textcomp混用) , squaren选项消除和amssymb的冲突
+\usepackage{siunitx} % 淘汰掉上面这个宏包吧, 现在用的是
+% \num{123}, \si{kg.m/s^2}, 
+% \si{\electronvolt\per\square\clight}, \SI{123}{\micro\metre}
+\usepackage{extarrows} % 长箭头, 长等号etc.
+\usepackage{graphicx} % 插图宏包
+% \usepackage{picinpar} % 图文绕排
+\usepackage{array} % 表格宏包
+% \usepackage{longtable} % 长表格宏包
+\usepackage{multirow} % 多行合并的表格宏包
+% \usepackage{booktabs} % 表格线宏包
+% \usepackage{braket} % 狄拉克符号
+
+% \usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ} % 电路图宏包
+% \usepackage[normalem]{ulem} % 下划线, 删除线等宏包, 参数表示不修改\emph{}格式
+% \usepackage{mychemistry} % 化学宏包, 包含mhchem和chemfig
+% \usepackage[version=3]{mhchem} % 化学宏包, 包含mhchem和chemfig
+% \usepackage[symbol]{footmisc} % 脚注拓展, 选项表示用符号做脚注记号
+% \usepackage{listings} % 代码段宏包
+% \lstset{numbers=left,frame=shadowbox,%
+% basicstyle=\ttfamily, commentstyle=\fontseries{lc}\selectfont\itshape, %
+% columns=fullflexible, breaklines=true, escapeinside={(*@}{@*)}}
+% \usepackage{minted} % 具有 Python 支持的代码宏包
+
+\renewcommand*{\vec}[1]{\bm{#1}} % 矢量的格式, 这里是加粗
+\newcommand{\dif}{\,\mathrm d}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}} % 定义数学模式中常用的正体字符
+\DeclareMathOperator\cov{Cov}
+% \bibliographystyle{unsrt}
+\begin{document}
+\title{随机数学方法整理}
+\author{吕铭 Lyu Ming}
+\maketitle
+\tableofcontents
+\newpage
+\section{概率事件与概率空间} % (fold)
+\label{sec:overall_defs}
+\begin{enumerate}
+	\item 基本事件, 样本点
+	\item 和事件, 交事件 $AB = A\cap B$, 对立事件 (余集$\overline A$), 
+	互斥事件 (互不相容)
+	\item 加法公理: 对于互不相容的事件 $A_i$
+	\begin{equation}
+		P\left(\bigcup_{i=1}^{n} A_i\right) = \sum_{i=1}^{n} P(A_i)
+	\end{equation}
+	可以推广到至多可数个互不相交的集合
+\end{enumerate}
+\subsection[概率空间和 sigma-域]{概率空间和 $\sigma$-域} % (fold)
+\label{sub:probability_space}
+概率空间三元组 $(\Omega, \mathscr F, P)$
+\begin{enumerate}
+	\item $\Omega$: 全体可能结果的集合
+	\item $\mathscr F$: 可观测事件的事件族, 是 $\Omega$ 幂集的子集
+	\item $P: F\mapsto [0,1]$ 定义概率, 要求满足加法公理, 以及必然事件概率 $1$
+\end{enumerate}
+称 $\mathscr F$ 为 $\sigma$-域, 若: 
+\begin{enumerate}
+	\item $\Omega\in\mathscr F$
+	\item $A\in\mathscr F \to \overline A\in\mathscr F$
+	\item $A_i\in\mathscr F \to \bigcup_i A_i \in \mathscr F$
+\end{enumerate}
+最小 $\sigma$-域: $\mathscr F_1 = \{\emptyset, \Omega\}$, 
+事件 $A$ 生成的 $\sigma$-域 $\mathscr F_A = \{\emptyset, A, \overline A, \Omega\}$
+% subsection probability_space (end)
+\subsection{概率的公理化定义} % (fold)
+\label{sub:axiom_probability}
+Kolmogorov 的概率公理化定义: 对于 $\mathscr F$ 上的函数 $P$, 
+$\forall A\in \mathscr F$, $P(A)$ 满足: 
+\begin{enumerate}
+	\item 非负性: $P(A) \ge 0$
+	\item 规范性: $P(\Omega) = 1$
+	\item 可数可加性: 两两互不相容的 $A_1, A_2, \cdots \in \mathscr F$
+	\begin{equation}
+		P\left(\bigcup_{n=1}^{\infty} A_n\right) = \sum_{n=1}^\infty P(A_n)
+	\end{equation}
+\end{enumerate}
+则称 $P(A)$ 为事件 $A$ 的概率 (概率测度), 
+三元组 $(\Omega, \mathscr F, P)$ 称为描述该随机试验的概率空间. 
+
+定义推论包括 $P(\emptyset) = 0$, 有限可加性等.
+\begin{itemize}
+	\item 概率的下 (上) 连续性: $\mathscr F$ 双红的事件序列 $\{A_n\}$ 满足: 
+	$A_n\subset A_{n+1}$ (或 $A_n\supset A_{n+1}$), 则
+	\begin{equation}
+		\lim_{n\to\infty} P(A_n) = P\left(\bigcup_{n=1}^\infty A_n\right)
+		\mbox{(或}P\left(\bigcap_{n=1}^\infty A_n\right)\mbox{)}
+	\end{equation}
+	注 可数可加性 $\Leftrightarrow$ 有限可加性 $+$ 概率连续性
+\end{itemize}
+% subsection axiom_probability (end)
+\subsection{条件概率} % (fold)
+\label{sub:bayes}
+在概率空间 $(\Omega, \mathscr F, P)$ 中 $B\in\mathscr F$, $P(B) > 0$, 
+则 $\forall A\in\mathscr F$, 
+定义事件 $B$ 发生的条件下, 事件 $A$ 发生的条件概率
+\begin{equation}
+	P_B(A) = P(A|B) = \frac{P(A\cap B)}{P(B)}
+\end{equation}
+\begin{itemize}
+	\item $B\in\mathscr F$ 且 $P(B) > 0$ 时, $(\Omega, \mathscr F, P_B)$
+	也是概率空间
+\end{itemize}
+\subsubsection{乘法公式} % (fold)
+\label{ssub:prod_equ}
+对于事件列 $A_i\in\mathscr F$, 满足 $P(\bigcap_i A_i)>0$, 则
+\begin{equation}
+	P\left(\bigcap_{i=1}^n A_i\right) = \prod_{i=1}^n
+	P\left(A_i\middle|\bigcap_{j=1}^{i-1}A_j\right)
+\end{equation}
+% subsubsection prod_equ (end)
+\subsubsection{全概率公式} % (fold)
+\label{ssub:full_prob_equ}
+称一族事件 $B_i$ 为 $\Omega$ 的一个一个划分, 
+如果 $B_i\cap B_j = \emptyset (i\neq j)$ 且 $\cup_i B_i = \Omega$. 
+如果 $P(B_i) >0$ 则称为正划分. 对于一族正划分有公式
+\begin{equation}
+	P(A) = \sum_i P(B_i)P(A|B_i)
+\end{equation}
+% subsubsection full_prob_equ (end)
+\subsubsection{Bayes 公式} % (fold)
+\label{ssub:bayes}
+对于一族正划分, 以及 $P(A) > 0$
+\begin{align}
+	P(B_i|A) &= \frac{P(B_i)P(A|B_i)}{P(A)}\\
+	&= \frac{P(B_i)P(A|B_i)}{\sum_j P(B_i)P(A|B_j)}
+\end{align}
+% subsubsection bayes (end)
+% subsection bayes (end)
+\subsection{事件独立性} % (fold)
+\label{sub:dependency}
+定义事件 $A, B\in\mathscr F$ 相互独立: 
+\begin{align*}
+	& P(AB) = P(A)P(B) \\
+	\Leftrightarrow & P(A|B) = P(A)  & P(B)>0\\
+	\Leftrightarrow & P(A|\overline B) & P(\overline B)>0\\
+	\Leftrightarrow & P(A|B) = P(A|\overline B) & 0<P(B)<1
+\end{align*}
+据此可见事件的独立性实质是 $\sigma$-域的独立性.
+
+推广到 $n$ 个事件: $\forall k, i_t (1\le k \le n, 1\le i_1\le\cdots\le i_k\le n)$
+$$
+  P\left(\bigcap_{t=1}^k A_{i_t}\right) = \prod_{t=1}^k P(A_{i_t})
+$$
+共包含 $2^n-n-1$ 个等式
+\subsubsection{事件的相关系数} % (fold)
+\label{ssub:correlation}
+对于 $P(A), P(B) \in (0,1)$, 定义相关系数
+\begin{equation}\label{equ:event_corelation}
+	r(A,B) = \frac{P(AB) - P(A)P(B)}{\sqrt{P(A)(1-P(A)) P(B)(1-P(B))}}
+\end{equation}
+\begin{itemize}
+	\item $r(A, B) = 0$ $\Leftrightarrow$ $A, B$ 相互独立
+	\item $|r(A,B)|\le 1$. 
+	\begin{itemize}
+		\item $r(A,B) = 1$ $\Leftrightarrow$ $P(A) = P(AB) = P(B)$ 即
+		$A, B$ 差别仅为零概率事件
+		\item $r(A,B) = -1$ $\Leftrightarrow$ 
+		$P(A) = P(A\overline B) = P(\overline B)$ 即 
+		$A, \overline B$ 差别仅为零概率事件
+	\end{itemize}
+	\item $r(A,B) > 0$ ($<0$), $A, B$ 正 (负) 相关
+	\item 等价于联合两点分布的随机变量相关系数
+\end{itemize}
+% subsubsection correlation (end)
+% subsection dependency (end)
+% section overall_defs (end)
+\section{随机变量} % (fold)
+\label{sec:variable}
+\subsection{分布函数} % (fold)
+\label{sub:distribution}
+\begin{enumerate}
+	\item 分布函数
+	\begin{equation}
+		F(x) = P(X\le x)
+	\end{equation}
+	\begin{itemize}
+		\item 单调不减函数
+		\item $F(-\infty) = 0$, $F(+\infty) = 1$
+		\item 右连续
+	\end{itemize}
+	\item 二维联合分布
+	\begin{equation}
+		F(x, y) = P(X\le x, Y\le y)
+	\end{equation}
+	\begin{itemize}
+		\item $x$ 或 $y$ 的单调不减函数
+		\item 任意 $x_1\le x_2$, $y_1 \le y_2$
+		$$
+		F(x_2, y_2) - F(x_2, y_1) - F(x_1, y_2) + F(x_1, y_1) \ge 0
+		$$
+		\item $F(-\infty, y) = F(x, -\infty) = 0$, \\
+		$F(+\infty, +\infty) = 1$
+		\item 关于 $x$ 或 $y$ 右连续
+	\end{itemize}
+	\item 边缘分布
+	\begin{equation}
+		F_X(x) = F(x, +\infty)
+	\end{equation}
+	\item 独立性
+	\begin{equation}
+		F(x, y) = F_X(x) F_Y(y)
+	\end{equation}
+\end{enumerate}
+% subsection distribution (end)
+\subsection{随机变量的数字特征} % (fold)
+\label{sub:math_chara}
+\begin{enumerate}
+	\item 数学期望 $EX$
+	\begin{equation}
+		EX = \int_{-\infty}^\infty x\dif F_X(x)
+	\end{equation}
+	\begin{itemize}
+		\item 关于分布函数
+		\begin{equation}
+			\int_{-\infty}^{EX} F(x)\dif x = \int_{EX}^{\infty}[1-F(x)]\dif x
+		\end{equation}
+		推论 (积分均收敛的情况下)
+		\begin{equation}
+		\begin{split}
+			EX = & \int_0^\infty P(X>x)\dif x \\
+			&\quad - \int_{-\infty}^0 P(X\le x)\dif x
+		\end{split}
+		\end{equation}
+		\item 实用统计学定律
+		\begin{equation}
+			Eg(x) = \int_{-\infty}^\infty g(x)\dif F_X(x)
+		\end{equation}
+		推广到多元
+		\begin{equation}
+			Eg(x, y) = \iint g(x, y)\dif F(x, y)
+		\end{equation}
+	\end{itemize}
+	\item $p$-分位数: $x$ 满足
+	\begin{equation}
+		P(X\le x)\ge p; \quad P(X\ge x) \ge 1-p
+	\end{equation}
+	特别的 $p=1/2$ 时称为中位数
+	\item $k$ 阶 (原点) 矩 $E(X^k)$; \\
+	$k$ 阶 (中心) 矩: $E((X-EX)^k)$
+	\item 推广联合 $k+l$ 阶混合矩 $E(X^kY^l)$. (中心矩同理)
+	\begin{itemize}
+		\item 高阶矩存在, 则低阶矩必存在
+	\end{itemize}
+	\item 方差 $DX = E(X - EX)^2$
+\end{enumerate}
+\subsubsection{数学期望和方差的性质} % (fold)
+\label{ssub:chara_expectation}
+\begin{enumerate}
+	\item $|EX|\le E(|X|)$
+	\item $E(\sum c_i X_i) =  \sum c_i EX_i$
+	\item $D(\sum c_i X_i) = \sum c_i^2 DX_i$
+	\item 相互独立, 则 $E(\prod X_i) = \prod EX_i$
+	\item Cauchy-Schwartz 不等式:\\
+	若 $E(X^2), E(Y^2) < +\infty$
+	\begin{equation}
+		(E(XY))^2 \le E(X^2)E(Y^2)
+	\end{equation}
+	\item $\min_c\{E(X-C)^2\} = E(X - EX)^2 = DX$
+	\item $DX^2$ 存在, 则 $DX = EX^2 - (EX)^2$
+	\item $DX = 0 \Leftrightarrow P(X=EX) = 1$
+\end{enumerate}
+% subsubsection chara_expectation (end)
+\subsubsection{协方差和相关性} % (fold)
+\label{ssub:covariance}
+\begin{enumerate}
+	\item 定义协方差
+	\begin{equation}
+	\begin{split}
+		\cov(X,Y) &= E[(X - EX)(Y - EY)]\\
+		&= E(XY) - EXEY
+	\end{split}
+	\end{equation}
+	来自于: $D(X+Y) = DX + DY + 2\cov(X,Y)$
+	\begin{itemize}
+		\item $\cov(X,Y)$ 是对称双线性函数
+		\item 对于多元
+		\begin{equation}
+		\begin{split}
+			D\left(\sum_i c_i X_i\right) = \sum_i c_i DX_i \\
+			+ 2\sum_{ij} c_i c_j \cov(X_i, X_j)
+		\end{split}
+		\end{equation}
+	\end{itemize}
+	\item 随机变量的 (线性) 相关系数
+	\begin{equation}
+		r_{X,Y} \equiv \frac{\cov{X,Y}}{\sqrt{DX}\sqrt{DY}}
+	\end{equation}
+	\begin{itemize}
+		\item $X, Y$ (线性) 不相关: $r_{X,Y} = 0$. 
+		\begin{itemize}
+			\item 独立一定不相关, 反之不亦然
+		\end{itemize}
+		\item 定理 (最佳线性预测)
+		\begin{equation}\label{equ:linear_approx}
+		\begin{split}
+			&E[X - (\hat a Y + \hat b)]^2 \\
+			=& \min_{a,b} E[X-(a Y +b)]^2 \\
+			=& DX(1-r^2_{X,Y})
+		\end{split}
+		\end{equation}
+		其中
+		\begin{equation}
+			\hat a = \frac{\cov(X,Y)}{DY} = r_{X, Y}\sqrt{\frac{DX}{DY}}
+		\end{equation}
+		也可以理解为在最佳预测下: 
+		\begin{equation}
+			\frac{(\hat X-EX)/\sqrt{DX}}{(Y-EY)/\sqrt{DY}} = r_{X,Y}
+		\end{equation}
+		\item  Cauchy-Schwartz 不等式:
+		\begin{equation}
+			|r_{X,Y}|\le 1
+		\end{equation}
+		\item $r_{X,Y} = \pm 1$ 时 $X$ 与 $Y$ 完全相关, 具有准确的线性关系
+		$$
+		P(X = \hat a Y + \hat b | Y) = 1
+		$$
+		\item $\hat X = \hat a Y + \hat b$ 与残差 $X- \hat X$ 不相关
+	\end{itemize}
+	\item 高纬 $(X_1, \cdots, X_n)$ 推广: 
+	\begin{itemize}
+		\item 协方差矩阵
+		\begin{equation}
+			\Sigma_{ij} = \cov(X_i, X_j)
+		\end{equation}
+		\item 相关系数矩阵
+		\begin{equation}
+			R_{ij} = r_{X_i, X_j}
+		\end{equation}
+	\end{itemize}
+	两者均为对称矩阵. $\Sigma$ 对角元为方差, $R$ 对角元 $1$
+\end{enumerate}
+% subsubsection covariance (end)
+\subsubsection{条件期望} % (fold)
+\label{ssub:exptation_with_condition}
+条件期望: $E(X|Y)$
+\begin{enumerate}
+	\item 全期望公式
+	\begin{equation}
+		E(E(X|Y)) = EX
+	\end{equation}
+	\item $E(g(Y)h(X)|Y) = g(Y)E(h(X)|Y)$
+	\item $X, Y$ 相互独立, 则 $E(X|Y) = EX$
+	\item 最佳预测
+	\begin{equation}
+		E[X - E(X|Y)]^2 = \min_\varphi E[X - \varphi(Y)]^2
+	\end{equation}
+	推论
+	\begin{align}
+		& DX = E[X - E(X|Y)]^2 + D[E(X|Y)]\\
+		& E[E(X|Y)]^2 \le EX^2 \\
+		& r_{X,Y}^2 DX\le D[E(X|Y)] \le DX \label{equ:better_than_linear}
+	\end{align}
+	其中 (\ref{equ:better_than_linear}) 式第一个不等号可以使 
+	$\psi(Y) = \hat a Y + \hat b$ 联合 (\ref{equ:linear_approx}) 式得; 
+	第二个不等号取等号当且仅当 $X = E(X|Y)$ ($X$ 由 $Y$ 确定)
+
+	推论: 对于有界 Borel 函数 $g(x)$: (从线性空间角度看, 定义 E(XY) 为内积)
+	\begin{equation}
+		E\{([X-E(X|Y)])g(Y)\} = 0
+	\end{equation}
+\end{enumerate}
+% subsubsection exptation_with_condition (end)
+% subsection math_chara (end)
+% section variable (end)
+\section{数学工具} % (fold)
+\label{sec:tools}
+\subsection{示性函数} % (fold)
+\label{sub:indicator}
+对于集合 $A$ 定义:
+\begin{equation}
+	I_A(x) = \begin{cases}
+		1 & x\in A \\
+		0 & x\notin A
+	\end{cases}
+\end{equation}
+% subsection indicator (end)
+\subsection{矩母函数} % (fold)
+\label{sub:moment_gen_func}
+随机变量 $X$ 的矩母函数 $m_X(u) = E(\e^{uX})$, $u\in \mathbb R$. 性质
+\begin{enumerate}
+	\item $m_X(u)$ 在 $u = 0$ 的某一开邻域内存在, 
+	$\Rightarrow E(X^n) = m_X^{(n)}(0)$
+	\item $X, Y$ 相互独立 $\Rightarrow m_{X+Y}(u) = m_X(u)m_Y(u)$
+	\item 当矩母函数存在时, 它可以唯一确定随机变量的分布
+\end{enumerate}
+
+特别的, 对于 Poisson 分布 $X\sim P(\lambda)$, $m_X(u) = \exp[\lambda(\e^u - 1)]$
+% subsection moment_gen_func (end)
+\subsection{特征函数} % (fold)
+\label{sub:chara_func}
+定义随机变量 $X$ 的特征函数
+\begin{equation}
+	\varphi_X(\theta) = E\e^{\mi\theta X}
+\end{equation}
+推广到随机向量 $\vec X = (X_1, \cdots X_m)^T$ 的特征函数, 
+记 $\vec \theta = (\theta_1, \cdots, \theta_m)^T\in\mathbb R^m$
+\begin{equation}
+	\varphi(\vec\theta) = E\e^{\mi\vec\theta^T\vec X}
+\end{equation}
+\begin{enumerate}
+	\item $|\varphi_{\vec X}(\vec \theta)|\le 1$, $\varphi_X(\vec 0) = 1$
+	\item $\varphi_{\vec X}(\vec \theta)$ 在 $\mathbb R^m$ 上一致连续
+	\item 复共轭 $\varphi_{\vec X}^*(\vec \theta) =
+	\varphi_{\vec X}(-\vec \theta)$
+	\item 常数 $a, b$, 则 
+	$\varphi_{\vec a+B\vec X}(\vec \theta) = \e^{\mi\vec \theta^T \vec a}
+	\varphi_{\vec X}(B^T\vec\theta)$
+	\item 分布密度的 Fourier 变换. 逆变换 (一维)
+	\begin{equation}
+		f(x) = \frac{1}{2\pi}\int_{-\infty}^\infty 
+		\e^{-\mi\theta x}\varphi(\theta)\dif\theta
+	\end{equation}
+	\item 唯一性定理: $F(\vec x)$ 由 $\varphi(\vec \theta)$ 唯一决定, 逆转公式
+	\begin{equation}
+	\begin{split}
+		&F(x) - F(y) = \\
+		&\lim_{T\to\infty}\frac{1}{2\pi}\int_{-T}^T
+		\frac{\e^{-\mi\theta x} - \e^{-\mi\theta y}}{-\mi\theta}
+		\varphi(\theta)\dif\theta
+	\end{split}
+	\end{equation}
+	\item $X, Y$ 相互独立 $\Rightarrow \varphi_{X+Y}(\theta)
+	 = \varphi_X(\theta)\varphi_Y(\theta)$
+	\item $\vec X$ 中各分量相互独立 $\Leftrightarrow$
+	$$
+		\varphi_{\vec X}(\vec \theta) = \prod_i \varphi_{X_i}(\theta_i)
+	$$
+	\item 矩性质: 对于 $E|X^k| < \infty$, $j\le k$
+	\begin{equation}
+		EX^j = \mi^{-j}\varphi^{(j)}(0)
+	\end{equation}
+	\item 混合矩, 若 $E|\prod X_i^{k_i}|<\infty$, 则:
+	\begin{equation}
+	\begin{split}
+		&E\left(X_1^{k_1}X_2^{k_2}\cdots X_m^{k_m}\right) = \\
+		&\quad(-\mi)^{k_1 + \cdots + k_m}
+		\frac{\partial^{k_1+\cdots k_m}}{\partial^{k_1}\theta_1\cdots
+		\partial^{k_m}\theta_m}\varphi(\vec 0)
+	\end{split}
+	\end{equation}
+	\item 连续性定理: 对于随机变量列 $X_n$ 与 $X$, 以下两种说法等价: 
+	\begin{enumerate}
+		\item 在 $F_X(x)$ 上的一切连续点上有 $F_{X_n}(x)\to F_X(x)$. 
+		称为 $X_n$ 依分布收敛到分布函数 $F_X$, 记为
+		$X_n\xlongrightarrow{D} F_X$ (或 $X_n\xlongrightarrow{D} X$)
+		\item $\forall \theta\in\mathbb R$, 
+		$\varphi_{X_n}(\theta)\to\varphi_X(\theta)$
+	\end{enumerate}
+\end{enumerate}
+\subsubsection{一些分布的特征函数} % (fold)
+\label{ssub:chara_func_eg}
+\begin{enumerate}
+	\item Poisson 分布 $P(\lambda)$: 
+	\begin{equation}
+		\varphi (\theta) = \exp\left[\lambda(\e^{\mi\theta} - 1)\right]
+	\end{equation}
+	\item 正态分布 $N(\mu, \sigma^2)$: 
+	\begin{equation}
+		\varphi(\theta) = \exp\left[\mi\mu\theta - 
+		\frac 12 \sigma^2\theta^2\right]
+	\end{equation}
+	\item $m$ 维 Gauss 分布 $N(\vec \mu, \Sigma)$
+	\begin{equation}\label{equ:chra_func_gauss}
+		\varphi(\vec\theta) = \exp\left[\mi\vec\theta^T\vec\mu
+		-\frac 12\vec\theta^T\Sigma\vec\theta\right]
+	\end{equation}
+\end{enumerate}
+% subsubsection chara_func_eg (end)
+% subsection chara_func (end)
+% section tools (end)
+\section{离散随机变量} % (fold)
+\label{sec:discrete}
+分布列 (分布律). $p_i = P(X = x_i)$ 的表格
+\subsection{离散随机向量} % (fold)
+\label{sub:multi_dim}
+\begin{enumerate}
+	\item 联合分布律 $p_{ij} = P(X=x_i, Y=y_j)$
+	\item 边缘分布律\\
+	$P(X=x_i) = \sum_j p_{ij}$, 
+	$P(Y=y_j) = \sum_i p_{ij}$
+	\item 条件分布律
+	\begin{equation}
+		P(X=x_i|Y=y_j) = \frac{p_{ij}}{\sum_k p_{kj}}
+	\end{equation}
+\end{enumerate}
+\subsubsection{独立性} % (fold)
+\label{ssub:indenpendency_discrete}
+独立性定义: $\forall x_i, y_i$
+\begin{equation}
+	P(X=x_i, Y=y_i) = P(X=x_i)P(Y=y_i)
+\end{equation}
+推广到高维 $(X_1, \cdots, X_n)$, $\forall \{x_k\}, (k = 1,2,\cdots)$
+\begin{equation}
+	P(X_i = x_i, i=1,2,\cdots) = \prod P(X_i = x_i)
+\end{equation}
+% subsubsection indenpendency_discrete (end)
+\subsection{数学期望} % (fold)
+\label{sub:math_chara_discrete}
+\begin{enumerate}
+	\item $EX =  \sum_n p_n x_n$
+	\item $E(X|Y=y_j) = \sum_i x_i p_{ij}$
+\end{enumerate}
+% subsection math_chara_discrete (end)
+\subsection{常见分布类型} % (fold)
+\label{sub:dist_type_discret}
+\begin{enumerate}
+	\item 二项分布 $X\sim B(n, p)$: 
+	\begin{equation}
+		P(X=k) = C_n^k p^k q^{n-k}
+	\end{equation}
+	其中 $k = 0, 1, \cdots ,n$. 特别的 $n=1$ 称为标准二值分布
+	\begin{itemize}
+		\item $EX = np$, $DX = npq$
+	\end{itemize}
+	\item 超几何分布
+	\begin{equation}
+		P(X=k) = \frac{C_M^k C_N^{n-k}}{C_{M+N}^n}
+	\end{equation}
+	其中 $k = \max(0, n-N), \cdots, \min(n, M)$
+	\begin{itemize}
+		\item $p = M/(M+N) > 0$ 在 $M+N \to \infty$ 时近似为二项分布
+		\item $EX = nM/(M+N)$
+		\item $DX = npq(M+N-n)/(M+N-1)$
+	\end{itemize}
+	\item 几何分布 $X\sim Ge(p)$
+	\begin{equation}
+		P(X=k) = qp^{k-1}
+	\end{equation}
+	其中 $q = 1-p$, $k = 1, 2, \cdots$
+	\begin{itemize}
+		\item $EX = 1/p$, $DX = q/p^2$
+	\end{itemize}
+	截止 $m$ 的几何分布 $P(X=m) = p^m$, $P(X>m)=0$
+	\begin{itemize}
+		\item $EX = (1-q^m)/p$
+	\end{itemize}
+	\item 负二项分布 $X\sim N\!B(r, p)$ (或称 Pascal 分布)
+	\begin{equation}
+		P(X=k) = C_{k-1}^{r-1} p^r q^{k-r}
+	\end{equation}
+	其中 $q = 1-p$, $k = r, r+1, \cdots$
+	\begin{itemize}
+		\item $EX = rq/p$, $DX = rq/p^2$
+	\end{itemize}
+	\item Poisson 分布 $X\sim P(\lambda)$ 或 $\mbox{Poisson}_\lambda$
+	\begin{equation}
+		P(X=k) = \frac{\lambda^k}{k!}e^{-\lambda}
+	\end{equation}
+	\begin{itemize}
+		\item $EX = DX = \lambda$
+	\end{itemize}
+	详见 \ref{sub:poisson}
+\end{enumerate}
+% subsection dist_type_discret (end)
+% subsection multi_dim (end)
+% section discrete (end)
+\section{连续型随机变量} % (fold)
+\label{sec:continuous}
+定义: 对于随机变量 $X$, 存在非负可积函数 $f(x)$ ($x\in\mathbb R$), 
+使 $\forall a<b$
+\begin{align}
+	& P(a < X \le b) = \int_a^b f(x)\dif x \\
+	\Leftrightarrow & F(x) = \int_{-\infty}^x f(u)\dif u
+\end{align}
+称 $f(x)$ 为 $X$ 的概率密度函数
+\begin{enumerate}
+	\item $f(x) \ge 0$, $\int_{-\infty}^\infty f(x)\dif x = 1$
+	\item 连续型随机变量的分布函数 $F(x)$ 是连续函数, 反之不亦然
+	\item 在 $f(x)$ 的连续点 $F'(x) = f(x)$
+	\item $f(x)$ 不唯一
+\end{enumerate}
+\subsection{连续随机向量} % (fold)
+\label{sub:multi_dim_conti}
+\begin{enumerate}
+	\item 定义 (二维): 存在非负可积函数 $f(x,y)$, 使得
+	\begin{align}
+		&F(x,y) = \int_{-\infty}^x\int_{-\infty}^y f(u, v)\dif u\dif v\\
+		\Leftrightarrow & P((x,y)\in C) = \iint_C f(x,y)\dif x\dif y
+	\end{align}
+	其中 $C = \{(x,y)|a<x\le b, c<y\le d\}$. 
+	称 $f(x,y)$ 为 $(X,Y)$ 的联合分布密度函数
+	\begin{itemize}
+		\item $f(x,y)\ge 0$; $\iint_{\mathbb R^2} f(x,y)\dif x\dif y = 1$
+		\item 若 $f(x,y)$ 在 $(x,y)$ 处连续, 则
+		\begin{equation}
+			f(x, y) = \frac{\partial^2 F(x,y)}{\partial x\partial y}
+		\end{equation}
+	\end{itemize}
+	\item 边缘分布
+	\begin{align}
+		&f_X(x) = \int_{-\infty}^\infty f(x, y) \dif y\\
+		&f_Y(y) = \int_{-\infty}^\infty f(x, y) \dif x
+	\end{align}
+	\item 条件密度, 对于 $f_Y(y) > 0$ (要求绝对收敛)
+	\begin{equation}
+		f_{X|Y}(x|y) = \frac{f(x,y)}{f_Y(y)}
+	\end{equation}
+\end{enumerate}
+\subsubsection{独立性} % (fold)
+\label{ssub:indenpendency}
+独立性定义: $\forall x, y$ 
+\begin{equation}
+	f(x,y) = f_X(x)f_Y(y) \Leftrightarrow f_{X|Y}(x|y) = f_X(x)
+\end{equation}
+% subsubsection indenpendency (end)
+\subsubsection{随机变量的函数分布} % (fold)
+\label{ssub:func_dist}
+对于随机向量 $\vec X$ 的联合概率密度函数 $f(\vec y)$, 
+有双射 $\vec Y = T(\vec X)$ ($T:D\mapsto R$), 则 $\vec Y$ 有概率密度函数
+\begin{equation}
+	f_{\vec Y}(\vec y) = f(\vec x(\vec y)) 
+	\left|\frac{\partial \vec x}{\partial \vec y}\right| I_R(\vec y)
+\end{equation}
+其中 $\partial \vec x/\partial \vec y$ 表示 Jacob 行列式
+\begin{equation}
+	\frac{\partial \vec x}{\partial \vec y} = \begin{vmatrix}
+		\frac{\partial x_1}{\partial y_1} & \frac{\partial x_2}{\partial y_1} 
+		& \cdots \\
+		\frac{\partial x_1}{\partial y_2} & \frac{\partial x_2}{\partial y_2}
+		& \cdots \\
+		\vdots & \vdots & \ddots
+	\end{vmatrix}
+\end{equation}
+
+据此导出相关公式: 
+\begin{align}
+	&\begin{aligned}
+		f_{aX + bY}(z) &= \int_{-\infty}^{\infty}\frac{1}{|b|}
+		f\left(x, \frac{z-ax}{b}\right)\dif x \\
+		&= \int_{-\infty}^{\infty}\frac{1}{|a|}
+		f\left(\frac{z-by}{a}, y\right)\dif y
+	\end{aligned}\label{equ:x_to_y_linear}\\
+	&f_{XY}(z) = \int_{-\infty}^{\infty}\frac{1}{|x|}
+	f\left(x, \frac zx\right)\dif x \\
+	&f_{X/Y}(z) = \int_{-\infty}^{\infty}|y|f(zy, y)\dif x
+\end{align}
+特别的, 对于 (\ref{equ:x_to_y_linear}) 式, 当 $X, Y$ 相互独立, 有卷积公式
+\begin{equation}
+\begin{split}
+	f_{X+Y}(z) &= \int_{-\infty}^{\infty}f_X(x)f_Y(z-x)\dif x \\
+	&= \int_{-\infty}^{\infty} f_X(z-y)f_Y(y)\dif y \\
+	&\equiv f_X * f_Y = f_Y * f_X
+\end{split}
+\end{equation}
+% subsubsection func_dist (end)
+% subsection multi_dim_conti (end)
+\subsection{数学期望} % (fold)
+\label{sub:expectation_conti}
+\begin{enumerate}
+	\item 一维: 如果
+	\begin{equation}
+		\int_{-\infty}^\infty |x|f(x)\dif x < \infty
+	\end{equation}
+	则称 $X$ 的数学期望存在, 定义为
+	\begin{equation}
+		EX = \int_{-\infty}^\infty xf(x)\dif x 
+	\end{equation}
+	\item 高维同理
+	\begin{equation}
+		Eg(X,Y) = \iint_{\mathbb R^2} g(x,y)f(x, y)\dif x\dif y
+	\end{equation}
+\end{enumerate}
+% subsection expectation_conti (end)
+\subsection{常见分布类型} % (fold)
+\label{sub:dist_type_conti}
+\begin{enumerate}
+	\item 均匀分布 $X\sim U[a,b]$
+	\begin{equation}
+		f(x) = \frac{1}{b-a}I_{[a,b]}(x)
+	\end{equation}
+	\begin{itemize}
+		\item $EX = (a+b)/2$; $DX = (b-a)^2/12$
+	\end{itemize}
+	二维 $(X, Y) \sim U(D)$
+	\begin{equation}
+		f(x, y) = I_D(x,y) \frac 1{|D|}
+	\end{equation}
+	\item 指数分布 $X\sim E(\lambda)$ (或 $\mathrm{Exp}_\lambda$)
+	\begin{equation}
+		f(x) = \lambda \e^{-\lambda x}I_{[0, +\infty)}(x)
+	\end{equation}
+	\begin{itemize}
+		\item $EX = 1/\lambda$, $DX = 1/\lambda^2$
+		\item $EX^n = \Gamma(n+1)/\lambda^n = n!/\lambda^n$
+	\end{itemize}
+	关于指数分布一下命题等价: 
+	\begin{enumerate}
+		\item $X\sim E(\lambda)$
+		\item 无记忆性: $\forall s, t \ge 0$, 
+		$$ P(X>s+t |X>s) = P(X>t) $$
+		\item 恒定增长率: 
+		$$\lim_{h\to 0} \frac 1h P(x<X\le x+h | X>x) = \lambda $$ 
+	\end{enumerate}
+	\item 正态分布 $X\sim N(\mu, \sigma^2)$
+	\begin{equation}
+		f(x) = \frac{1}{\sqrt{2\pi}\sigma}
+		\exp\left[-\frac{(x-\mu)^2}{2\sigma^2}\right]
+	\end{equation}
+	特别的 $N(0, 1)$ 称为标准正态分布
+	\begin{itemize}
+		\item 标准正态分布的分布函数 $F(x) = \Phi(x)$
+		\begin{equation}
+			\Phi(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^x\e^{-u^2/2}\dif u
+		\end{equation}
+		特殊值: $\phi(-x) = 1-\Phi(x)$, $\Phi(0) = 1/2$
+		\item $EX = \mu$, $DX = \sigma^2$
+		\item $X\sim N(0,1)$ 的 $n$ 阶矩
+		\begin{equation}
+			EX^n = \begin{cases}
+				(2k-1)!! & n=2k \\
+				0 & n=2k-1
+			\end{cases}
+		\end{equation}
+		\item 可加性: 对于相互独立的 $X_i\sim N(\mu_i, \sigma_i^2)$, 
+		\begin{equation}
+			X = \sum_i a_i X_i + b \sim 
+			N(\sum_i a_i\mu_i + b, \sum_i a_i^2\sigma_i^2)
+		\end{equation}
+	\end{itemize}
+	\item 二维正态分布 $(X, Y)\sim N(\mu_1, \mu_2, \rho, \sigma_1^2, \sigma_2^2)$
+	\begin{equation}
+		f(x, y) = \frac{\exp\left[-Q(x, y)/2\right]}{2\pi\sigma_1\sigma_2\sqrt{1-\rho}}
+	\end{equation}
+	其中 $|\rho|<1$, $\sigma_i > 0$; $Q(x, y)$ 是二次型
+	\begin{equation}
+		Q(x, y) = \frac{1}{1-\rho^2}\left[x^{*2}-2\rho x^*y^* + y^{*2}\right]
+	\end{equation}
+	标准化变量: $x^* = (x-\mu_1)/\sigma_1$, 
+	$y^* = (y-\mu_2)/\sigma_2$. 
+
+	特别的 $N(0, 0, \rho, 1, 1)$ 为二元 $\rho$-标准正态分布
+	\begin{itemize}
+		\item 边缘分布 $X_1\sim N(\mu_1, \sigma_1^2)$, 
+		$Y\sim N(\mu_2, \sigma_2^2)$
+		\item 相关系数 $r_{X,Y} = \rho$
+		\item $X, Y$ 相互独立 $\Leftrightarrow$ $\rho = 0$
+		\item $X|Y=y \sim N(\mu', \sigma'^2)$
+		\item $\mu' = E(X | Y ) = \mu_1 + \sigma_1 \rho (Y-\mu_2)/\sigma_2$ \\
+		\begin{itemize}
+			\item 非线性预测恰为线性预测, 线性回归的依据
+		\end{itemize}
+		\item $\sigma'^2 = D(X | Y ) = (1-\rho^2)\sigma_1^2$
+	\end{itemize}
+	\item $m$ 维 Gauss 分布 $\vec X\sim N(\vec \mu, \Sigma)$ \\
+	$\vec X = A\vec Z +\vec \mu$, 其中 
+	$\vec Z$ 的各分量独立 $Z_i\sim N(0, 1)$ ($i = 1, \cdots, n$) 
+	构成的 $m$ 维随机向量, $A_{m\times n}$ 为常数. 
+	特别的, 一维 Gauss 分布是正态分布或常数.
+	\begin{itemize}
+		\item 分布密度: 对于行列式 $|\Sigma|>0$ 的正态分布
+		\begin{equation}
+		\begin{split}\label{equ:dist_func_gauss}
+			&f(\vec x) = \left(\frac{1}{2\pi}\right)^{m/2} 
+			\frac{1}{\sqrt{|\Sigma|}} \times \\
+			&\exp\left[-\frac 12 (\vec x - \vec\mu)^T\Sigma^{-1}
+			(\vec x - \vec\mu)\right]
+		\end{split}
+		\end{equation}
+		\item 特别的, $m=2$ 时, 二维正态分布
+		\begin{equation}
+			\Sigma = \begin{pmatrix}
+				\sigma_1^2 & \rho\sigma_1\sigma_2 \\
+				\rho\sigma_1\sigma_2 & \sigma_2^2
+			\end{pmatrix}
+		\end{equation}
+		\item 期望 $E\vec X = \vec \mu$, 协方差矩阵 $\Sigma = AA^T$
+		\item 特别的, $\mathrm{Rank}[A] = m$ 满秩时称为 $m$ 维正态分布. 
+		等价于 $\Sigma$ 行列式非零/正定
+		\item 以下等价于定义: 
+		\begin{itemize}
+			\item (正态分布时) 密度函数为 (\ref{equ:dist_func_gauss}) 式
+			\item 满足 (\ref{equ:chra_func_gauss}) 式特征函数定义
+			\item $\vec X\sim N(\vec \mu, \Sigma)$ $\Leftrightarrow$ 
+			$\forall \vec a \in \mathbb R^m$, $\vec a^T\vec X$ 
+			服从一维 Gauss 分布 (正态或者常数)
+		\end{itemize}
+		\item $B\vec X + \vec b \sim N(B\vec\mu + \vec b, B\Sigma B^T)$
+		\item $\vec X$ 各分量相互独立 $\Leftrightarrow$ $\cov(X_i, X_j) = 0$
+		即 $\Sigma$ 对角. 推广: 
+		\begin{itemize}
+			\item $\vec X = (\vec X_1, \vec X_2)$ 相互独立 $\Leftrightarrow$ 
+			$\Sigma$ 分块对角
+			\item $A\vec X$ 与 $B\vec X$ 独立 $\Leftrightarrow$ 
+			$A\Sigma B^T = 0$
+		\end{itemize}
+	\end{itemize}
+\end{enumerate}
+% subsection dist_type_conti (end)
+% section continuous (end)
+\section{随机过程} % (fold)
+\label{sec:random_process}
+\begin{enumerate}
+	\item 随机过程: 概率空间 $(\Omega, \mathscr F, P)$ 中一族依赖参数 $t\in T$ 
+	的随机变量 $X = \{X_t|t\in T\}$ 
+	\item 指标集 $T$ 
+	\item (样本) 轨道: 对于固定的基本事件 $\omega$, 定义在 $T$ 上的实值函数
+	$X_t(\omega)$,
+\end{enumerate}
+\subsection{有限维分布族} % (fold)
+\label{sub:dist_in_process}
+对于一个随机过程, 定义
+$$
+	F_{t_1,\cdots, t_k}(x_1, \cdots, x_k) = P(X_{t_i}\le x_i, i = 1, \cdots, k)
+$$
+为过程的有限维分布族, 满足
+\begin{enumerate}
+	\item 对称性: $\{(t_i, x_i)\}$ 的排序不影响取值
+	\item 相容性: $F_{\vec t, t_i}(\vec x, +\infty) = F_{\vec t}(\vec x)$
+\end{enumerate}
+\begin{itemize}
+	\item Kolmogorov 定理: 满足对称性和相容性的函数族
+	总是某个随机过程使的有限维分布族
+\end{itemize}
+% subsection dist_in_process (end)
+\subsection{独立增量过程} % (fold)
+\label{sub:indenpendent_increase}
+\begin{enumerate}
+	\item 独立增量过程: 随机过程 $X =\{X_t\}$ 中, 
+	任意 $s$ 个互不相交的区间上的增量 $X_{m_i} - X_{n_i}$ ($i = 1, \cdots, s$) 
+	都相互独立
+	\item 时齐的独立增量过程: $X_{m+n} - X_m$ ($n>0$) 对于一切 $m$ 同分布
+\end{enumerate}
+% subsection indenpendent_increase (end)
+\subsection{随机徘徊} % (fold)
+\label{sub:random_walk}
+离散事件, 离散状态的随机过程. 
+\begin{enumerate}
+	\item ($1$-维) 简单随机徘徊: 概率空间 $(\Omega, \mathscr F, P)$ 上的
+	独立同分布随机变量序列 $\{Z_n\}$ 满足
+	$$
+		Z_n\sim \begin{pmatrix}
+			-1 & 1 \\
+			q  & p
+		\end{pmatrix}\quad {n = 1, 2, \cdots}
+	$$
+	其中 $q = 1-p$. 令
+	$$
+		X_n = X_0 + \sum_{i=1}^n Z_i
+	$$
+	称 $X = \{X_n, n\ge 1\}$ 为 ($1$-维) 简单随机徘徊. 
+	特别的 $p=q=1/2$ 时候称为对称的简单随机徘徊
+	\item 分布性质: 令 $X_0 = x$
+	\begin{itemize}
+		\item $EX_n = x + n(p-q)$
+		\item $DX_n = 4npq$
+		\item $\cov(X_n, X_m) = 4pq\min(m,n)$
+	\end{itemize}
+	\item 轨道性质: \\
+	记 $T_y^x$ 表示 $x$ 出发首次到达 $y$ 的时刻, $\phi(x) = P (T_d^x < T_c^x)$, 
+	对于 $c+1\le x \le d-1$
+	$$
+	\phi(x) = p\phi(x+1) + q\phi(x-1)
+	$$
+	考虑 $\phi(c) = 0$, $\phi(d) = 1$, 递推得到 ($p=q$ 渐近)
+	$$
+		\phi(x) = 
+		\frac{1-\left(q/p\right)^{x-c}}{1-\left(q/p\right)^{d-c}}
+	$$
+	\begin{itemize}
+		\item $P (T_d^x < T_c^x) + P (T_c^x < T_d^x) = 1$, 即从 $[c,d]$ 出发, 
+		一定到达边界
+		\item 若 $x>c$, 则
+		$$
+		P(T_c^x \le \infty) = \begin{cases}
+			(q/p)^{x-c} & p>1/2 \\
+			1 & p\le 1/2
+		\end{cases}
+		$$
+	\end{itemize}
+\end{enumerate}
+% subsection random_walk (end)
+\subsection{Poisson 过程与 Poisson 分布} % (fold)
+\label{sub:poisson}
+连续时间, 离散状态的随机过程. 
+
+模型条件: 
+\begin{itemize}
+	\item 独立增量性, 时齐性
+	\item 普通性: 
+	\begin{align*}
+		&P(\omega: N_{t+h}(\omega) - N_t(\omega) = n) \\
+		= &\quad\begin{cases}
+			\lambda h + o(h) & n = 1\\
+			o(h) & n\ge 2\\
+			1-\lambda h + o(h) & n=0
+		\end{cases}
+	\end{align*}
+\end{itemize}
+\subsubsection{Poisson 分布的性质} % (fold)
+\label{ssub:poisson_dist}
+$X\sim P(\lambda)$ 或 $\mbox{Poisson}_{\lambda}$
+\begin{equation}
+	P(X = k) = \frac{(\lambda )^k}{k!}\e^{-\lambda }
+\end{equation}
+\begin{enumerate}
+	\item 可加性: 
+	\begin{equation}
+		X_i\sim P(\lambda_i) \Rightarrow 
+		S_n = \sum_i^n X_i \sim P\left(\sum_i^n \lambda_i\right)
+	\end{equation}
+	\item 随机选择下的不变性: 对于 $C\sim P(\lambda)$, 对于每个个体以保留概率 
+	$p$ 筛选得到 $Y$ 个个体, 则 $Y\sim P(\lambda p)$
+	\begin{equation}
+		\sum_{n=k}^\infty C_n^k p^kq^{n-k} \frac{\lambda^n \e^{-\lambda}}{n!}
+		= \frac{(\lambda p)^k}{k!}\e^{-\lambda p}
+	\end{equation}
+	\item Poisson 近似定理: 对于二项分布 $B(n,p)$, $np = \lambda$
+	\begin{equation}\label{equ:poisson_approx}
+		\lim_{n\to \infty} B(n, \lambda/n) = P(\lambda)
+	\end{equation}
+	即: 
+	\begin{equation}
+		\lim_{n\to\infty} C_n^k\left(\frac{\lambda}{n}\right)^k
+		\left(1-\frac{\lambda}{n}\right)^{n-k} 
+		= \frac{\lambda^k \e^{-\lambda}}{k!}
+	\end{equation}
+	\item $EX = DX = \lambda$
+	\item 与二项式分布的关系: 对于独立的 $X_i\sim P(\lambda_i)$
+	\begin{equation}\label{equ:p_to_b}
+	\begin{split}
+		&P(X_2 = k|X_1 + X_2 = n) \\
+		= &\quad C_n^k \left(\frac{\lambda_2}{\lambda_1 + \lambda_2}\right)^k 
+		\left(\frac{\lambda_1}{\lambda_1+\lambda_2}\right)^{n-k}
+	\end{split}
+	\end{equation}
+	\item 与正态分布的关系, 对于 $X_\lambda\sim P(\lambda)$
+	\begin{equation}
+		\lim_{\lambda\to\infty} \frac{X_\lambda - \lambda}{\sqrt{\lambda}}
+		\xlongrightarrow{D} N(0,1)
+	\end{equation}
+	使用特征函数可得.
+	\item 复合 Poisson 分布: $N\sim P(\lambda)$, 独立同分布的 $Y_i$ 以及
+	$$
+	X = \sum_{i=1}^N Y_i
+	$$
+	\begin{itemize}
+		\item $EX = EN\,EY_1 = \lambda EY_1$
+		\item $DX = \lambda EY_1^2$
+	\end{itemize}
+\end{enumerate}
+% subsubsection poisson_dist (end)
+\subsubsection{Poisson 过程} % (fold)
+\label{ssub:poisson_process}
+\begin{enumerate}
+	\item 强度 $\lambda$ 的Poisson 过程 $N = \{N_t, t\ge 0\}$: 
+	\begin{enumerate}
+		\item $N_0 = 0$
+		\item 独立增量过程
+		\item $N_{s+t} - N_s \sim P(\lambda t)$
+	\end{enumerate}
+	强度 $\lambda$ 的 Poisson 过程等价于初值为 $0$ 的普通性时齐独立增量过程.
+	\item $EX = DX = \lambda t$, $\cov(N_s, N_t) = \lambda\min(s,t)$ 
+	\item 在 $N_t=n$ 条件下, 对于 $u<t$: $N_u \sim B(n, u/t)$
+\end{enumerate}
+% subsubsection poisson_process (end)
+% subsection poisson (end)
+\subsection{Yule 过程} % (fold)
+\label{sub:yule}
+连续时间, 离散状态的随机过程.
+Yule 过程 $N_t$, 已知 $N_0 = n_0$, 记 $p_n(t) = P(N_t = n)$. 模型得到
+$$
+  p_n(t+h) = p_n(t)(1-n\lambda h) + p_{n-1}(t)(n-1)\lambda h + o(h)
+$$
+可解得
+\begin{equation}
+	p_n(t) = C_{n-1}^{n-n_0}\e^{-\lambda n_0 t}
+	\left(1-\e^{-\lambda t}\right)^{n-n_0}
+\end{equation}
+% subsection yule (end)
+\subsection{Gauss 过程} % (fold)
+\label{sub:gauss_process}
+连续时间, 连续状态的随机过程.
+
+定义: 对于 $X = \{ X_t|t\in\mathbb R\}$, 任意有限维 
+$\vec X = (X_{t_1},\cdots X_{t_n})^T \sim N(\vec \mu_{\vec t}, \Sigma_{\vec t}$. 
+其中 $\vec\mu_{\vec t}$, $\Sigma_{\vec t}$ 依赖时间 
+$\vec t = (t_1, \cdots, t_n)$
+% subsection gauss_process (end)
+\subsection{Brown 运动} % (fold)
+\label{sub:brown_motion}
+连续时间, 连续状态的随机过程.
+
+定义随机过程 $B = \{B_t|t\ge 0\}$ : 为 Brown 运动 
+\begin{enumerate}
+	\item $B$ 是独立增量过程
+	\item $\forall s\ge 0, t > 0$, 增量 $B_{s+t} - B_s \sim N(0,Dt)$
+	\item (可导出) 对于固定的 $\omega$, $B_t(\omega)$ 关于时间连续
+\end{enumerate}
+Brown 运动是 Gauss 过程. 
+
+特别的, 当 $D=1$ 时称为标准 Brown 运动 (默认)
+\subsubsection{Einstein 模型} % (fold)
+\label{ssub:einstein_model}
+\begin{enumerate}
+	\item 独立增量过程
+	\item 时齐, 且 $\sigma(t)\equiv E(B_{t+h} - B_h)^2$ 存在且连续
+	\begin{itemize}
+		\item 于是有 $\sigma(t+s) = \sigma (t) + \sigma(s) \Rightarrow
+		\sigma(t) = Dt$
+	\end{itemize}
+	\item 空间对称性 $EB_t = 0$
+\end{enumerate}
+据此有结论, 一维 $B_t\sim N(0, Dt)$. 可从特征函数 
+$\varphi_t(\theta) = E\e^{\mi\theta B_t}$ 入手得到它的偏微分方程
+\begin{equation}
+	\frac{\partial \varphi_t}{\partial t} = -\frac 12 D\theta^2\varphi_t
+\end{equation}
+% subsubsection einstein_model (end)
+\subsubsection{Brown 运动的不变性} % (fold)
+\label{ssub:brown_property}
+\begin{enumerate}
+	\item 定义等价于: $B$ 是 Gauss 过程且 $EB_t = 0$, $E(B_sB_t) = \min(s,t)$
+	\item 平移不变性: $\{B_{t+a} - B_a | t\ge 0\}$ 是 Brown 运动
+	\item 尺度不变形: $\{B_{ct}/\sqrt c | t\ge 0\}$ 是 Brown 运动
+	\item $\{t B_{1/t}|t\ge 0\}$ 是 Brown 运动
+\end{enumerate}
+% subsubsection brown_property (end)
+\subsubsection{Brown 运动的轨道} % (fold)
+\label{ssub:brown_path}
+\begin{enumerate}
+	\item 轨道 $B_t(\omega)$ 关于 $t$ 处处连续, 处处不可导
+	\begin{equation}
+	\begin{split}
+		&P\left(\omega: \left|
+		\frac{B_{t+\Delta t}(\omega) - B_{t}(\omega)}{\Delta t}
+		\right|\le C\right) \\
+		=& \Phi(C\sqrt{\Delta t}) - \Phi(-C\sqrt{\Delta t}) 
+		\xlongrightarrow{\Delta t \to 0} 0
+	\end{split}
+	\end{equation}
+	\item 镜面对称性: $P(B_t\ge 0) = P(B_t < 0) = 1/2$
+	\item 定义首达时
+	\begin{equation}
+		T_a = \inf\{ t>0 | B_t = 1\}
+	\end{equation}
+	其分布
+	\begin{equation}
+	\begin{split}
+		P(T_a\le t) &= \sqrt{\frac 2\pi}\int_{|a|/\sqrt{t}}^\infty
+		\e^{-x^2/2}\dif x \\
+		&= 2\left[1-\Phi\left(\frac{|a|}{\sqrt t}\right)\right]
+	\end{split}
+	\end{equation}
+	$a>0$ 时候, 可以从 $P(B_t\ge a) = P(B_t\ge a|T_a\le a)P(T_a\le t) 
+	= P(T_a\le t)/2$ 得到
+	\item $P(T_a < \infty) = 1$: 几乎所有轨道都能在有限时间内经过指定点
+	\item $ET_a = +\infty$: 经过指定点的期望时间是无穷
+	\item 最远距离的分布
+	\begin{equation}
+	\begin{split}
+		& X = \max_{0\le s \le t} B_s\\
+		& f(x) = \frac{2}{\sqrt{2\pi t}}\e^{-x^2/2t}\quad (x\ge 0)
+	\end{split}
+	\end{equation}
+\end{enumerate}
+% subsubsection brown_path (end)
+% subsection brown_motion (end)
+% section random_process (end)
+\section{极限定理} % (fold)
+\label{sec:limit}
+\begin{enumerate}
+	\item 依分布收敛: 在 $F_X(x)$ 上的一切连续点上
+	\begin{equation}
+		X_n\xlongrightarrow{D} X \Leftrightarrow 
+		\lim_{n\to\infty}F_{X_n}(x) = F_X(x)
+	\end{equation}
+	\begin{itemize}
+		\item Polya 定理: $X_n\xlongrightarrow{D} X \Rightarrow$ $F_{X_n}(x)$ 一致收敛到
+		$F_X(x)$ 
+	\end{itemize}
+	\item 依概率收敛: $\forall \varepsilon > 0$
+	\begin{equation}
+		X_n\xlongrightarrow{P} X \Leftrightarrow
+		\lim_{n\to\infty} P\left(|X_n - X|\ge\varepsilon\right) = 0
+	\end{equation}
+	\begin{itemize}
+		\item $g(x)$ 连续, $\xi_n\xlongrightarrow{P}\xi$, 则
+		$g(\xi_n)\xlongrightarrow g(\xi)$\\
+		可以推广到随机向量 $\vec\xi$
+		\item $X_n\xlongrightarrow{P} X \Rightarrow X_n\xlongrightarrow{D} X$
+		\item $X_n\xlongrightarrow{P} a \Leftrightarrow 
+		X_n\xlongrightarrow{D} a$ ($a$ 常数)
+	\end{itemize}
+	\item 依概率 $1$ 收敛: 
+	\begin{equation}
+		X_n\xlongrightarrow{\mbox{a.s.}} X \Leftrightarrow 
+		P\left(\lim_{n\to\infty} X_n = X\right) = 1
+	\end{equation}
+\end{enumerate}
+\subsection{大数定律} % (fold)
+$\{X_n\}$ 满足 (弱) 大数定律, 即
+\begin{equation}
+	\frac 1n\sum_{i=1}^n X_i - \frac 1n \sum_{i=1}^n EX_i \xlongrightarrow{P} 0
+\end{equation}
+\label{sub:large_num}
+\begin{enumerate}
+	\item Chebyshev 大数定律: $\{X_n\}$ 两两不相关, 且方差一致有界 
+	($\forall i, DX_i\le C$), 则 $\{X_n\}$ 满足大数定律
+	\begin{enumerate}
+		\item 引理 (Chebyshev 不等式): 对于有限方差 $X$, 
+		$\forall \varepsilon > 0$
+		\begin{equation}
+			P\left(|X - EX|\ge \varepsilon\right)\le \frac{DX}{\varepsilon^2}
+		\end{equation}
+		(使用范围内 $g\le (x-EX)^2/\varepsilon^2$ 进行缩放)
+		\item 均值 $\overline X = \sum_i X_i / n$ 分布的估计: 
+		\begin{align}
+			D\overline X = \frac{\sigma^2}{n}; \quad
+			P(|\overline X - \mu|\ge \varepsilon) \le 
+			\frac{\sigma^2}{\varepsilon^2 n}
+		\end{align}
+	\end{enumerate}
+	\item Khintchine 大数定律: $\{X_n\}$ 独立同分布, $EX_i = \mu$, 
+	则 $\{X_n\}$ 满足大数定律. 
+	\begin{itemize}
+		\item Chebyshev 大数定律是它的推广. 可以直接通过特征函数得到
+	\end{itemize}
+	\item Bernoulli 大数定律: 以概率 $p$ 独立重复 $n$ 次的 Bernoulli 概型中, 
+	$\mu_n$ 表示发生次数, $\mu_n/n\xlongrightarrow{P}p$
+	\begin{itemize}
+		\item Bernoulli 概型: $P(X = 1)=p$, $P(X=0) = q=1-p$ 的二值分布, 
+		进行独立重复实验
+		\item 满足强大数定律 $\mu_n/n\xlongrightarrow{\mbox{a.s.}}p$
+	\end{itemize}
+\end{enumerate}
+% subsection large_num (end)
+\subsection{中心极限定理} % (fold)
+\label{sub:central_limit}
+$\{X_n\}$ 满足中心极限定理, 即
+\begin{equation}
+	S_n^* = \frac{\sum_{i=1}^n X_i - \sum_{i=1}^n EX_i}{\sqrt{D\left(
+	\sum_{i=1}^n X_i\right)}} \xlongrightarrow{D} N(0,1)
+\end{equation}
+或 $\sum_i X_i$ 近似满足正态分布
+\begin{enumerate}
+	\item Levy-Lindeberg 中心极限定理: $\{X_n\}$ 独立同分布, 
+	且具有有限的数学期望 ($EX_i = \mu$) 和方差 ($DX_i = \sigma^2\neq 0$), 
+	则 $\{X_n\}$ 满足中心极限定理\\
+	(使用特征函数证明)
+	\item 推论 De Moivre-Laplace 定理: 概率 $p$ 的Bernoulli 实验中, 发生次数 
+	$\mu_n$ ($\sim B(n, p)$)
+	\begin{equation}
+		\frac{\mu_n - np}{\sqrt{np(1-p)}} \xlongrightarrow{D} N(0, 1)
+	\end{equation}
+	(与 (\ref{equ:poisson_approx}) 式区分)
+	\item Liapunov 定理: 独立随机变量 $\{X_i\}$, 
+	$EX_i = \mu_i$, $DX_i = \sigma_i^2$, 
+	记 $B_n^2 = \sum \sigma_i^2$, 
+	若满足 Liapunov 条件, 即 $\exists \delta >0$
+	\begin{equation}\label{equ:liapunov}
+		\lim_{n\to\infty}\frac{1}{B_n^{2+\delta}}
+		\sum_{i=1}^n E|X_i - \mu_i|^{2+\delta} = 0
+	\end{equation}
+	则由
+	\begin{equation}
+		S_n = \sum_{i=1}^n X_i - N\left(\sum_{i=1}^n\mu_i, B_n^2\right) 
+		\xlongrightarrow{D} 0
+	\end{equation}
+	\begin{itemize}
+		\item (\ref{equ:liapunov}) 主要保证: $\forall \tau >0$
+		\begin{equation}
+			\lim_{n\to\infty} P\left(\max_{1\le i \le n} 
+			\frac{|X_i-\mu_i|}{B_i} > \tau\right) = 0
+		\end{equation}
+		即各项对于总和的极限分布不产生显著影响
+	\end{itemize}
+\end{enumerate}
+% subsection central_limit (end)
+% section limit (end)
+\end{document}
