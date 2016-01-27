@@ -1,5 +1,5 @@
 %!TEX program = xelatex
-%!TEX builder = simple
+%!TEX builder = latexmk
 % or can be latexmk texify
 %!TEX option = --output-driver="xdvipdfmx -V7"
 % -shell-escape -8bit % For minted package
@@ -56,6 +56,8 @@ columns=fullflexible, breaklines=true, escapeinside={(*@}{@*)}}
 \newcommand{\dif}{\,\mathrm d}
 \newcommand\mi{\mathrm{i}}
 \newcommand\e{\mathrm{e}} % 定义数学模式中常用的正体字符
+\newcommand\nf{\ensuremath{\mathrm{n.f.}}}
+\newcommand\nnf{\ensuremath{\mathrm{n.n.f.}}}
 \renewcommand{\emptyset}{\varnothing}
 \DeclareMathOperator{\dom}{dom}
 \DeclareMathOperator{\ran}{ran}
@@ -441,9 +443,9 @@ $R(C_1, C_2) = C_1' \lor C_2'$
 	\end{itemize}
 	\item 转换为范式的方法: 
 	\begin{align*}
-		&  (\exists x)(\forall y) P(x, y)\xlongleftrightarrow{*}\\
-		& \quad(\exists x)\big((\exists y) (P(x, y)\land \lnot S(x, y)
-		)\lor(\forall z)S(x, z)\big) \\
+		&  (\exists x)(\forall y) P(x, y)\xlongleftrightarrow{*}
+		(\exists x)\Big((\exists y)\\
+		& \quad (P(x, y)\land \lnot S(x, y) )\lor(\forall z)S(x, z)\Big) \\
 		& (\exists x) P(x) \xlongleftrightarrow{**} P(a) \\
 		& (\forall x)(\exists y) P(x, y) \xlongleftrightarrow{**} 
 		(\forall)P(x, f(x)) 
@@ -467,6 +469,154 @@ $R(C_1, C_2) = C_1' \lor C_2'$
 	\end{enumerate}
 \end{enumerate}
 % subsection reasoning_for_predicate (end)
+\subsection{一阶形式理论与 G\"odel 定理} % (fold)
+\label{sub:first_order_form}
+\begin{enumerate}
+	\item 字符表: 
+	\begin{itemize}
+		\item 个体变元 $x, y, z, \cdots$
+		\item 常项变元 $a, b, c, \cdots$
+		\item 函词符号 $F_1, F_2, F_3, \cdots$ (设定变目个数)
+		\item 谓词符号 $P_1, P_2, P_3, \cdots$
+		\item 特殊谓词 $=$
+		\item 逻辑联结词
+		\item 量词 $\forall, \exists$
+		\item 括号
+	\end{itemize}
+	\item 递归定义形成规则
+	\item 语句 $A$: 不含变元的自由出现
+	\item 语言 $L$: 定义了字符表, 形成规则和语句
+	\item 一阶理论 $T$ 包含: 
+	\begin{enumerate}
+		\item 谓词演算中的所有公理
+		\item $L$ 中语句形成的集合 (非逻辑公理)
+		\item 谓词演算的所有推理规则
+	\end{enumerate}
+	\item 定理: 公理, 非逻辑公理或者他们根据 $T$ 的对立规则得到的语句 $A|- T$
+	\item $L$ 的数学结构 $M = \left\langle U, f_1, f_2, \cdots, R_1, R_2, \cdots
+	\right\rangle$
+	\begin{itemize}
+		\item $U$ 是非空集合
+		\item 对应于 $L$ 的每个函词符号 $F_j$, $f_j$ 是 $A$ 上的一个 $k$ 元函数
+		\item 对应于 $L$ 的每个谓词符号 $P_j$, $R_j$ 是 $A$ 上的一个 $k$ 元关系
+	\end{itemize}
+	\item $L$ 在结构 $M$ 上的一个赋值 $I$ 包括以下映射:
+	\begin{enumerate}
+		\item $L$ 的常项符号 $C$ 到 $A$, $r: C\mapsto A$ ($r$-置换, $A_r = r(A)$)
+		\item $L$ 的语句到 $\{0, 1\}$ 的映射 $I$ (真值, 对于不同符号分别定义)
+	\end{enumerate}
+	\item 一阶理论 $T$ 的模型: 有序对 $\left\langle M, I\right\rangle$ 满足
+	\begin{itemize}
+		\item 所有非逻辑公理 $A$, $I(A) = 1$, 记为 $M \models A$ 
+		或 $M \models T$
+	\end{itemize}
+	\item 理论 $T$ 是协调的: $T\vdash A$ 及 $T\vdash\lnot A$ 不同时成立
+	\begin{enumerate}
+		\item 紧致性定理: $T$ 是协调的 $\Leftrightarrow$ $T$ 
+		的任一有穷子集是协调的
+		\item $T$ 是协调的 $\Leftrightarrow$ $T$ 有一个模型 $M\models T$
+	\end{enumerate}
+	\item G\"odel 完全性定理: $T\vdash A$ $\Leftrightarrow$ 
+	$A$ 在 $T$ 的所有模型中都成立
+	\item 语言 $L$ 的基数 $|L|$: $L$ 的符号集合的基数. 以下讨论 $|L|\le \aleph_0$
+	\item Lowenheim-Skolem 定理: 如果 $T$ 有一个无穷模型, 
+	则 $T$ 有一个基数小于等于 $\aleph_0$ 的模型
+	\item Herbrand 域: $A$ 是 $L$ 的一个 $\forall$ (无 $\exists$) 前束范式, 
+	Herbrand 域 $H$ 是 $A$ 中个体常项符号, 自由变元符号和函词符号组成的项的集合. 
+	$A$ 的母式 (去掉量词余下部分) 中的元素用 $H$ 中任意元素组的替换称为 Herbrand
+	域上的特例 $S$
+	\item Herbrand 定理: 任一一阶公式 $A$ 是不可满足的 $\Leftrightarrow$ 
+	$\exists S'\subset S$, $|S|<\infty$ 且 $S'$ 不可满足
+	\item 一阶形式理论 $Z_1$: $\mathbb Z^+$ 的形式理论, 公理包含
+	\begin{itemize}
+		\item 加法及单位元 $0$
+		\item 乘法及单位元 $1$
+		\item 对于 $1$ 的加法结合律和乘法分配律
+		\item $\forall x, y(x+1=y+1\to x=y)$
+		\item $\forall x (\lnot(x+1=0))$
+		\item 数学归纳法
+	\end{itemize}
+	\item G\"odel 不完全性定理: 若 $Z_1$ 是协调的, 则存在 $Z_1$ 的语句 $A$, 
+	在 $Z_1$ 中 $A$ 及 $\lnot A$ 都不可能形式证明
+	\item G\"odel 第二不完全性定理: $Z_1$ 是否协调可以通过编码表达为 $Z_1$ 
+	的一个形式公式. 某一 $Z_1$ 的语句 $\psi$ 在 $Z_1$ 中不可证明 
+	(如果 $Z_1$ 不协调, 任何公式都在 $Z_1$ 中可证)
+	\item 广义 G\"odel 不完全性定理: 任何形式理论 $T$, 它的公理是归纳地给出的, 
+	同时原始归纳函数在 $T$ 中可以定义, 那么若 $T$ 是协调的, 则: 
+	\begin{itemize}
+		\item 存在语句 $A$, 在 $T$ 中 $A$ 及 $\lnot A$ 都不可能形式证明
+		\item $T$ 的协调性在 $T$ 中不可证明
+	\end{itemize}
+\end{enumerate}
+% subsection first_order_form (end)
+\subsection[λ-演算]{$\lambda$-演算} % (fold)
+\label{sub:lambda_cal}
+$\lambda$-演算是表达 ``代入'' 和 ``置换'' 的形式系统
+\begin{enumerate}
+	\item 描述
+	\begin{itemize}
+		\item 字母表
+		\begin{enumerate}
+			\item $x_1, x_2,\cdots$ 变元
+			\item $\to$ 归约, $=$ 等价
+			\item $\lambda$, $()$ 辅助工具和括号
+		\end{enumerate}
+		\item $\lambda$-项: 
+		(记所有 $\lambda$-项组成的集合为 $\Lambda$)
+		\begin{enumerate}
+			\item 任意变元是项
+			\item $M$, $N$ 是项 $\Rightarrow$ $(MN)$ 是项
+			\item $M$ 是项, $x$ 是变元 $\Rightarrow$ $(\lambda x. M)$ 是项
+			\item 仅以上规则归纳定义的符号串是项
+			\item $M$, $N$ 是项, $x$ 在 $M$ 中有自由出现, 
+			以 $N$ 置换 $M$ 中所有 $x$ 的自由出现, 得到另一个项, 
+			记为 $M[x/N]$
+		\end{enumerate}
+		\item 公式: $M$, $N$ 是 $\lambda$-项 $\Rightarrow$ 
+			$M\to N$, $M = N$ 是公式
+	\end{itemize}
+	\item 理论: 公理和规则包括
+	\begin{enumerate}
+		\item $(\lambda x. M)N \to M[x/N]$ \quad($\beta$-归约)
+		\item $M\to M$
+		\item $M\to M'\Rightarrow M=M'$
+		\item $M = M' \Rightarrow M'=M$
+		\item $M\to N, N\to L \Rightarrow M\to N$
+		\item $M=N, N=L \Rightarrow M=L$
+		\item $M\to (\mbox{或}=) M' \Rightarrow ZM\to ZM'$
+		\item $M\to (\mbox{或}=) M' \Rightarrow MZ\to M'Z$
+		\item $M\to (\mbox{或}=) M' \Rightarrow \lambda x. M\to \lambda x. M'$
+	\end{enumerate}
+	\begin{itemize}
+		\item 如果一个公式可以由以上公式推出, 则记为: $\lambda\vdash M\to N$, 
+		$\lambda \vdash M=N$
+		\item 如果一个 $\lambda$-项 $M$ 不含形如 $((\lambda x.N_1)N_2)$ 的子项, 
+		则称为 $M$ 为范式, 记为 \nf
+		\item 如果一个 $\lambda$-项 $M$ 经过有限步 $\beta$-归约后得到范式, 
+		称 $M$ 有 \nf
+		\item 没有 \nf 的 $\lambda$-项称为 \nnf
+		\begin{itemize}
+			\item $M = \lambda x.(xx)\lambda x. (xx)$ 是 \nnf
+		\end{itemize}
+	\end{itemize}
+	\item 不动点定理:
+	$$
+	 	(\forall F\in \Lambda)(\exists M\in \Lambda) (\lambda\vdash FM=M)
+	$$
+	证明: $M = \omega\omega$, $\omega = \lambda x. F(xx)$
+	\item Church-Rosser 定理: 
+	$$
+		\lambda \vdash M=N \Rightarrow (\exists Z)
+		(\lambda \vdash M\to Z, \lambda\vdash N\to Z)
+	$$
+	\item Diamond Property 定理
+	\begin{align*}
+		&\lambda \vdash M\to N_1, \lambda \vdash M \to N_2 \\\Rightarrow &
+		(\exists Z)(\lambda \vdash N_1\to Z, \lambda \vdash N_2 \to Z)
+	\end{align*}
+	以上两个定理等价, 可通过逐一检验公理和规则, 按照证明步骤数目归纳证明
+\end{enumerate}
+% subsection lambda_cal (end)
 % section predicate_logic (end)
 \section{集合论} % (fold)
 \label{sec:set_theory}
